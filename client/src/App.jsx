@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import SampleComponent from './components/SampleComponent.jsx'
+import NavigationBar from './components/NavigationBar.jsx'
 import './App.css'
 
 function App() {
@@ -7,7 +8,10 @@ function App() {
 
   return (
     <>
-      <SampleComponent />
+      <NavigationBar />
+      <div className="body-container">
+        
+      </div>
     </>
   )
 }
