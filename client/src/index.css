@@ -6,7 +6,7 @@
 }
 
 .body-container {
-  margin-top: 100px;
+  margin-top: 80px;
   background: linear-gradient(to bottom, #020E2A 0%, #0F172A 50%, #0B2154 100%);
   min-height: calc(100vh - 100px);
 }
