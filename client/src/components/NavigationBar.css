@@ -1,12 +1,72 @@
 .navigation-bar {
-
-    height: 100px;
+    height: 80px;
     width: 100vw;
     display: flex;
     align-items: center;
+    justify-content: center;
     color: white;
     background-color: #142140;
     position: fixed;
     top: 0;
     left: 0;
 }
+
+.navigation-bar ul {
+    flex: 1;
+    list-style: none;   
+    text-align: center;
+    margin-top: 20px;
+}
+.navigation-bar ul li {
+    display: inline-block;
+    margin: 20px 0;
+    font-size: 20px;
+    padding: 0 80px;
+    cursor: pointer;
+    border-left: 1px solid white;
+}
+
+.navigation-bar ul li:last-child {
+    border-right: 1px solid white;
+}
+
+.navigation-bar a {
+    color: #263E77;
+    text-decoration: none;
+}
+
+.navigation-bar a.active {
+    color: white;
+}
+
+.navigation-bar a:hover {
+    color: white;
+}
+
+.navigation-bar b {
+    color: #263E77;
+    text-decoration: none;
+}
+
+.navigation-bar b:hover {
+    color: white;
+}
+
+.navigation-bar c .active {
+    color: white;
+}
+
+.navigation-bar c {
+    color: #263E77;
+    text-decoration: none;
+}
+
+.navigation-bar c:hover {
+    color: white;
+}
+
+.navigation-bar c .active {
+    color: white;
+}
+
+

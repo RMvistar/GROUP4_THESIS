@@ -1,0 +1,9 @@
+.node-details-container {
+    padding: 40px;
+    color: white;
+}
+
+.node-details-container h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
