@@ -1,0 +1,9 @@
+.dashboard-container {
+    padding: 40px;
+    color: white;
+}
+
+.dashboard-container h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}

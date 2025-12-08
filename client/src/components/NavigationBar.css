@@ -29,3 +29,44 @@
 .navigation-bar ul li:last-child {
     border-right: 1px solid white;
 }
+
+.navigation-bar a {
+    color: #263E77;
+    text-decoration: none;
+}
+
+.navigation-bar a.active {
+    color: white;
+}
+
+.navigation-bar a:hover {
+    color: white;
+}
+
+.navigation-bar b {
+    color: #263E77;
+    text-decoration: none;
+}
+
+.navigation-bar b:hover {
+    color: white;
+}
+
+.navigation-bar c .active {
+    color: white;
+}
+
+.navigation-bar c {
+    color: #263E77;
+    text-decoration: none;
+}
+
+.navigation-bar c:hover {
+    color: white;
+}
+
+.navigation-bar c .active {
+    color: white;
+}
+
+
