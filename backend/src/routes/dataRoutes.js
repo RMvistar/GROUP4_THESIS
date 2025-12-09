@@ -3,6 +3,7 @@ import { postData } from "../controllers/dataController.js";
 import express from "express";
 
 const router = express.Router();
-router.get("/", getData);
+router.get("/export", getData);
 router.post("/", postData);
+
 export default router;
