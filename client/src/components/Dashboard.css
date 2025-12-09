@@ -1,9 +1,25 @@
-.dashboard-container {
+.dashboard-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     padding: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-container {
+    display: flex;
+    gap: 20px;
+}
+
+.active-nodes-container {
     color: white;
 }
 
-.dashboard-container h1 {
-    font-size: 32px;
-    margin-bottom: 20px;
+.last-clog-alert-container {
+    color: white;
+}
+
+.live-alerts-feed-container {
+    color: white;
 }
