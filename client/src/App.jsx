@@ -5,11 +5,13 @@ import NodeDetails from './components/NodeDetails.jsx';
 import Alerts from './components/Alerts.jsx';
 import './App.css';
 
+
 function App() {
   return (
     <Router>
       <NavigationBar />
       <div className="body-container">
+        
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/node-details" element={<NodeDetails />} />
