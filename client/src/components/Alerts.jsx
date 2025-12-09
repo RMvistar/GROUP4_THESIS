@@ -1,14 +1,20 @@
-import React from 'react';
-import './Alerts.css';
+import React from "react";
+import "./Alerts.css";
 
 function Alerts() {
-    return (
+  return (
+    <>
+      <div className="alerts-container-constraints">
         <div className="alerts-container">
-            <h1>Alerts</h1>
-            <p>Insert Alert Contents</p>
-            {/* Add your alerts content here */}
+          <div className="alert-buttons-container">
+            <button className="unresolved-button">Unresolved</button>
+            <button className="ongoing-button">Ongoing</button>
+            <button className="resolved-button">Resolved</button>
+          </div>
         </div>
-    );
+      </div>
+    </>
+  );
 }
 
 export default Alerts;
