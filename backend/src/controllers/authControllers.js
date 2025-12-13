@@ -35,20 +35,27 @@ export const login = async (req, res) => {
     if (!user)
       return res.status(400).json({ message: "Your Credentials are invalid!" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Your Credentials are invalid!" });
 
     const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET || "SECRET123",
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
     res.json({
-      message: "Login successful",
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role, // ang admin/user roles
+      },
     });
   } catch (err) {
     console.error("Login error:", err);
