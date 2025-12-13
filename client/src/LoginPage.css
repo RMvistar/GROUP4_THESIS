@@ -1,0 +1,156 @@
+.login-page {
+  background-image: 
+    linear-gradient(to bottom, rgba(2, 14, 42, 1) 0%, rgba(15, 23, 42, 0.9) 50%, rgba(11, 33, 84, 0.5) 100%),
+    url('./assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+  gap: 30px;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.logo-container img {
+  height: 150px;
+  object-fit: contain;
+}
+
+.login-container {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(18, 30, 51, 0.5) 0%, rgba(12, 31, 62, 0.5) 50%, rgba(19, 34, 60, 0.5) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  color: white;
+  padding: 25px 40px 40px;
+}
+
+.login-container h1 {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.input-box {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin-bottom: 20px;
+}
+
+.input-box:first-of-type {
+  margin-top: 0;
+}
+
+.input-box input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 0 20px;
+  color: white;
+}
+
+.input-box input::placeholder {
+  color: white;
+}
+
+.input-box .icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+}
+
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 14.5px;
+  margin-bottom: 25px;
+}
+
+.remember-forgot label input {
+  accent-color: white;
+  margin-right: 4px;
+}
+
+.remember-forgot a {
+  color: white;
+  text-decoration: none;
+}
+
+.remember-forgot a:hover {
+  text-decoration: underline;
+}
+
+.login-button {
+  width: 100%;
+  height: 45px;
+  background: white;
+  border: none;
+  border-radius: 40px;
+  color: #13223C;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+}
+
+.guest-button {
+  width: 100%;
+  height: 45px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 40px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.guest-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(78, 158, 255, 0.5);
+}
+
+.register-link {
+  width: 100%;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.register-link p {
+  margin: 8px 0;
+}
+
+.register-link p a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-link p a:hover {
+  text-decoration: underline; 
+}
