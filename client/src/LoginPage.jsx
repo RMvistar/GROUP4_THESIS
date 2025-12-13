@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -17,7 +17,7 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const user = await login(email, password);
+      const user = await login(name, password);
       console.log("Login successful:", user);
       console.log("Navigating to dashboard...");
       navigate("/");
@@ -38,10 +38,10 @@ function LoginPage() {
           <form onSubmit={handleLogin}>
             <div className="input-box">
               <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                placeholder="username"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
               <FaUser className="icon" />

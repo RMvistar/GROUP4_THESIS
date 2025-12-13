@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import NavigationBar from "./components/NavigationBar.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import NodeDetails from "./components/NodeDetails/NodeDetails.jsx";
@@ -11,7 +16,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route
           path="/*"
           element={
