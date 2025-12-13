@@ -20,7 +20,7 @@ function LoginPage() {
       const user = await login(name, password);
       console.log("Login successful:", user);
       console.log("Navigating to dashboard...");
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       console.error("Login failed:", err);
       console.error("Error details:", error);
