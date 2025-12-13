@@ -1,13 +1,16 @@
 import { create } from "zustand";
 
 export const useAuthStore = create((set) => ({
+  //ang initial state
   user: null,
   token: null,
+  isAuthenticated: false,
   loading: false,
   error: null,
 
+  // Login functions namun
   login: async (email, password) => {
-    set({ loading: true });
+    set({ loading: true, error: null });
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -18,21 +21,29 @@ export const useAuthStore = create((set) => ({
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) throw new Error(data.message || "Login failed");
 
       set({
-        user: data.user,
+        user: data.user, // contains role
         token: data.token,
+        isAuthenticated: true,
         loading: false,
-        error: null,
       });
+
+      return data.user; // allow redirect logic
     } catch (err) {
-      set({ error: err.message, loading: false });
+      set({
+        error: err.message,
+        loading: false,
+        isAuthenticated: false,
+      });
+      throw err;
     }
   },
 
+  // REGISTER
   register: async (name, email, password) => {
-    set({ loading: true });
+    set({ loading: true, error: null });
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/register", {
@@ -42,10 +53,9 @@ export const useAuthStore = create((set) => ({
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) throw new Error(data.message || "Registration failed");
 
-      set({ loading: false, error: null });
-
+      set({ loading: false });
       return { success: true };
     } catch (err) {
       set({ error: err.message, loading: false });
@@ -53,5 +63,12 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  logout: () => set({ user: null, token: null }),
+  // LOGOUT
+  logout: () =>
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      error: null,
+    }),
 }));
