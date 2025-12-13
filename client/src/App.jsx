@@ -9,20 +9,26 @@ import "./App.css";
 
 function App() {
   return (
-    <>
-      <LoginPage />
-
-      {/*<Router>
-        <NavigationBar />
-        <div className="body-container">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/node-details" element={<NodeDetails />} />
-            <Route path="/alerts" element={<Alerts />} />
-          </Routes>
-        </div>
-      </Router>*/}
-    </>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/*"
+          element={
+            <>
+              <NavigationBar />
+              <div className="body-container">
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/node-details" element={<NodeDetails />} />
+                  <Route path="/alerts" element={<Alerts />} />
+                </Routes>
+              </div>
+            </>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
