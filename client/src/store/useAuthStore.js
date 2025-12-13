@@ -9,14 +9,14 @@ export const useAuthStore = create((set) => ({
   error: null,
 
   // Login functions namun
-  login: async (email, password) => {
+  login: async (name, password) => {
     set({ loading: true, error: null });
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, password }),
       });
 
       const data = await res.json();
