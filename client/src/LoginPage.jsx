@@ -1,7 +1,6 @@
 import React from "react";
-
 import "./LoginPage.css";
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import logo from "./assets/ARCOMLogo.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ import { useAuthStore } from "./store/useAuthStore";
 function LoginPage() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login, loading, error } = useAuthStore();
   const navigate = useNavigate();
@@ -48,13 +48,24 @@ function LoginPage() {
             </div>
             <div className="input-box">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <FaLock className="icon" />
+              {showPassword ? (
+                <FaEyeSlash
+                  className="icon-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+              ) : (
+                <FaEye
+                  className="icon-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+              )}
             </div>
             <div className="remember-forgot">
               <label>
