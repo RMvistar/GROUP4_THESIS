@@ -10,6 +10,7 @@ import NodeDetails from "./components/NodeDetails/NodeDetails.jsx";
 import Alerts from "./components/Alerts/Alerts.jsx";
 import React from "react";
 import LoginPage from "./LoginPage.jsx";
+import RegisterPage from "./RegisterPage.jsx";
 import "./App.css";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/*"
           element={
