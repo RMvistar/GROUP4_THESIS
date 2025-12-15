@@ -14,23 +14,27 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 
 function RegisterPage() {
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const { login, loading, error } = useAuthStore();
+  const { register, loading, error } = useAuthStore();
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const user = await login(name, password);
-      console.log("Login successful:", user);
-      console.log("Navigating to dashboard...");
-      navigate("/dashboard");
+      const user = await register(first_name, last_name, name, email, password);
+      console.log("Registration successful:", user);
+
+      navigate("/login");
     } catch (err) {
-      console.error("Login failed:", err);
+      console.error("Register failed:", err);
       console.error("Error details:", error);
     }
   };
@@ -43,13 +47,13 @@ function RegisterPage() {
         </div>
         <div className="register-container">
           <h1>Register</h1>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleRegister}>
             <div className="input-box">
               <input
                 type="text"
                 placeholder="First name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={first_name}
+                onChange={(e) => setFirstName(e.target.value)}
                 required
               />
               <FaIdCard className="icon" />
@@ -58,8 +62,8 @@ function RegisterPage() {
               <input
                 type="text"
                 placeholder="Last name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={last_name}
+                onChange={(e) => setLastName(e.target.value)}
                 required
               />
               <FaIdCard className="icon" />
@@ -68,8 +72,8 @@ function RegisterPage() {
               <input
                 type="text"
                 placeholder="Email"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
               <FaEnvelope className="icon" />

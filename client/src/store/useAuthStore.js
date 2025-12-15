@@ -42,14 +42,14 @@ export const useAuthStore = create((set) => ({
   },
 
   // REGISTER
-  register: async (name, email, password) => {
+  register: async (first_name, last_name, name, email, password) => {
     set({ loading: true, error: null });
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ first_name, last_name, name, email, password }),
       });
 
       const data = await res.json();

@@ -80,7 +80,7 @@ function LoginPage() {
           </form>
           <div className="register-link">
             <p>
-              Don't have an account? <a href="#">Register</a>
+              Don't have an account? <a href="/register">Register</a>
             </p>
             <p>or</p>
           </div>
