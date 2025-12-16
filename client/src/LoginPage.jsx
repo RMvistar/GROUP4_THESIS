@@ -39,7 +39,7 @@ function LoginPage() {
             <div className="input-box">
               <input
                 type="text"
-                placeholder="username"
+                placeholder="Username"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
