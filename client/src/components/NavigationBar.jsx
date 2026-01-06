@@ -8,7 +8,7 @@ function NavigationBar() {
       <ul>
         <li>ADD LOGO HERE</li>
         <li>
-          <NavLink to="/">Dashboard</NavLink>
+          <NavLink to="/Dashboard">Dashboard</NavLink>
         </li>
         <li>
           <NavLink to="/node-details">Node Details</NavLink>
