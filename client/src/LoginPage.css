@@ -17,19 +17,21 @@
   gap: 30px;
 }
 
-.logo-container {
+.login-page .logo-container {
   display: flex;
   justify-content: center;
   width: 100%;
 }
 
-.logo-container img {
+.login-page .logo-container img {
   height: 150px;
   object-fit: contain;
 }
 
-.login-container {
+.login-page .login-container {
   width: 400px;
+  min-height: 520px;
+  max-height: 520px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,23 +47,23 @@
   padding: 25px 40px 40px;
 }
 
-.login-container h1 {
+.login-page .login-container h1 {
   font-size: 30px;
   margin-bottom: 20px;
 }
 
-.input-box {
+.login-page .input-box {
   position: relative;
   width: 100%;
-  height: 50px;
+  height: 45px;
   margin-bottom: 20px;
 }
 
-.input-box:first-of-type {
+.login-page .input-box:first-of-type {
   margin-top: 0;
 }
 
-.input-box input {
+.login-page .input-box input {
   width: 100%;
   height: 100%;
   background: transparent;
@@ -69,15 +71,20 @@
   outline: none;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
-  padding: 0 45px 0 45px;
+  padding: 0 20px 0 45px;
   color: white;
 }
 
-.input-box input::placeholder {
+.login-page .input-box input[type="password"],
+.login-page .input-box input[type="text"]:not(:only-of-type) {
+  padding-right: 45px;
+}
+
+.login-page .input-box input::placeholder {
   color: white;
 }
 
-.input-box .icon {
+.login-page .input-box .icon {
   position: absolute;
   left: 20px;
   top: 50%;
@@ -85,7 +92,7 @@
   font-size: 16px;
 }
 
-.input-box .icon-toggle {
+.login-page .input-box .icon-toggle {
   position: absolute;
   right: 20px;
   top: 50%;
@@ -94,7 +101,7 @@
   cursor: pointer;
 }
 
-.remember-forgot {
+.login-page .remember-forgot {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -104,21 +111,21 @@
   margin-bottom: 25px;
 }
 
-.remember-forgot label input {
+.login-page .remember-forgot label input {
   accent-color: white;
   margin-right: 4px;
 }
 
-.remember-forgot a {
+.login-page .remember-forgot a {
   color: white;
   text-decoration: none;
 }
 
-.remember-forgot a:hover {
+.login-page .remember-forgot a:hover {
   text-decoration: underline;
 }
 
-.login-button {
+.login-page .login-button {
   width: 100%;
   height: 45px;
   background: white;
@@ -132,12 +139,12 @@
   margin-bottom: 15px;
 }
 
-.login-button:hover {
+.login-page .login-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
 }
 
-.guest-button {
+.login-page .guest-button {
   width: 100%;
   height: 45px;
   background: transparent;
@@ -150,27 +157,27 @@
   transition: all 0.3s ease;
 }
 
-.guest-button:hover {
+.login-page .guest-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(78, 158, 255, 0.5);
 }
 
-.register-link {
+.login-page .register-link {
   width: 100%;
   text-align: center;
   margin: 10px 0;
 }
 
-.register-link p {
+.login-page .register-link p {
   margin: 8px 0;
 }
 
-.register-link p a {
+.login-page .register-link p a {
   color: white;
   text-decoration: none;
   font-weight: 600;
 }
 
-.register-link p a:hover {
+.login-page .register-link p a:hover {
   text-decoration: underline;
 }
