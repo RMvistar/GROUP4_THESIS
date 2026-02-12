@@ -99,12 +99,12 @@ function RegisterPage() {
               />
               <FaLock className="icon" />
               {showPassword ? (
-                <FaEyeSlash
+                <FaEye
                   className="icon-toggle"
                   onClick={() => setShowPassword(!showPassword)}
                 />
               ) : (
-                <FaEye
+                <FaEyeSlash
                   className="icon-toggle"
                   onClick={() => setShowPassword(!showPassword)}
                 />
@@ -120,12 +120,12 @@ function RegisterPage() {
               />
               <FaLock className="icon" />
               {showConfirmPassword ? (
-                <FaEyeSlash
+                <FaEye
                   className="icon-toggle"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 />
               ) : (
-                <FaEye
+                <FaEyeSlash
                   className="icon-toggle"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 />
