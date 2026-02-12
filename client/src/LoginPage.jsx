@@ -56,12 +56,12 @@ function LoginPage() {
               />
               <FaLock className="icon" />
               {showPassword ? (
-                <FaEyeSlash
+                <FaEye
                   className="icon-toggle"
                   onClick={() => setShowPassword(!showPassword)}
                 />
               ) : (
-                <FaEye
+                <FaEyeSlash
                   className="icon-toggle"
                   onClick={() => setShowPassword(!showPassword)}
                 />
