@@ -66,4 +66,20 @@
     background: rgba(78, 158, 255, 0.4);
 }
 
+.navigation-bar .logo-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.navigation-bar .logo {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+}
+
+
+
+
+
 
