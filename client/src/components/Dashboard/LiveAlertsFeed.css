@@ -1,0 +1,7 @@
+.live-alerts-feed {
+    width: 1220px;
+    height: 441px;
+    background: linear-gradient(to bottom, #121E33 0%, #0C1F3E 50%, #13223C 100%);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
+}
