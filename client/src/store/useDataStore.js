@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore";
 
 export const useDataStore = create((set) => ({
   data: [], // Gina store and Data halin sa backend
@@ -10,7 +11,14 @@ export const useDataStore = create((set) => ({
     set({ loading: true });
 
     try {
-      const res = await fetch("http://localhost:5000/api/data/export");
+      const token = useAuthStore.getState().token;
+
+      const res = await fetch("http://localhost:5001/api/data/export", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       const result = await res.json();
 
       set({ data: result, loading: false });

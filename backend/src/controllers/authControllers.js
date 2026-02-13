@@ -55,19 +55,31 @@ export const login = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Your Credentials are invalid!" });
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET || "SECRET123",
-      { expiresIn: "7d" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     res.json({
       message: "Login successful",
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (err) {
     console.error("Login error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching users:", err);
     res.status(500).json({ message: "Server Error" });
   }
 };

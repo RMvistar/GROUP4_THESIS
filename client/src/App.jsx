@@ -8,6 +8,7 @@ import NavigationBar from "./components/NavigationBar.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import NodeDetails from "./components/NodeDetails/NodeDetails.jsx";
 import Alerts from "./components/Alerts/Alerts.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import React from "react";
 import LoginPage from "./LoginPage.jsx";
 import RegisterPage from "./RegisterPage.jsx";
@@ -23,7 +24,7 @@ function App() {
         <Route
           path="/*"
           element={
-            <>
+            <ProtectedRoute>
               <NavigationBar />
               <div className="body-container">
                 <Routes>
@@ -32,7 +33,7 @@ function App() {
                   <Route path="/alerts" element={<Alerts />} />
                 </Routes>
               </div>
-            </>
+            </ProtectedRoute>
           }
         />
       </Routes>

@@ -1,9 +1,18 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/useAuthStore";
 import logo from "../assets/ARCOMLogo2.png";
 import "./NavigationBar.css";
 
 function NavigationBar() {
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <nav className="navigation-bar">
       <ul>
@@ -22,6 +31,9 @@ function NavigationBar() {
           <NavLink to="/alerts">Alerts</NavLink>
         </li>
       </ul>
+      <button className="logout-button" onClick={handleLogout}>
+        Logout
+      </button>
     </nav>
   );
 }

@@ -1,10 +1,10 @@
 import { create } from "zustand";
 
 export const useAuthStore = create((set) => ({
-  //ang initial state
-  user: null,
-  token: null,
-  isAuthenticated: false,
+  //ang initial state - Load from localStorage
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  token: localStorage.getItem("token") || null,
+  isAuthenticated: !!localStorage.getItem("token"),
   loading: false,
   error: null,
 
@@ -22,6 +22,10 @@ export const useAuthStore = create((set) => ({
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.message || "Login failed");
+
+      // Save to localStorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
       set({
         user: data.user, // contains role
@@ -64,11 +68,16 @@ export const useAuthStore = create((set) => ({
   },
 
   // LOGOUT
-  logout: () =>
+  logout: () => {
+    // Clear localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     set({
       user: null,
       token: null,
       isAuthenticated: false,
       error: null,
-    }),
+    });
+  },
 }));
