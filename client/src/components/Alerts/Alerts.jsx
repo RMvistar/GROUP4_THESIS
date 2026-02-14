@@ -5,10 +5,28 @@ function Alerts() {
   return (
     <div className="alerts-container-constraints">
       <div className="alerts-container">
-        <div className="alert-buttons-container">
-          <button className="unresolved-button">Unresolved</button>
-          <button className="ongoing-button">Ongoing</button>
-          <button className="resolved-button">Resolved</button>
+        <div>
+          <div className="UnresolvedSection">
+            <p>Unresolved Alerts</p>
+            <div className="alertCard"></div>
+            <div className="alertCard"></div>
+            <div className="alertCard"></div>
+            <div className="alertCard"></div>
+          </div>
+          <div className="OngoingSection">
+            <p>Ongoing Alerts</p>
+            <div className="alertCard"></div>
+            <div className="alertCard"></div>
+            <div className="alertCard"></div>
+            <div className="alertCard"></div>
+          </div>
+          <div className="ResolvedSection">
+            <p>Resolved Alerts</p>
+            <div className="alertCard"></div>
+            <div className="alertCard"></div>
+            <div className="alertCard"></div>
+            <div className="alertCard"></div>
+          </div>
         </div>
       </div>
     </div>
