@@ -1,14 +1,34 @@
 import mongoose from "mongoose";
 
-const DataSchema = new mongoose.Schema({
-  timestamp: { type: Date, default: Date.now },
-  flow_rate: Number,
-  water_level: Number,
-  distance: Number,
-  rain: Number,
-  label: Number, // 0,1,2
-});
+const dataSchema = new mongoose.Schema(
+  {
+    sensor_id: {
+      type: String,
+      default: "DRAINAGE_SENSOR_01",
+    },
+    flow_rate: {
+      type: Number,
+      required: true,
+    },
+    water_level: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: Number,
+      required: true,
+      enum: [0, 1, 2, 3], // 0-Normal, 1-At Risk, 2-Clogged, 3-Overflow
+    },
+    // Store additional data for records
+    delta_water_level: Number,
+    distance: Number,
+    rain: Number,
+    timestamp: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { timestamps: true },
+);
 
-const Data = mongoose.model("Data", DataSchema);
-
-export default Data;
+export default mongoose.model("Data", dataSchema);
