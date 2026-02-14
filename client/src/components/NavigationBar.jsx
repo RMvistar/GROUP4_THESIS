@@ -1,8 +1,8 @@
-import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore.js';
-import logo from '../assets/arcom_logo.png';
-import './NavigationBar.css';
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/useAuthStore.js";
+import logo from "../assets/ARCOMLogo2.png";
+import "./NavigationBar.css";
 
 function NavigationBar() {
   const { logout, user } = useAuthStore();
