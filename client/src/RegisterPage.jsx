@@ -7,6 +7,7 @@ import {
   FaEyeSlash,
   FaEnvelope,
   FaIdCard,
+  FaArrowLeft,
 } from "react-icons/fa";
 import logo from "./assets/ARCOMLogo.png";
 import { useState } from "react";
@@ -52,6 +53,10 @@ function RegisterPage() {
     <>
       <div className="register-page">
         <div className="logo-container">
+          <FaArrowLeft
+            className="back-icon"
+            onClick={() => navigate("/login")}
+          />
           <img src={logo} alt="ARCOM Logo" className="logo" />
         </div>
         <div className="register-container">
