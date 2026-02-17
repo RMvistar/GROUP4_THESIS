@@ -7,3 +7,63 @@
     font-size: 32px;
     margin-bottom: 20px;
 }
+
+.nodeCard {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.nodeCard .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nodeCard .status-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.nodeCard .timestamp {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.nodeCard .card-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1rem;
+}
+
+.nodeCard .data-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.nodeCard .data-label {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+}
+
+.nodeCard .data-value {
+    color: white;
+    font-weight: 400;
+    font-size: 0.875rem;
+}
