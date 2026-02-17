@@ -16,12 +16,7 @@ function Dashboard() {
 
   const fetchLatestData = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5001/api/data/latest", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch("http://localhost:5001/api/data/latest");
       if (response.ok) {
         const data = await response.json();
         setLatestData(data);

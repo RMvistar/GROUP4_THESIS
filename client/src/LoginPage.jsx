@@ -32,6 +32,11 @@ function LoginPage() {
     }
   };
 
+  const handleGuestLogin = () => {
+    // Navigate directly to dashboard without authentication
+    navigate("/dashboard");
+  };
+
   return (
     <>
       <div className="login-page">
@@ -83,6 +88,13 @@ function LoginPage() {
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
+          <button
+            type="button"
+            className="guest-button"
+            onClick={handleGuestLogin}
+          >
+            Continue as Guest
+          </button>
           <div className="register-link">
             <p>
               Don't have an account? <a href="/register">Register</a>

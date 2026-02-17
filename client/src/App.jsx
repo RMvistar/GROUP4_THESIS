@@ -33,10 +33,11 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* Guest-accessible routes (no ProtectedRoute) */}
         <Route
           path="/*"
           element={
-            <ProtectedRoute>
+            <>
               <NavigationBar />
               <div className="body-container">
                 <Routes>
@@ -45,7 +46,7 @@ function App() {
                   <Route path="/alerts" element={<Alerts />} />
                 </Routes>
               </div>
-            </ProtectedRoute>
+            </>
           }
         />
       </Routes>

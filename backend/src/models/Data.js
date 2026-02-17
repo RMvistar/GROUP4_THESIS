@@ -19,6 +19,11 @@ const dataSchema = new mongoose.Schema(
       required: true,
       enum: [0, 1, 2, 3], // 0-Normal, 1-At Risk, 2-Clogged, 3-Overflow
     },
+    alertStatus: {
+      type: String,
+      enum: ["unresolved", "ongoing", "resolved"],
+      default: "unresolved",
+    },
     // Store additional data for records
     delta_water_level: Number,
     distance: Number,

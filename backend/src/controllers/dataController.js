@@ -54,3 +54,29 @@ export async function getLatestData(req, res) {
     res.status(500).json({ message: "Server Error" });
   }
 }
+
+export async function updateAlertStatus(req, res) {
+  try {
+    const { id } = req.params;
+    const { alertStatus } = req.body;
+
+    if (!["unresolved", "ongoing", "resolved"].includes(alertStatus)) {
+      return res.status(400).json({ message: "Invalid alert status" });
+    }
+
+    const updatedData = await Data.findByIdAndUpdate(
+      id,
+      { alertStatus },
+      { new: true },
+    );
+
+    if (!updatedData) {
+      return res.status(404).json({ message: "Data not found" });
+    }
+
+    res.status(200).json(updatedData);
+  } catch (error) {
+    console.error("Error updating alert status:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+}
