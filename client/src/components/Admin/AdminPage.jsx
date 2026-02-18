@@ -10,15 +10,23 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Pagination state for each column
+  const [unresolvedPage, setUnresolvedPage] = useState(1);
+  const [ongoingPage, setOngoingPage] = useState(1);
+  const [resolvedPage, setResolvedPage] = useState(1);
+  const itemsPerPage = 5;
+
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 10000); // Update every 10 seconds
+    fetchData(true);
+    const interval = setInterval(() => fetchData(false), 10000); // Update every 10 seconds
     return () => clearInterval(interval);
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = async (isInitialLoad = false) => {
     try {
-      setLoading(true);
+      if (isInitialLoad) {
+        setLoading(true);
+      }
       const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5001/api/data/export", {
         method: "GET",
@@ -33,13 +41,15 @@ function AdminPage() {
       }
 
       const data = await response.json();
-      setDataList(data.slice(0, 20)); // Show last 20 entries
+      setDataList(data); // Show all fetched entries (backend limits to 50)
       setError(null);
     } catch (err) {
       setError("Failed to load data");
       console.error("Error fetching data:", err);
     } finally {
-      setLoading(false);
+      if (isInitialLoad) {
+        setLoading(false);
+      }
     }
   };
 
@@ -112,6 +122,18 @@ function AdminPage() {
     }
   };
 
+  // Pagination helper function
+  const paginateData = (data, currentPage) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  // Calculate total pages
+  const getTotalPages = (dataLength) => {
+    return Math.ceil(dataLength / itemsPerPage);
+  };
+
   return (
     <div className="admin-page">
       <div className="data-section">
@@ -128,136 +150,284 @@ function AdminPage() {
             <div className="alert-column">
               <h2 className="column-title">Unresolved Alerts</h2>
               <div className="cards-container">
-                {dataList
-                  .filter((item) => item.alertStatus === "unresolved")
-                  .map((item) => (
-                    <div
-                      key={item._id}
-                      className={`data-card ${getStatusClass(item.status)}`}
-                    >
-                      <div className="card-header">
-                        <span className="status-badge">
-                          {getStatusLabel(item.status)}
-                        </span>
-                        <span className="timestamp">
-                          {new Date(
-                            item.timestamp || item.createdAt,
-                          ).toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="card-body">
-                        <div className="data-row">
-                          <span className="data-label">Node Location:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Description:</span>
-                          <span className="data-value"></span>
-                        </div>
-                      </div>
-
-                      <button
-                        className="acknowledge-button"
-                        onClick={() => updateAlertStatus(item._id, "ongoing")}
-                      >
-                        Mark as Ongoing
-                      </button>
+                {paginateData(
+                  dataList.filter((item) => item.alertStatus === "unresolved"),
+                  unresolvedPage,
+                ).map((item) => (
+                  <div
+                    key={item._id}
+                    className={`data-card ${getStatusClass(item.status)}`}
+                  >
+                    <div className="card-header">
+                      <span className="status-badge">
+                        {getStatusLabel(item.status)}
+                      </span>
+                      <span className="timestamp">
+                        {new Date(
+                          item.timestamp || item.createdAt,
+                        ).toLocaleString()}
+                      </span>
                     </div>
-                  ))}
+
+                    <div className="card-body">
+                      <div className="data-row">
+                        <span className="data-label">Node Location:</span>
+                        <span className="data-value"></span>
+                      </div>
+                      <div className="data-row">
+                        <span className="data-label">Description:</span>
+                        <span className="data-value"></span>
+                      </div>
+                    </div>
+
+                    <button
+                      className="acknowledge-button"
+                      onClick={() => updateAlertStatus(item._id, "ongoing")}
+                    >
+                      Mark as Ongoing
+                    </button>
+                  </div>
+                ))}
               </div>
+              {getTotalPages(
+                dataList.filter((item) => item.alertStatus === "unresolved")
+                  .length,
+              ) > 1 && (
+                <div className="pagination-controls">
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setUnresolvedPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={unresolvedPage === 1}
+                  >
+                    Previous
+                  </button>
+                  <span className="pagination-info">
+                    Page {unresolvedPage} of{" "}
+                    {getTotalPages(
+                      dataList.filter(
+                        (item) => item.alertStatus === "unresolved",
+                      ).length,
+                    )}
+                  </span>
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setUnresolvedPage((prev) =>
+                        Math.min(
+                          prev + 1,
+                          getTotalPages(
+                            dataList.filter(
+                              (item) => item.alertStatus === "unresolved",
+                            ).length,
+                          ),
+                        ),
+                      )
+                    }
+                    disabled={
+                      unresolvedPage ===
+                      getTotalPages(
+                        dataList.filter(
+                          (item) => item.alertStatus === "unresolved",
+                        ).length,
+                      )
+                    }
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Ongoing Alerts */}
             <div className="alert-column">
               <h2 className="column-title">Ongoing Alerts</h2>
               <div className="cards-container">
-                {dataList
-                  .filter((item) => item.alertStatus === "ongoing")
-                  .map((item) => (
-                    <div
-                      key={item._id}
-                      className={`data-card ${getStatusClass(item.status)}`}
-                    >
-                      <div className="card-header">
-                        <span className="status-badge">
-                          {getStatusLabel(item.status)}
-                        </span>
-                        <span className="timestamp">
-                          {new Date(
-                            item.timestamp || item.createdAt,
-                          ).toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="card-body">
-                        <div className="data-row">
-                          <span className="data-label">Node Location:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Description</span>
-                          <span className="data-value"></span>
-                        </div>
-                      </div>
-
-                      <button
-                        className="acknowledge-button resolve-button"
-                        onClick={() => updateAlertStatus(item._id, "resolved")}
-                      >
-                        Mark as Resolved
-                      </button>
+                {paginateData(
+                  dataList.filter((item) => item.alertStatus === "ongoing"),
+                  ongoingPage,
+                ).map((item) => (
+                  <div
+                    key={item._id}
+                    className={`data-card ${getStatusClass(item.status)}`}
+                  >
+                    <div className="card-header">
+                      <span className="status-badge">
+                        {getStatusLabel(item.status)}
+                      </span>
+                      <span className="timestamp">
+                        {new Date(
+                          item.timestamp || item.createdAt,
+                        ).toLocaleString()}
+                      </span>
                     </div>
-                  ))}
+
+                    <div className="card-body">
+                      <div className="data-row">
+                        <span className="data-label">Node Location:</span>
+                        <span className="data-value"></span>
+                      </div>
+                      <div className="data-row">
+                        <span className="data-label">Description</span>
+                        <span className="data-value"></span>
+                      </div>
+                    </div>
+
+                    <button
+                      className="acknowledge-button resolve-button"
+                      onClick={() => updateAlertStatus(item._id, "resolved")}
+                    >
+                      Mark as Resolved
+                    </button>
+                  </div>
+                ))}
               </div>
+              {getTotalPages(
+                dataList.filter((item) => item.alertStatus === "ongoing")
+                  .length,
+              ) > 1 && (
+                <div className="pagination-controls">
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setOngoingPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={ongoingPage === 1}
+                  >
+                    Previous
+                  </button>
+                  <span className="pagination-info">
+                    Page {ongoingPage} of{" "}
+                    {getTotalPages(
+                      dataList.filter((item) => item.alertStatus === "ongoing")
+                        .length,
+                    )}
+                  </span>
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setOngoingPage((prev) =>
+                        Math.min(
+                          prev + 1,
+                          getTotalPages(
+                            dataList.filter(
+                              (item) => item.alertStatus === "ongoing",
+                            ).length,
+                          ),
+                        ),
+                      )
+                    }
+                    disabled={
+                      ongoingPage ===
+                      getTotalPages(
+                        dataList.filter(
+                          (item) => item.alertStatus === "ongoing",
+                        ).length,
+                      )
+                    }
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Resolved Alerts */}
             <div className="alert-column">
               <h2 className="column-title">Resolved Alerts</h2>
               <div className="cards-container">
-                {dataList
-                  .filter((item) => item.alertStatus === "resolved")
-                  .map((item) => (
-                    <div
-                      key={item._id}
-                      className={`data-card ${getStatusClass(item.status)}`}
-                    >
-                      <div className="card-header">
-                        <span className="status-badge">
-                          {getStatusLabel(item.status)}
-                        </span>
-                        <span className="timestamp">
-                          {new Date(
-                            item.timestamp || item.createdAt,
-                          ).toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="card-body">
-                        <div className="data-row">
-                          <span className="data-label">
-                            Node Location: SM Drainage B
-                          </span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">
-                            <p>Water overflow and clogging detected.</p>
-                          </span>
-                          <span className="data-value"></span>
-                        </div>
-                      </div>
-
-                      <button
-                        className="acknowledge-button acknowledged"
-                        onClick={() => handleAcknowledge(item._id)}
-                      >
-                        Acknowledge
-                      </button>
+                {paginateData(
+                  dataList.filter((item) => item.alertStatus === "resolved"),
+                  resolvedPage,
+                ).map((item) => (
+                  <div
+                    key={item._id}
+                    className={`data-card ${getStatusClass(item.status)}`}
+                  >
+                    <div className="card-header">
+                      <span className="status-badge">
+                        {getStatusLabel(item.status)}
+                      </span>
+                      <span className="timestamp">
+                        {new Date(
+                          item.timestamp || item.createdAt,
+                        ).toLocaleString()}
+                      </span>
                     </div>
-                  ))}
+
+                    <div className="card-body">
+                      <div className="data-row">
+                        <span className="data-label">
+                          Node Location: SM Drainage B
+                        </span>
+                        <span className="data-value"></span>
+                      </div>
+                      <div className="data-row">
+                        <span className="data-label">
+                          <p>Water overflow and clogging detected.</p>
+                        </span>
+                        <span className="data-value"></span>
+                      </div>
+                    </div>
+
+                    <button
+                      className="acknowledge-button acknowledged"
+                      onClick={() => handleAcknowledge(item._id)}
+                    >
+                      Acknowledge
+                    </button>
+                  </div>
+                ))}
               </div>
+              {getTotalPages(
+                dataList.filter((item) => item.alertStatus === "resolved")
+                  .length,
+              ) > 1 && (
+                <div className="pagination-controls">
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setResolvedPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={resolvedPage === 1}
+                  >
+                    Previous
+                  </button>
+                  <span className="pagination-info">
+                    Page {resolvedPage} of{" "}
+                    {getTotalPages(
+                      dataList.filter((item) => item.alertStatus === "resolved")
+                        .length,
+                    )}
+                  </span>
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setResolvedPage((prev) =>
+                        Math.min(
+                          prev + 1,
+                          getTotalPages(
+                            dataList.filter(
+                              (item) => item.alertStatus === "resolved",
+                            ).length,
+                          ),
+                        ),
+                      )
+                    }
+                    disabled={
+                      resolvedPage ===
+                      getTotalPages(
+                        dataList.filter(
+                          (item) => item.alertStatus === "resolved",
+                        ).length,
+                      )
+                    }
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
