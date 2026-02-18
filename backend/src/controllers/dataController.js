@@ -2,7 +2,7 @@ import Data from "../models/Data.js";
 
 export async function getData(req, res) {
   try {
-    const data = await Data.find().sort({ createdAt: -1 });
+    const data = await Data.find().sort({ createdAt: -1 }).limit(50);
     res.status(200).json(data);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -51,6 +51,17 @@ export async function getLatestData(req, res) {
     res.status(200).json(latestData);
   } catch (error) {
     console.error("Error fetching latest data:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+}
+
+export async function getAlertStatus(req, res) {
+  try {
+    // Fetch same alert data as admin (public endpoint for guests)
+    const data = await Data.find().sort({ createdAt: -1 }).limit(50);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching alert data:", error);
     res.status(500).json({ message: "Server Error" });
   }
 }
