@@ -36,7 +36,7 @@ function Dashboard() {
           <LastClogAlert />
         </div>
       </div>
-      {latestData && <DataDisplay data={latestData} />}
+
       <div className="live-alerts-feed-container">
         <LiveAlertsFeed />
       </div>
