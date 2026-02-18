@@ -152,31 +152,7 @@ function AdminPage() {
                           <span className="data-value"></span>
                         </div>
                         <div className="data-row">
-                          <span className="data-label">Status:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Battery:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Clog status:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Rainfall amount:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Water level:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Junk Level:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">System insights:</span>
+                          <span className="data-label">Description:</span>
                           <span className="data-value"></span>
                         </div>
                       </div>
@@ -220,31 +196,7 @@ function AdminPage() {
                           <span className="data-value"></span>
                         </div>
                         <div className="data-row">
-                          <span className="data-label">Status:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Battery:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Clog status:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Rainfall amount:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Water level:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Junk Level:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">System insights:</span>
+                          <span className="data-label">Description</span>
                           <span className="data-value"></span>
                         </div>
                       </div>
@@ -284,35 +236,15 @@ function AdminPage() {
 
                       <div className="card-body">
                         <div className="data-row">
-                          <span className="data-label">Node Location:</span>
+                          <span className="data-label">
+                            Node Location: SM Drainage B
+                          </span>
                           <span className="data-value"></span>
                         </div>
                         <div className="data-row">
-                          <span className="data-label">Status:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Battery:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Clog status:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Rainfall amount:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Water level:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">Junk Level:</span>
-                          <span className="data-value"></span>
-                        </div>
-                        <div className="data-row">
-                          <span className="data-label">System insights:</span>
+                          <span className="data-label">
+                            <p>Water overflow and clogging detected.</p>
+                          </span>
                           <span className="data-value"></span>
                         </div>
                       </div>

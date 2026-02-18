@@ -147,12 +147,12 @@
 }
 
 .card-header {
-  display: flex;
+    display: flex;
     justify-content: space-between;
-    align-items: center;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
 }
 
 .status-badge {
@@ -193,7 +193,7 @@
   flex: 1;
   margin-bottom: 1rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0.5rem 1rem;
 }
 
@@ -201,15 +201,16 @@
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.data-row:last-child {
-  border-bottom: none;
 }
 
 .data-label {
   font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.data-label p {
+  font-weight: 200;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
 }
