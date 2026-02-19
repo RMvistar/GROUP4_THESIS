@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, replace, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore.js";
 import logo from "../assets/ARCOMLogo2.png";
 import "./NavigationBar.css";
@@ -10,6 +10,9 @@ function NavigationBar() {
 
   const handleLogout = () => {
     logout();
+    navigate("/dashboard");
+  };
+  const handleAdminLogin = () => {
     navigate("/login");
   };
 
@@ -37,10 +40,21 @@ function NavigationBar() {
         <li>
           <NavLink to="/alerts">Alerts</NavLink>
         </li>
+        {isAdmin && (
+          <li>
+            <button className="logout-button" onClick={handleLogout}>
+              Logout
+            </button>
+          </li>
+        )}
+        {!isAdmin && (
+          <li>
+            <button className="admin-login-button" onClick={handleAdminLogin}>
+              Admin Login
+            </button>
+          </li>
+        )}
       </ul>
-      <button className="logout-button" onClick={handleLogout}>
-        Logout
-      </button>
     </nav>
   );
 }

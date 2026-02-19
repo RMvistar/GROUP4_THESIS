@@ -5,7 +5,7 @@ function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuthStore();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
