@@ -20,6 +20,8 @@
 .login-page .logo-container {
   display: flex;
   justify-content: center;
+  align-items: center;
+  position: relative;
   width: 100%;
 }
 
@@ -144,24 +146,6 @@
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
 }
 
-.login-page .guest-button {
-  width: 100%;
-  height: 45px;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 40px;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.login-page .guest-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(78, 158, 255, 0.5);
-}
-
 .login-page .register-link {
   width: 100%;
   text-align: center;
@@ -180,4 +164,18 @@
 
 .login-page .register-link p a:hover {
   text-decoration: underline;
+}
+
+.login-page .logo-container .exit-icon {
+  position: absolute;
+  left: 50px;
+  top: 0;
+  font-size: 50px;
+  cursor: pointer;
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.login-page .logo-container .exit-icon:hover {
+  color: #4e9eff;
 }

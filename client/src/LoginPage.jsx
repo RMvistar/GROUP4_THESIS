@@ -1,6 +1,6 @@
 import React from "react";
 import "./LoginPage.css";
-import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaUser, FaLock, FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
 import logo from "./assets/ARCOMLogo.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -31,16 +31,14 @@ function LoginPage() {
       console.error("Error details:", error);
     }
   };
-
-  const handleGuestLogin = () => {
-    // Navigate directly to dashboard without authentication
-    navigate("/dashboard");
-  };
-
   return (
     <>
       <div className="login-page">
         <div className="logo-container">
+          <FaTimes
+            className="exit-icon"
+            onClick={() => navigate("/dashboard")}
+          />
           <img src={logo} alt="ARCOM Logo" className="logo" />
         </div>
         <div className="login-container">
@@ -88,13 +86,6 @@ function LoginPage() {
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
-          <button
-            type="button"
-            className="guest-button"
-            onClick={handleGuestLogin}
-          >
-            Continue as Guest
-          </button>
           <div className="register-link">
             <p>
               Don't have an account? <a href="/register">Register</a>
