@@ -33,10 +33,6 @@ function NodeContainer() {
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Junk Level:</span>
-                <span className="data-value"></span>
-              </div>
-              <div className="data-row">
                 <span className="data-label">System insights:</span>
                 <span className="data-value"></span>
               </div>
@@ -68,10 +64,6 @@ function NodeContainer() {
               </div>
               <div className="data-row">
                 <span className="data-label">Water level:</span>
-                <span className="data-value"></span>
-              </div>
-              <div className="data-row">
-                <span className="data-label">Junk Level:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
@@ -111,10 +103,6 @@ function NodeContainer() {
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Junk Level:</span>
-                <span className="data-value"></span>
-              </div>
-              <div className="data-row">
                 <span className="data-label">System insights:</span>
                 <span className="data-value"></span>
               </div>
@@ -146,10 +134,6 @@ function NodeContainer() {
               </div>
               <div className="data-row">
                 <span className="data-label">Water level:</span>
-                <span className="data-value"></span>
-              </div>
-              <div className="data-row">
-                <span className="data-label">Junk Level:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
