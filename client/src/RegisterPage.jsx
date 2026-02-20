@@ -103,23 +103,6 @@ function RegisterPage() {
               <FaUser className="icon" />
             </div>
             <div className="input-box">
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                required
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  border: "1px solid #ccc",
-                  borderRadius: "5px",
-                  fontSize: "16px",
-                }}
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-            <div className="input-box">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
