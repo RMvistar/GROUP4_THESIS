@@ -70,13 +70,13 @@ function NodeContainer() {
             </span>
           </div>
           <div className="data-row">
-            <span className="data-label">Clog status:</span>
+            <span className="data-label">Clog Status:</span>
             <span className="data-value">
               {sensor.distance !== undefined ? `${sensor.distance} cm` : "N/A"}
             </span>
           </div>
           <div className="data-row">
-            <span className="data-label">Water level:</span>
+            <span className="data-label">Water Level:</span>
             <span className="data-value">
               {sensor.water_level !== undefined
                 ? `${sensor.water_level.toFixed(2)} cm`
@@ -84,7 +84,7 @@ function NodeContainer() {
             </span>
           </div>
           <div className="data-row">
-            <span className="data-label">Water flow:</span>
+            <span className="data-label">Water Flow:</span>
             <span className="data-value">
               {sensor.flow_rate !== undefined
                 ? `${sensor.flow_rate} cm/s`
@@ -92,7 +92,7 @@ function NodeContainer() {
             </span>
           </div>
           <div className="data-row">
-            <span className="data-label">System insights:</span>
+            <span className="data-label">System Insights:</span>
             <span className="data-value"></span>
           </div>
         </div>
