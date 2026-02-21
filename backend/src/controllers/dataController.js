@@ -12,6 +12,50 @@ export async function getData(req, res) {
 
 export async function postData(req, res) {
   try {
+    // Check if data is from ESP (has mac and data fields)
+    if (req.body.mac && req.body.data) {
+      const { mac, data, timestamp } = req.body;
+
+      // Transform ESP data to backend format
+      const flow_rate = data.velocity || 0;
+      const water_level = data.ultrasonic || 0;
+      const distance = data.tof || 0;
+
+      // Calculate status based on readings
+      let status = 0; // Normal
+      const NORMAL_LEVEL = 200;
+      const AT_RISK_LEVEL = 150;
+      const CLOGGED_LEVEL = 100;
+
+      if (water_level > NORMAL_LEVEL && flow_rate < 10) {
+        status = 0; // Normal
+      } else if (water_level <= NORMAL_LEVEL && water_level > AT_RISK_LEVEL) {
+        status = 1; // At Risk
+      } else if (water_level <= AT_RISK_LEVEL && flow_rate < 5) {
+        status = 2; // Clogged
+      } else if (water_level <= CLOGGED_LEVEL) {
+        status = 3; // Overflow
+      }
+
+      const newData = new Data({
+        sensor_id: mac,
+        flow_rate,
+        water_level,
+        status,
+        delta_water_level: 0,
+        distance,
+        rain: 0,
+        batteryVoltage: data.batteryVoltage,
+        batteryPercent: data.batteryPercent,
+        timestamp: timestamp || new Date(),
+      });
+
+      const savedData = await newData.save();
+      console.log("✅ ESP data saved:", savedData);
+      return res.status(201).json(savedData);
+    }
+
+    // Original format (for backward compatibility)
     const {
       flow_rate,
       water_level,
@@ -57,7 +101,7 @@ export async function getLatestData(req, res) {
 
 export async function getAlertStatus(req, res) {
   try {
-    // Fetch same alert data as admin (public endpoint for guests)
+    // Fetch same alert data as admin and guests
     const data = await Data.find().sort({ createdAt: -1 }).limit(50);
     res.status(200).json(data);
   } catch (error) {

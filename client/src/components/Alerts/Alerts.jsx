@@ -127,7 +127,7 @@ function Alerts() {
 
                     <div className="card-body">
                       <div className="card-location">
-                        Node Location: {item.nodeLocation || "SM Drainage B"}
+                        Node Location: {item.nodeLocation || "USLS"}
                       </div>
                       <div className="card-message">
                         {item.message ||
@@ -213,7 +213,7 @@ function Alerts() {
 
                     <div className="card-body">
                       <div className="card-location">
-                        Node Location: {item.nodeLocation || "SM Drainage B"}
+                        Node Location: {item.nodeLocation || "USLS"}
                       </div>
                       <div className="card-message">
                         {item.message ||
@@ -298,7 +298,7 @@ function Alerts() {
 
                     <div className="card-body">
                       <div className="card-location">
-                        Node Location: {item.nodeLocation || "SM Drainage B"}
+                        Node Location: {item.nodeLocation || "USLS"}
                       </div>
                       <div className="card-message">
                         {item.message ||

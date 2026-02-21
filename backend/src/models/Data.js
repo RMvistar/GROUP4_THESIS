@@ -28,6 +28,8 @@ const dataSchema = new mongoose.Schema(
     delta_water_level: Number,
     distance: Number,
     rain: Number,
+    batteryVoltage: Number,
+    batteryPercent: Number,
     timestamp: {
       type: Date,
       default: Date.now,

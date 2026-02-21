@@ -139,7 +139,7 @@
 }
 
 .data-card.status-alert {
-  border-left-color: #fd7e14;
+  border-left-color: #28a745;
 }
 
 .data-card.status-critical {
@@ -174,8 +174,8 @@
 }
 
 .status-alert .status-badge {
-  background-color: #ffe5d0;
-  color: #8a4000;
+  background-color: #d4edda;
+  color: #155724;
 }
 
 .status-critical .status-badge {
@@ -191,10 +191,27 @@
 
 .card-body {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  gap: 1rem;
+  text-align: center;
   margin-bottom: 1rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.5rem 1rem;
+}
+
+.card-location {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-message {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 .data-row {
@@ -217,7 +234,7 @@
 
 .data-value {
   font-weight: 600;
-  color: #333;
+  color: white;
   font-size: 0.9rem;
 }
 

@@ -170,13 +170,12 @@ function AdminPage() {
                     </div>
 
                     <div className="card-body">
-                      <div className="data-row">
-                        <span className="data-label">Node Location:</span>
-                        <span className="data-value"></span>
+                      <div className="card-location">
+                        Node Location: {item.nodeLocation || "USLS"}
                       </div>
-                      <div className="data-row">
-                        <span className="data-label">Description:</span>
-                        <span className="data-value"></span>
+                      <div className="card-message">
+                        {item.message ||
+                          "Water overflow and clogging detected."}
                       </div>
                     </div>
 
@@ -264,13 +263,12 @@ function AdminPage() {
                     </div>
 
                     <div className="card-body">
-                      <div className="data-row">
-                        <span className="data-label">Node Location:</span>
-                        <span className="data-value"></span>
+                      <div className="card-location">
+                        Node Location: {item.nodeLocation || "USLS"}
                       </div>
-                      <div className="data-row">
-                        <span className="data-label">Description</span>
-                        <span className="data-value"></span>
+                      <div className="card-message">
+                        {item.message ||
+                          "Water overflow and clogging detected."}
                       </div>
                     </div>
 
@@ -357,17 +355,12 @@ function AdminPage() {
                     </div>
 
                     <div className="card-body">
-                      <div className="data-row">
-                        <span className="data-label">
-                          Node Location: SM Drainage B
-                        </span>
-                        <span className="data-value"></span>
+                      <div className="card-location">
+                        Node Location: {item.nodeLocation || "USLS"}
                       </div>
-                      <div className="data-row">
-                        <span className="data-label">
-                          <p>Water overflow and clogging detected.</p>
-                        </span>
-                        <span className="data-value"></span>
+                      <div className="card-message">
+                        {item.message ||
+                          "Water overflow and clogging detected."}
                       </div>
                     </div>
 

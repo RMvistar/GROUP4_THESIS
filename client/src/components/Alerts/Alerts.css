@@ -89,7 +89,7 @@
 }
 
 .data-card.status-alert {
-  border-left: 4px solid #fd7e14;
+  border-left: 4px solid #28a745;
 }
 
 .data-card.status-critical {
@@ -124,8 +124,8 @@
 }
 
 .status-alert .status-badge {
-  background-color: #ffe5d0;
-  color: #8a4000;
+  background-color: #d4edda;
+  color: #155724;
 }
 
 .status-critical .status-badge {
