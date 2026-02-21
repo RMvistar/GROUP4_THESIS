@@ -25,15 +25,19 @@ function NodeContainer() {
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Clog status:</span>
+                <span className="data-label">Clog Status:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Water level:</span>
+                <span className="data-label">Rain Status:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">System insights:</span>
+                <span className="data-label">Water Level:</span>
+                <span className="data-value"></span>
+              </div>
+              <div className="data-row">
+                <span className="data-label">System Insights:</span>
                 <span className="data-value"></span>
               </div>
             </div>
@@ -59,15 +63,19 @@ function NodeContainer() {
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Clog status:</span>
+                <span className="data-label">Clog Status:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Water level:</span>
+                <span className="data-label">Rain Status:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">System insights:</span>
+                <span className="data-label">Water Level:</span>
+                <span className="data-value"></span>
+              </div>
+              <div className="data-row">
+                <span className="data-label">System Insights:</span>
                 <span className="data-value"></span>
               </div>
             </div>
@@ -95,15 +103,19 @@ function NodeContainer() {
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Clog status:</span>
+                <span className="data-label">Clog Status:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Water level:</span>
+                <span className="data-label">Rain Status:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">System insights:</span>
+                <span className="data-label">Water Level:</span>
+                <span className="data-value"></span>
+              </div>
+              <div className="data-row">
+                <span className="data-label">System Insights:</span>
                 <span className="data-value"></span>
               </div>
             </div>
@@ -129,15 +141,19 @@ function NodeContainer() {
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Clog status:</span>
+                <span className="data-label">Clog Status:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">Water level:</span>
+                <span className="data-label">Rain Status:</span>
                 <span className="data-value"></span>
               </div>
               <div className="data-row">
-                <span className="data-label">System insights:</span>
+                <span className="data-label">Water Level:</span>
+                <span className="data-value"></span>
+              </div>
+              <div className="data-row">
+                <span className="data-label">System Insights:</span>
                 <span className="data-value"></span>
               </div>
             </div>
