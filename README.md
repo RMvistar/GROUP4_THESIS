@@ -35,7 +35,7 @@ GET	/:id	Get user by ID
 POST	/	Create new user (assign role)
 PUT	/:id	Update user details/role
 DELETE	/:id	Delete specific user
-DELETE	/	Delete all users ⚠️
+DELETE	/	Delete all users 
 Create User Request:
  
          
