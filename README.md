@@ -30,7 +30,7 @@ Base URL: /api/users
 All routes require: Authorization: Bearer <token> + super-admin role
  
 Method	Endpoint	Description
-GET	/	Get all users
+GET	/ Get all users
 GET	/:id	Get user by ID
 POST	/	Create new user (assign role)
 PUT	/:id	Update user details/role
