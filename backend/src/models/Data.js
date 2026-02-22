@@ -4,7 +4,7 @@ const dataSchema = new mongoose.Schema(
   {
     sensor_id: {
       type: String,
-      default: "DRAINAGE_SENSOR_01",
+      default: "DRAINAGE_Module_01",
     },
     flow_rate: {
       type: Number,

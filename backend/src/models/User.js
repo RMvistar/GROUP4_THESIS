@@ -6,15 +6,16 @@ const UserSchema = new mongoose.Schema(
     last_name: String,
     name: String,
     email: { type: String, unique: true },
+    government_id: String,
     password: String,
     role: {
       type: String,
-      enum: ["admin", "guest"],
-      default: "guest",
+      enum: ["super-admin", "admin", "worker", "public-user"],
+      default: "public-user",
     },
   },
   {
-    timestamps: true, // This adds createdAt and updatedAt automatically
+    timestamps: true,
   },
 );
 
