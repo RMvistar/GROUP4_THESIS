@@ -8,19 +8,17 @@ import {
   FaChevronRight,
   FaEllipsisV,
   FaUser,
+  FaUserShield,
+  FaHistory,
+  FaUserCog,
 } from "react-icons/fa";
 import "./SuperAdminNavigation.css";
 
 function SuperAdminNavigation({ activeSection, onSectionChange }) {
   const [isUsersExpanded, setIsUsersExpanded] = useState(false);
-  const [isManageExpanded, setIsManageExpanded] = useState(false);
 
   const toggleUsers = () => {
     setIsUsersExpanded(!isUsersExpanded);
-  };
-
-  const toggleManage = () => {
-    setIsManageExpanded(!isManageExpanded);
   };
 
   return (
@@ -69,43 +67,48 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
           {isUsersExpanded && (
             <div className="nav-submenu">
               <div
-                className={`nav-subitem ${isManageExpanded ? "expanded" : ""}`}
-                onClick={toggleManage}
+                className={`nav-subitem ${
+                  activeSection === "user-management" ? "active" : ""
+                }`}
+                onClick={() => onSectionChange("user-management")}
               >
-                <span className="nav-label">Manage</span>
-                <span className={`nav-arrow ${isManageExpanded ? "open" : ""}`}>
-                  <FaChevronRight />
+                <span className="nav-icon">
+                  <FaUserCog />
                 </span>
+                <span className="nav-label">User Management</span>
               </div>
 
-              {isManageExpanded && (
-                <div className="nav-submenu-nested">
-                  <div
-                    className={`nav-subitem-nested ${
-                      activeSection === "user-role" ? "active" : ""
-                    }`}
-                    onClick={() => onSectionChange("user-role")}
-                  >
-                    User Role
-                  </div>
-                  <div
-                    className={`nav-subitem-nested ${
-                      activeSection === "permissions" ? "active" : ""
-                    }`}
-                    onClick={() => onSectionChange("permissions")}
-                  >
-                    Permissions
-                  </div>
-                </div>
-              )}
+              <div
+                className={`nav-subitem ${
+                  activeSection === "roles-permissions" ? "active" : ""
+                }`}
+                onClick={() => onSectionChange("roles-permissions")}
+              >
+                <span className="nav-icon">
+                  <FaUserShield />
+                </span>
+                <span className="nav-label">Roles & Permissions</span>
+              </div>
+
+              <div
+                className={`nav-subitem ${
+                  activeSection === "activity-log" ? "active" : ""
+                }`}
+                onClick={() => onSectionChange("activity-log")}
+              >
+                <span className="nav-icon">
+                  <FaHistory />
+                </span>
+                <span className="nav-label">Activity Log</span>
+              </div>
             </div>
           )}
         </div>
 
-        {/* Projects */}
+        {/* Node Details */}
         <div
-          className={`nav-item ${activeSection === "projects" ? "active" : ""}`}
-          onClick={() => onSectionChange("projects")}
+          className={`nav-item ${activeSection === "node-details" ? "active" : ""}`}
+          onClick={() => onSectionChange("node-details")}
         >
           <span className="nav-icon">
             <FaNetworkWired />
@@ -113,10 +116,10 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
           <span className="nav-label">Node Details</span>
         </div>
 
-        {/* Reports */}
+        {/* Alerts */}
         <div
-          className={`nav-item ${activeSection === "reports" ? "active" : ""}`}
-          onClick={() => onSectionChange("reports")}
+          className={`nav-item ${activeSection === "alerts" ? "active" : ""}`}
+          onClick={() => onSectionChange("alerts")}
         >
           <span className="nav-icon">
             <FaBell />
