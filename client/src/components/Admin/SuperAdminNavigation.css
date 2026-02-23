@@ -1,0 +1,259 @@
+.super-admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.super-admin-navigation-wrapper {
+  width: 250px;
+  height: 100vh;
+  background: #121E33;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+}
+
+/* User Profile Section */
+.nav-profile {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  gap: 12px;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: #b4b4b4;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #b4b4b4;
+}
+
+.profile-menu-btn {
+  background: none;
+  border: none;
+  color: #b4b4b4;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-menu-btn:hover {
+  color: #fff;
+}
+
+/* Navigation Menu */
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 10px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  color: #b4b4b4;
+  position: relative;
+}
+
+.nav-item:hover {
+  background: #1a3050;
+  color: #fff;
+}
+
+.nav-item.active {
+  background: #1a3050;
+  color: #fff;
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 70%;
+  background: #5b8def;
+  border-radius: 0 2px 2px 0;
+}
+
+.nav-icon {
+  font-size: 18px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.nav-arrow {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+  color: #b4b4b4;
+}
+
+.nav-arrow.open {
+  transform: rotate(90deg);
+}
+
+/* Submenu Styles */
+.nav-item-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 32px;
+  margin-top: 4px;
+  padding-left: 12px;
+  border-left: 1px solid #1a3050;
+}
+
+.nav-subitem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  color: #b4b4b4;
+  font-size: 14px;
+}
+
+.nav-subitem:hover {
+  background: #1a3050;
+  color: #fff;
+}
+
+.nav-subitem.active {
+  background: #1a3050;
+  color: #fff;
+}
+
+.nav-submenu-nested {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 20px;
+  margin-top: 4px;
+}
+
+.nav-subitem-nested {
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  color: #b4b4b4;
+  font-size: 13px;
+}
+
+.nav-subitem-nested:hover {
+  background: #1a3050;
+  color: #fff;
+}
+
+.nav-subitem-nested.active {
+  background: #1a3050;
+  color: #fff;
+}
+
+/* Scrollbar Styling */
+.super-admin-navigation-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.super-admin-navigation-wrapper::-webkit-scrollbar-track {
+  background: #121E33;
+}
+
+.super-admin-navigation-wrapper::-webkit-scrollbar-thumb {
+  background: #1a3050;
+  border-radius: 3px;
+}
+
+.super-admin-navigation-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #2a4a6a;
+}
+
+.log-out-button {
+  background-color: transparent;
+  color: #7a8db5;
+  border: 2px solid #7a8db5;
+  padding: 10px 24px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: calc(100% - 20px);
+  margin: auto 10px 10px 10px;
+}
+
+.log-out-button:hover {
+  background-color: #d32f2f;
+  color: white;
+  border-color: #d32f2f;
+}
+
+.super-admin-navigation-wrapper .logo-container {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 20px;
+  align-items: center;
+  width: 100%;
+}
+
+.super-admin-navigation-wrapper .logo {
+  height: auto;
+  width: 25%;
+  object-fit: contain;
+  max-width: 85%;
+}

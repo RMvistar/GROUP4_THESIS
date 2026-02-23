@@ -13,6 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import React from "react";
 import LoginPage from "./LoginPage.jsx";
 import RegisterPage from "./RegisterPage.jsx";
+import SuperAdminPage from "./components/Admin/SuperAdminPage.jsx";
 import "./App.css";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/super-admin" element={<SuperAdminPage />} />
         <Route
           path="/admin"
           element={
