@@ -12,6 +12,7 @@ import {
   FaHistory,
   FaUserCog,
 } from "react-icons/fa";
+import logo from "../../assets/ARCOMLogo2.png";
 import "./SuperAdminNavigation.css";
 
 function SuperAdminNavigation({ activeSection, onSectionChange }) {
@@ -24,6 +25,10 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
   return (
     <div className="super-admin-navigation-wrapper">
       {/* User Profile Section */}
+      <div className="logo-container">
+        <img src={logo} alt="ARCOM Logo" className="logo" />
+        <h1>RCOM</h1>
+      </div>
       <div className="nav-profile">
         <div className="profile-avatar">
           <FaUser />

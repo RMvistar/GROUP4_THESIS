@@ -1,7 +1,9 @@
 import { useState } from "react";
 import "./SuperAdminPage.css";
 import SuperAdminNavigation from "./SuperAdminNavigation.jsx";
-
+import Dashboard from "../Dashboard/Dashboard.jsx";
+import NodeDetails from "../NodeDetails/NodeDetails.jsx";
+import Alerts from "../Alerts/Alerts.jsx";
 function SuperAdminPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
 
@@ -12,8 +14,9 @@ function SuperAdminPage() {
         onSectionChange={setActiveSection}
       />
       <div className="super-admin-content">
-        <h1>Super Admin Dashboard</h1>
-        <p>Active Section: {activeSection}</p>
+        {activeSection === "dashboard" && <Dashboard />}
+        {activeSection === "node-details" && <NodeDetails />}
+        {activeSection === "alerts" && <Alerts />}
       </div>
     </div>
   );
