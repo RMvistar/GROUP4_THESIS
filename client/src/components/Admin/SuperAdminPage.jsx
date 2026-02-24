@@ -4,6 +4,7 @@ import SuperAdminNavigation from "./SuperAdminNavigation.jsx";
 import Dashboard from "../Dashboard/Dashboard.jsx";
 import NodeDetails from "../NodeDetails/NodeDetails.jsx";
 import Alerts from "../Alerts/Alerts.jsx";
+import UserManagement from "./UserManagement.jsx";
 function SuperAdminPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
 
@@ -17,6 +18,7 @@ function SuperAdminPage() {
         {activeSection === "dashboard" && <Dashboard />}
         {activeSection === "node-details" && <NodeDetails />}
         {activeSection === "alerts" && <Alerts />}
+        {activeSection === "user-management" && <UserManagement />}
       </div>
     </div>
   );
