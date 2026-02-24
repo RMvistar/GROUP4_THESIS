@@ -40,7 +40,7 @@ function UserManagement() {
       lastName: "Doe",
       username: "johndoe",
       email: "john.doe@arcom.com",
-      role: "Admin",
+      role: "Super Admin",
       status: "Active",
     },
     {
@@ -50,7 +50,7 @@ function UserManagement() {
       lastName: "Smith",
       username: "janesmith",
       email: "jane.smith@arcom.com",
-      role: "Worker",
+      role: "Admin",
       status: "Active",
     },
     {
@@ -238,6 +238,7 @@ function UserManagement() {
                 onChange={(e) => setRoleFilter(e.target.value)}
               >
                 <option value="all">All Roles</option>
+                <option value="superadmin">Super Admin</option>
                 <option value="admin">Admin</option>
                 <option value="worker">Worker</option>
               </select>
@@ -281,7 +282,7 @@ function UserManagement() {
                   <td>{user.username}</td>
                   <td>
                     <span
-                      className={`role-badge role-${user.role.toLowerCase()}`}
+                      className={`role-badge role-${user.role.toLowerCase().replace(/\s+/g, "")}`}
                     >
                       {user.role}
                     </span>
@@ -492,6 +493,7 @@ function UserManagement() {
                     >
                       <option value="worker">Worker</option>
                       <option value="admin">Admin</option>
+                      <option value="superadmin">Super Admin</option>
                     </select>
                   </div>
                 </div>
