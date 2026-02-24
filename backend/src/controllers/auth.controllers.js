@@ -44,6 +44,7 @@ export const register = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
+
 // diri na ang login yey
 export const login = async (req, res) => {
   try {
@@ -57,9 +58,13 @@ export const login = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Your Credentials are invalid!" });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
 
     res.json({
       message: "Login successful",

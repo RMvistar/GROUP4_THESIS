@@ -25,25 +25,41 @@ export async function getUserId(req, res) {
 }
 
 // Create user (Super Admin )
-export async function postUser(req, res) {
+export async function CreateUser(req, res) {
   try {
     const {
       first_name,
       last_name,
-      name,
+      username,
       email,
       password,
       government_id,
       role,
     } = req.body;
 
-    if (!first_name || !last_name || !name || !email || !password) {
+    if (!first_name || !last_name || !username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const exist = await User.findOne({ email });
+    if (!government_id) {
+      return res.status(400).json({ message: "Government ID is required" });
+    }
+
+    const exist = await User.findOne({
+      $or: [{ government_id }, { email }, { username }],
+    });
     if (exist) {
-      return res.status(400).json({ message: "User already exists" });
+      let message = "User already exists";
+
+      if (exist.government_id === government_id) {
+        message = "Government ID already exists";
+      } else if (exist.email === email) {
+        message = "Email already exists";
+      } else if (exist.username === username) {
+        message = "Username already exists";
+      }
+
+      return res.status(400).json({ message });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -51,7 +67,7 @@ export async function postUser(req, res) {
     const user = await User.create({
       first_name,
       last_name,
-      name,
+      username,
       email,
       password: hashedPassword,
       government_id,
@@ -65,6 +81,19 @@ export async function postUser(req, res) {
       .status(201)
       .json({ message: "User created successfully", user: userResponse });
   } catch (err) {
+    if (err?.code === 11000) {
+      const duplicateField = Object.keys(err.keyPattern || {})[0];
+      const fieldMap = {
+        email: "Email",
+        government_id: "Government ID",
+        username: "Username",
+      };
+
+      return res.status(400).json({
+        message: `${fieldMap[duplicateField] || "Field"} already exists`,
+      });
+    }
+
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 }

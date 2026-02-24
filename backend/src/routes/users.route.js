@@ -4,7 +4,7 @@ import { checkRole } from "../middleware/role.middleware.js";
 import {
   getUsers,
   getUserId,
-  postUser,
+  CreateUser,
   putUserId,
   deleteUser,
   deleteUserId,
@@ -12,9 +12,9 @@ import {
 
 const router = express.Router();
 
-router.get("/", verifyToken, checkRole(["super-admin"]), getUsers);
-router.get("/:id", verifyToken, checkRole(["super-admin"]), getUserId);
-router.post("/", verifyToken, checkRole(["super-admin"]), postUser);
+router.get("/", getUsers);
+router.get("/:id", getUserId);
+router.post("/CreateUser", CreateUser);
 router.put("/:id", verifyToken, checkRole(["super-admin"]), putUserId);
 router.delete("/", verifyToken, checkRole(["super-admin"]), deleteUser);
 router.delete("/:id", verifyToken, checkRole(["super-admin"]), deleteUserId);

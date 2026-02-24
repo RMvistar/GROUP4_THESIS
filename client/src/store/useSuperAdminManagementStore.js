@@ -1,0 +1,96 @@
+import { create } from "zustand";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
+
+export const useSuperAdminManagementStore = create((set) => ({
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  token: localStorage.getItem("token") || null,
+  isAuthenticated: !!localStorage.getItem("token"),
+  loading: false,
+  error: null,
+
+  // Create new user
+  register: async (
+    first_name,
+    last_name,
+    username,
+    email,
+    government_id,
+    password,
+    role,
+  ) => {
+    set({ loading: true, error: null });
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${API_BASE_URL}/api/users/CreateUser`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          first_name,
+          last_name,
+          username,
+          email,
+          government_id,
+          password,
+          role,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Registration failed");
+
+      set({ loading: false });
+      return {
+        success: true,
+        message: data.message || "User created successfully",
+        user: data.user,
+      };
+    } catch (err) {
+      const message =
+        err?.name === "TypeError"
+          ? "Cannot connect to backend server. Please make sure backend is running on port 5001."
+          : err.message;
+
+      set({ error: message, loading: false });
+      return { success: false, message };
+    }
+  },
+
+  // Get all users for user management table
+  getUsers: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${API_BASE_URL}/api/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Failed to fetch users");
+
+      set({ loading: false });
+      return { success: true, users: data };
+    } catch (err) {
+      const message =
+        err?.name === "TypeError"
+          ? "Cannot connect to backend server. Please make sure backend is running on port 5001."
+          : err.message;
+
+      set({ error: message, loading: false });
+      return { success: false, message, users: [] };
+    }
+  },
+}));

@@ -20,8 +20,10 @@ function LoginPage() {
       const user = await login(name, password);
       console.log("Login successful:", user);
       console.log("Navigating to dashboard...");
-      // Only admins can login, redirect to admin page
-      if (user.role === "admin") {
+      // Route based on role
+      if (user.role === "super-admin") {
+        navigate("/super-admin");
+      } else if (user.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/dashboard");

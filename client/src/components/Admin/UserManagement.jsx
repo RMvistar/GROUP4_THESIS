@@ -12,7 +12,9 @@ import {
   FaPause,
   FaPlay,
 } from "react-icons/fa";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+import { useSuperAdminManagementStore } from "../../store/useSuperAdminManagementStore";
 
 function UserManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,58 +25,42 @@ function UserManagement() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editUser, setEditUser] = useState(null);
   const [resetPasswordUser, setResetPasswordUser] = useState(null);
+  const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
-    idNumber: "",
+    government_id: "",
     role: "worker",
   });
+  const { register: createUser, getUsers } = useSuperAdminManagementStore();
 
-  // Sample data - replace with actual API data
-  const users = [
-    {
-      id: 1,
-      idNumber: "EMP-2024-001",
-      firstName: "John",
-      lastName: "Doe",
-      username: "johndoe",
-      email: "john.doe@arcom.com",
-      role: "Super Admin",
-      status: "Active",
-    },
-    {
-      id: 2,
-      idNumber: "EMP-2024-002",
-      firstName: "Jane",
-      lastName: "Smith",
-      username: "janesmith",
-      email: "jane.smith@arcom.com",
-      role: "Admin",
-      status: "Active",
-    },
-    {
-      id: 3,
-      idNumber: "EMP-2024-003",
-      firstName: "Bob",
-      lastName: "Johnson",
-      username: "bobjohnson",
-      email: "bob.johnson@arcom.com",
-      role: "Worker",
-      status: "Suspended",
-    },
-    {
-      id: 4,
-      idNumber: "EMP-2024-004",
-      firstName: "Sarah",
-      lastName: "Williams",
-      username: "s.williams",
-      email: "sarah.williams@arcom.com",
-      role: "Worker",
-      status: "Inactive",
-    },
-  ];
+  const normalizeUser = (user) => ({
+    id: user?._id || user?.id || Date.now(),
+    _id: user?._id || user?.id,
+    government_id: user?.government_id || "",
+    first_name: user?.first_name || "",
+    last_name: user?.last_name || "",
+    email: user?.email || "",
+    username: user?.username || "",
+    role: user?.role || "worker",
+    status: user?.status || "Active",
+  });
 
+  useEffect(() => {
+    const loadUsers = async () => {
+      const result = await getUsers();
+
+      if (!result?.success) {
+        alert(result?.message || "Failed to fetch users");
+        return;
+      }
+
+      setUsers((result.users || []).map(normalizeUser));
+    };
+
+    loadUsers();
+  }, [getUsers]);
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -108,41 +94,52 @@ function UserManagement() {
   // Get generated credentials for display
   const { username: generatedUsername, password: generatedPassword } =
     generateCredentials(
-      formData.firstName,
-      formData.lastName,
-      formData.idNumber,
+      formData.first_name,
+      formData.last_name,
+      formData.government_id,
     );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Generate username and password
     const { username, password } = generateCredentials(
-      formData.firstName,
-      formData.lastName,
-      formData.idNumber,
+      formData.first_name,
+      formData.last_name,
+      formData.government_id,
     );
 
-    // Prepare complete user data
-    const userData = {
-      ...formData,
-      username,
-      password,
-      status: "active", // Default status for new users
-    };
+    const roleValue =
+      formData.role === "superadmin" ? "super-admin" : formData.role;
 
-    // Handle form submission - add API call here
-    console.log("Creating user:", userData);
-    console.log("Generated Username:", username);
-    console.log("Generated Password:", password);
+    const result = await createUser(
+      formData.first_name,
+      formData.last_name,
+      username,
+      formData.email,
+      formData.government_id,
+      password,
+      roleValue,
+    );
+
+    if (!result?.success) {
+      alert(result?.message || "Failed to create user");
+      return;
+    }
+    const refreshed = await getUsers();
+    if (refreshed?.success) {
+      setUsers((refreshed.users || []).map(normalizeUser));
+    } else {
+      alert(result?.message || "User created successfully");
+      // fallback if fetch fails: still show the created one
+      setUsers((prev) => [normalizeUser(result?.user), ...prev]);
+    }
 
     setIsModalOpen(false);
-    // Reset form
     setFormData({
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       email: "",
-      idNumber: "",
+      government_id: "",
       role: "worker",
     });
   };
@@ -150,10 +147,10 @@ function UserManagement() {
   const handleEdit = (user) => {
     setEditUser(user);
     setFormData({
-      firstName: user.firstName,
-      lastName: user.lastName,
+      first_name: user.first_name,
+      last_name: user.last_name,
       email: user.email || "",
-      idNumber: user.idNumber,
+      government_id: user.government_id,
       role: user.role.toLowerCase(),
     });
     setIsModalOpen(true);
@@ -173,9 +170,9 @@ function UserManagement() {
 
   const handleResetPassword = (user) => {
     const { password } = generateCredentials(
-      user.firstName,
-      user.lastName,
-      user.idNumber,
+      user.first_name,
+      user.last_name,
+      user.government_id,
     );
     setResetPasswordUser({ ...user, newPassword: password });
     setActiveDropdown(null);
@@ -191,7 +188,7 @@ function UserManagement() {
       newStatus = "Active";
     }
     console.log(
-      `Changing ${user.firstName} ${user.lastName} status to ${newStatus}`,
+      `Changing ${user.first_name} ${user.last_name} status to ${newStatus}`,
     );
     // Add API call here
     setActiveDropdown(null);
@@ -275,9 +272,9 @@ function UserManagement() {
             <tbody>
               {users.map((user) => (
                 <tr key={user.id}>
-                  <td>{user.idNumber}</td>
-                  <td>{user.firstName}</td>
-                  <td>{user.lastName}</td>
+                  <td>{user.government_id}</td>
+                  <td>{user.first_name}</td>
+                  <td>{user.last_name}</td>
                   <td>{user.email}</td>
                   <td>{user.username}</td>
                   <td>
@@ -289,9 +286,9 @@ function UserManagement() {
                   </td>
                   <td>
                     <span
-                      className={`status-badge status-${user.status.toLowerCase()}`}
+                      className={`status-badge status-${(user.status || "Active").toLowerCase()}`}
                     >
-                      {user.status}
+                      {user.status || "Active"}
                     </span>
                   </td>
                   <td className="actions-cell">
@@ -321,14 +318,14 @@ function UserManagement() {
                             className="action-menu-item"
                             onClick={() => handleToggleStatus(user)}
                           >
-                            {user.status === "Active" ? (
+                            {(user.status || "Active") === "Active" ? (
                               <FaPause />
                             ) : (
                               <FaPlay />
                             )}
-                            {user.status === "Active"
+                            {(user.status || "Active") === "Active"
                               ? "Suspend"
-                              : user.status === "Suspended"
+                              : (user.status || "Active") === "Suspended"
                                 ? "Deactivate"
                                 : "Activate"}
                           </button>
@@ -383,7 +380,7 @@ function UserManagement() {
               <p>
                 New password for{" "}
                 <strong>
-                  {resetPasswordUser.firstName} {resetPasswordUser.lastName}
+                  {resetPasswordUser.first_name} {resetPasswordUser.last_name}
                 </strong>
                 :
               </p>
@@ -417,10 +414,10 @@ function UserManagement() {
                     setIsModalOpen(false);
                     setEditUser(null);
                     setFormData({
-                      firstName: "",
-                      lastName: "",
+                      first_name: "",
+                      last_name: "",
                       email: "",
-                      idNumber: "",
+                      government_id: "",
                       role: "worker",
                     });
                   }}
@@ -435,8 +432,8 @@ function UserManagement() {
                     <label>First Name *</label>
                     <input
                       type="text"
-                      name="firstName"
-                      value={formData.firstName}
+                      name="first_name"
+                      value={formData.first_name}
                       onChange={handleInputChange}
                       required
                       placeholder="Enter first name"
@@ -447,8 +444,8 @@ function UserManagement() {
                     <label>Last Name *</label>
                     <input
                       type="text"
-                      name="lastName"
-                      value={formData.lastName}
+                      name="last_name"
+                      value={formData.last_name}
                       onChange={handleInputChange}
                       required
                       placeholder="Enter last name"
@@ -473,8 +470,8 @@ function UserManagement() {
                     <label>ID Number *</label>
                     <input
                       type="text"
-                      name="idNumber"
-                      value={formData.idNumber}
+                      name="government_id"
+                      value={formData.government_id}
                       onChange={handleInputChange}
                       required
                       placeholder="e.g., EMP-2024-001"
