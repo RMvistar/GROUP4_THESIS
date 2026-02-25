@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import { sendCredentialsEmail } from "../utils/mailer.js";
 
 // Get all users (Super Admin only)
 export async function getUsers(req, res) {
@@ -73,6 +74,20 @@ export async function CreateUser(req, res) {
       government_id,
       role: role || "public-user",
     });
+
+    // Send credentials email (non-blocking — user creation still succeeds if email fails)
+    try {
+      await sendCredentialsEmail({
+        to: email,
+        firstName: first_name,
+        username,
+        password, // plain-text — captured before hashing above
+      });
+      console.log(`Credentials email sent to ${email}`);
+    } catch (emailErr) {
+      console.error("Credentials email failed:", emailErr.message);
+      console.error(emailErr);
+    }
 
     const userResponse = user.toObject();
     delete userResponse.password;
