@@ -92,7 +92,7 @@ function NodeContainer() {
             </span>
           </div>
           <div className="data-row">
-            <span className="data-label">System Insights:</span>
+            <span className="data-label">System Prediction/Insights:</span>
             <span className="data-value"></span>
           </div>
         </div>
