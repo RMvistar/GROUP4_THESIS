@@ -37,6 +37,8 @@ function UserManagement() {
     register: createUser,
     getUsers,
     deleteUser,
+    updateUser,
+    findUserById,
   } = useSuperAdminManagementStore();
 
   const normalizeUser = (user) => ({
@@ -106,36 +108,66 @@ function UserManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { username, password } = generateCredentials(
-      formData.first_name,
-      formData.last_name,
-      formData.government_id,
-    );
-
     const roleValue =
       formData.role === "superadmin" ? "super-admin" : formData.role;
 
-    const result = await createUser(
-      formData.first_name,
-      formData.last_name,
-      username,
-      formData.email,
-      formData.government_id,
-      password,
-      roleValue,
-    );
+    let result;
 
-    if (!result?.success) {
-      alert(result?.message || "Failed to create user");
-      return;
+    if (editUser) {
+      // Edit mode: update everything except government_id
+      result = await updateUser(editUser._id, {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        role: roleValue,
+      });
+
+      if (!result?.success) {
+        alert(result?.message || "Failed to update user");
+        return;
+      }
+    } else {
+      // Create mode
+      const { username, password } = generateCredentials(
+        formData.first_name,
+        formData.last_name,
+        formData.government_id,
+      );
+
+      result = await createUser(
+        formData.first_name,
+        formData.last_name,
+        username,
+        formData.email,
+        formData.government_id,
+        password,
+        roleValue,
+      );
+
+      if (!result?.success) {
+        alert(result?.message || "Failed to create user");
+        return;
+      }
     }
+
     const refreshed = await getUsers();
     if (refreshed?.success) {
       setUsers((refreshed.users || []).map(normalizeUser));
     } else {
-      alert(result?.message || "User created successfully");
-      // fallback if fetch fails: still show the created one
-      setUsers((prev) => [normalizeUser(result?.user), ...prev]);
+      // fallback: reflect change locally
+      if (editUser) {
+        setUsers((prev) =>
+          prev.map((u) =>
+            u._id === editUser._id
+              ? normalizeUser(
+                  result?.user ?? { ...u, ...formData, role: roleValue },
+                )
+              : u,
+          ),
+        );
+      } else {
+        setUsers((prev) => [normalizeUser(result?.user), ...prev]);
+      }
     }
 
     setIsModalOpen(false);
@@ -147,7 +179,7 @@ function UserManagement() {
       role: "worker",
     });
   };
-
+  //Edit Function
   const handleEdit = (user) => {
     setEditUser(user);
     setFormData({
@@ -160,6 +192,7 @@ function UserManagement() {
     setIsModalOpen(true);
     setActiveDropdown(null);
   };
+  //End of Edit Function
 
   //Ddelete function
   const handleDelete = (userId) => {
@@ -209,6 +242,26 @@ function UserManagement() {
   const toggleDropdown = (userId) => {
     setActiveDropdown(activeDropdown === userId ? null : userId);
   };
+
+  const filteredUsers = users.filter((user) => {
+    const fullName = `${user.first_name} ${user.last_name}`.toLowerCase();
+    const matchesSearch =
+      fullName.includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.government_id.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesRole =
+      roleFilter === "all" ||
+      user.role.toLowerCase().replace(/[-\s]+/g, "") ===
+        roleFilter.toLowerCase().replace(/[-\s]+/g, "");
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      (user.status || "Active").toLowerCase() === statusFilter.toLowerCase();
+
+    return matchesSearch && matchesRole && matchesStatus;
+  });
 
   return (
     <div className="user-management-wrapper">
@@ -282,7 +335,7 @@ function UserManagement() {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <tr key={user.id}>
                   <td>{user.government_id}</td>
                   <td>{user.first_name}</td>
@@ -487,6 +540,8 @@ function UserManagement() {
                       onChange={handleInputChange}
                       required
                       placeholder="e.g., EMP-2024-001"
+                      readOnly={!!editUser}
+                      className={editUser ? "readonly-input" : ""}
                     />
                   </div>
                 </div>
@@ -544,7 +599,7 @@ function UserManagement() {
                     Cancel
                   </button>
                   <button type="submit" className="submit-btn">
-                    Create User
+                    {editUser ? "Update User" : "Create User"}
                   </button>
                 </div>
               </form>

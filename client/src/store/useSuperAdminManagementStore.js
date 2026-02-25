@@ -94,6 +94,66 @@ export const useSuperAdminManagementStore = create((set) => ({
     }
   },
 
+  findUserById: async (userId) => {
+    set({ loading: true, error: null });
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to find user");
+      set({ loading: false });
+      return { success: true, user: data };
+    } catch (error) {
+      const message =
+        error?.name === "TypeError"
+          ? "Cannot connect to backend server. Please make sure backend is running on port 5001."
+          : error.message;
+
+      set({ error: message, loading: false });
+      return { success: false, message };
+    }
+  },
+
+  updateUser: async (userId, { first_name, last_name, email, role }) => {
+    set({ loading: true, error: null });
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ first_name, last_name, email, role }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update user");
+
+      set({ loading: false });
+      return {
+        success: true,
+        message: data.message || "User updated successfully",
+        user: data.user,
+      };
+    } catch (err) {
+      const message =
+        err?.name === "TypeError"
+          ? "Cannot connect to backend server. Please make sure backend is running on port 5001."
+          : err.message;
+
+      set({ error: message, loading: false });
+      return { success: false, message };
+    }
+  },
+
   deleteUser: async (userId) => {
     set({ loading: true, error: null });
     try {
