@@ -131,17 +131,6 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
           </span>
           <span className="nav-label">Alerts</span>
         </div>
-
-        {/* Settings */}
-        <div
-          className={`nav-item ${activeSection === "settings" ? "active" : ""}`}
-          onClick={() => onSectionChange("settings")}
-        >
-          <span className="nav-icon">
-            <FaCog />
-          </span>
-          <span className="nav-label">Settings</span>
-        </div>
         <button className="log-out-button">Log out</button>
       </nav>
     </div>
