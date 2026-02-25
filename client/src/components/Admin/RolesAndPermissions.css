@@ -11,13 +11,6 @@
   color: #fff;
   overflow: visible;
 }
-.user-management-content {
-  background-color: #1a2942;
-  border-radius: 12px;
-  padding: 30px;
-  color: #fff;
-  overflow: visible;
-}
 
 .roles-and-permissions-content .header-section {
   display: flex;

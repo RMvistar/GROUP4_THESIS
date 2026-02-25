@@ -6,6 +6,7 @@ import NodeDetails from "../NodeDetails/NodeDetails.jsx";
 import Alerts from "../Alerts/Alerts.jsx";
 import UserManagement from "./UserManagement.jsx";
 import RolesAndPermissions from "./RolesAndPermissions.jsx";
+import ActivityLog from "./ActivityLog.jsx";
 
 function SuperAdminPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -22,6 +23,7 @@ function SuperAdminPage() {
         {activeSection === "alerts" && <Alerts />}
         {activeSection === "user-management" && <UserManagement />}
         {activeSection === "roles-permissions" && <RolesAndPermissions />}
+        {activeSection === "activity-log" && <ActivityLog />}
       </div>
     </div>
   );

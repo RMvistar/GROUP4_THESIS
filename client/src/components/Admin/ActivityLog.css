@@ -1,0 +1,103 @@
+.activity-log-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+}
+
+.activity-log-content {
+  background-color: #1a2942;
+  border-radius: 12px;
+  padding: 30px;
+  color: #fff;
+  overflow: visible;
+}
+
+.activity-log-content .header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.activity-log-content .header-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+/* Table Styles */
+.activity-log-content .table-container {
+  margin-top: 20px;
+}
+
+.activity-log-content .activity-log-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #0f1b2e;
+  border-radius: 8px;
+}
+
+.activity-log-content .activity-log-table thead {
+  background: #121e33;
+}
+
+.activity-log-content .activity-log-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #9ca3af;
+  border-bottom: 2px solid #2a3f5f;
+}
+
+.activity-log-content .activity-log-table tbody tr {
+  border-bottom: 1px solid #2a3f5f;
+  transition: background 0.2s ease;
+}
+
+.activity-log-content .activity-log-table tbody tr:hover {
+  background: #1a2942;
+}
+
+.activity-log-content .activity-log-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.activity-log-content .activity-log-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: #e5e7eb;
+  position: relative;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.status-resolved {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-ongoing {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.status-unresolved {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
