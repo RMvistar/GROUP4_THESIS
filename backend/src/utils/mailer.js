@@ -15,6 +15,7 @@ export async function sendCredentialsEmail({
   firstName,
   username,
   password,
+  role,
 }) {
   const subject = "Your ARCOM account credentials";
   const text = `Hi ${firstName},
@@ -23,8 +24,8 @@ Your account has been created.
 
 Username: ${username}
 Your password: ${password}
+your role is: ${role}
 
-Please log in and change your password immediately.
 
 — ARCOM Team`;
 
@@ -34,7 +35,8 @@ Please log in and change your password immediately.
       <p>Your account has been created.</p>
       <p>
         <b>Username:</b> ${username}<br/>
-        <b>Your password:</b> ${password}
+        <b>Your password:</b> ${password}<br/>
+        <b>Your role is:</b> ${role}
       </p>
       <p>— ARCOM Team</p>
     </div>

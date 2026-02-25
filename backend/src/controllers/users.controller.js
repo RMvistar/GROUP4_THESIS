@@ -82,6 +82,7 @@ export async function CreateUser(req, res) {
         firstName: first_name,
         username,
         password, // plain-text — captured before hashing above
+        role: role || "public-user",
       });
       console.log(`Credentials email sent to ${email}`);
     } catch (emailErr) {

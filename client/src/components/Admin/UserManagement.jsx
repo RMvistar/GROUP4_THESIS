@@ -26,6 +26,7 @@ function UserManagement() {
   const [editUser, setEditUser] = useState(null);
   const [resetPasswordUser, setResetPasswordUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -108,6 +109,9 @@ function UserManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     const roleValue =
       formData.role === "superadmin" ? "super-admin" : formData.role;
 
@@ -124,6 +128,7 @@ function UserManagement() {
 
       if (!result?.success) {
         alert(result?.message || "Failed to update user");
+        setIsSubmitting(false);
         return;
       }
     } else {
@@ -146,6 +151,7 @@ function UserManagement() {
 
       if (!result?.success) {
         alert(result?.message || "Failed to create user");
+        setIsSubmitting(false);
         return;
       }
     }
@@ -171,6 +177,7 @@ function UserManagement() {
     }
 
     setIsModalOpen(false);
+    setIsSubmitting(false);
     setFormData({
       first_name: "",
       last_name: "",
@@ -598,8 +605,16 @@ function UserManagement() {
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="submit-btn">
-                    {editUser ? "Update User" : "Create User"}
+                  <button
+                    type="submit"
+                    className="submit-btn"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting
+                      ? "Saving..."
+                      : editUser
+                        ? "Update User"
+                        : "Create User"}
                   </button>
                 </div>
               </form>
