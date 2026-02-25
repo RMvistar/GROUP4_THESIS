@@ -33,7 +33,11 @@ function UserManagement() {
     government_id: "",
     role: "worker",
   });
-  const { register: createUser, getUsers } = useSuperAdminManagementStore();
+  const {
+    register: createUser,
+    getUsers,
+    deleteUser,
+  } = useSuperAdminManagementStore();
 
   const normalizeUser = (user) => ({
     id: user?._id || user?.id || Date.now(),
@@ -157,17 +161,25 @@ function UserManagement() {
     setActiveDropdown(null);
   };
 
+  //Ddelete function
   const handleDelete = (userId) => {
     setDeleteConfirm(userId);
     setActiveDropdown(null);
   };
 
-  const confirmDelete = () => {
-    console.log("Deleting user:", deleteConfirm);
-    // Add API call here
+  const confirmDelete = async () => {
+    const result = await deleteUser(deleteConfirm);
+    if (!result?.success) {
+      alert(result?.message || "Failed to delete user");
+      setDeleteConfirm(null);
+      return;
+    }
+    setUsers((prev) =>
+      prev.filter((u) => u._id !== deleteConfirm && u.id !== deleteConfirm),
+    );
     setDeleteConfirm(null);
   };
-
+  // end sang delete function
   const handleResetPassword = (user) => {
     const { password } = generateCredentials(
       user.first_name,

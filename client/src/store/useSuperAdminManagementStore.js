@@ -93,4 +93,39 @@ export const useSuperAdminManagementStore = create((set) => ({
       return { success: false, message, users: [] };
     }
   },
+
+  deleteUser: async (userId) => {
+    set({ loading: true, error: null });
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const contentType = res.headers.get("content-type");
+      const data = contentType?.includes("application/json")
+        ? await res.json()
+        : { message: await res.text() };
+      if (!res.ok) throw new Error(data.message || "Failed to delete user");
+
+      set({ loading: false });
+      return {
+        success: true,
+        message: data.message || "User deleted successfully",
+      };
+    } catch (err) {
+      const message =
+        err?.name === "TypeError"
+          ? "Cannot connect to backend server. Please make sure backend is running on port 5001."
+          : err.message;
+
+      set({ error: message, loading: false });
+      return { success: false, message };
+    }
+  },
 }));

@@ -17,6 +17,6 @@ router.get("/:id", getUserId);
 router.post("/CreateUser", CreateUser);
 router.put("/:id", verifyToken, checkRole(["super-admin"]), putUserId);
 router.delete("/", verifyToken, checkRole(["super-admin"]), deleteUser);
-router.delete("/:id", verifyToken, checkRole(["super-admin"]), deleteUserId);
+router.delete("/:id", deleteUserId);
 
 export default router;
