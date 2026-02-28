@@ -307,7 +307,7 @@ function UserManagement() {
                 onChange={(e) => setRoleFilter(e.target.value)}
               >
                 <option value="all">All Roles</option>
-                <option value="superadmin">Super Admin</option>
+                <option value="superadmin">Super-Admin</option>
                 <option value="admin">Admin</option>
                 <option value="worker">Worker</option>
               </select>
@@ -564,7 +564,7 @@ function UserManagement() {
                     >
                       <option value="worker">Worker</option>
                       <option value="admin">Admin</option>
-                      <option value="superadmin">Super Admin</option>
+                      <option value="superadmin">Super-Admin</option>
                     </select>
                   </div>
                 </div>

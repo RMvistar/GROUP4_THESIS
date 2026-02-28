@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./SuperAdminPage.css";
 import SuperAdminNavigation from "./SuperAdminNavigation.jsx";
 import Dashboard from "../Dashboard/Dashboard.jsx";
@@ -9,7 +9,13 @@ import ActivityLog from "./ActivityLog.jsx";
 import AdminNodeDetails from "./AdminNodeDetails.jsx";
 
 function SuperAdminPage() {
-  const [activeSection, setActiveSection] = useState("dashboard");
+  const [activeSection, setActiveSection] = useState(() => {
+    return localStorage.getItem("superAdminActiveSection") || "dashboard";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("superAdminActiveSection", activeSection);
+  }, [activeSection]);
 
   return (
     <div className="super-admin-page-wrapper">
