@@ -1,19 +1,21 @@
 .login-page {
   background-image: linear-gradient(
-      to bottom,
-      rgba(2, 14, 42, 1) 0%,
-      rgba(15, 23, 42, 0.9) 50%,
-      rgba(11, 33, 84, 0.5) 100%
-    ),
-    url("./assets/background.jpg");
+    to bottom,
+    rgba(2, 14, 42, 1) 0%,
+    rgba(15, 23, 42, 0.9) 50%,
+    rgba(11, 33, 84, 0.5) 100%
+  ),
+  url("./assets/background.jpg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding-top: 50px;
+  padding: 20px;
   gap: 30px;
 }
 
@@ -31,34 +33,36 @@
 }
 
 .login-page .login-container {
-  width: 400px;
-  min-height: 520px;
-  max-height: 520px;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: linear-gradient(
-    to bottom,
-    rgba(18, 30, 51, 0.5) 0%,
-    rgba(12, 31, 62, 0.5) 50%,
-    rgba(19, 34, 60, 0.5) 100%
+  to bottom,
+  rgba(18, 30, 51, 0.5) 0%,
+  rgba(12, 31, 62, 0.5) 50%,
+  rgba(19, 34, 60, 0.5) 100%
   );
   backdrop-filter: blur(10px);
   border-radius: 10px;
   color: white;
-  padding: 25px 40px 40px;
+  padding: 35px 45px 40px;
 }
 
 .login-page .login-container h1 {
-  font-size: 30px;
-  margin-bottom: 20px;
+  font-size: 32px;
+  margin-bottom: 35px;
+  margin-top: 0;
+  font-weight: 600;
 }
 
 .login-page .input-box {
   position: relative;
   width: 100%;
-  height: 45px;
-  margin-bottom: 20px;
+  height: 50px;
+  margin-bottom: 18px;
 }
 
 .login-page .input-box:first-of-type {
@@ -66,15 +70,16 @@
 }
 
 .login-page .input-box input {
-  width: 100%;
+  width: 320px;
   height: 100%;
   background: transparent;
   border: none;
   outline: none;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
+  border-radius: 25px;
   padding: 0 20px 0 45px;
   color: white;
+  font-size: 15px;
 }
 
 .login-page .input-box input[type="password"],
@@ -102,68 +107,24 @@
   font-size: 16px;
   cursor: pointer;
 }
-
-.login-page .remember-forgot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 60px;
-  width: 100%;
-  font-size: 14.5px;
-  margin-bottom: 25px;
-}
-
-.login-page .remember-forgot label input {
-  accent-color: white;
-  margin-right: 4px;
-}
-
-.login-page .remember-forgot a {
-  color: white;
-  text-decoration: none;
-}
-
-.login-page .remember-forgot a:hover {
-  text-decoration: underline;
-}
-
 .login-page .login-button {
   width: 100%;
-  height: 45px;
+  height: 50px;
   background: white;
   border: none;
-  border-radius: 40px;
+  border-radius: 25px;
   color: #13223c;
   cursor: pointer;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.3s ease;
-  margin-bottom: 15px;
+  margin-top: 20px;
+  margin-bottom: 0;
 }
 
 .login-page .login-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
-}
-
-.login-page .register-link {
-  width: 100%;
-  text-align: center;
-  margin: 10px 0;
-}
-
-.login-page .register-link p {
-  margin: 8px 0;
-}
-
-.login-page .register-link p a {
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.login-page .register-link p a:hover {
-  text-decoration: underline;
 }
 
 .login-page .logo-container .exit-icon {

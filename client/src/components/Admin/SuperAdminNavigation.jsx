@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FaChartLine,
   FaUsers,
@@ -16,7 +16,13 @@ import logo from "../../assets/ARCOMLogo2.png";
 import "./SuperAdminNavigation.css";
 
 function SuperAdminNavigation({ activeSection, onSectionChange }) {
-  const [isUsersExpanded, setIsUsersExpanded] = useState(false);
+  const [isUsersExpanded, setIsUsersExpanded] = useState(() => {
+    return localStorage.getItem("usersMenuExpanded") === "true";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("usersMenuExpanded", isUsersExpanded);
+  }, [isUsersExpanded]);
 
   const toggleUsers = () => {
     setIsUsersExpanded(!isUsersExpanded);

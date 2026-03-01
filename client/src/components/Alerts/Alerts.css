@@ -221,25 +221,25 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
   .alerts-columns {
-    grid-template-columns: 1fr;
-    height: auto;
+  grid-template-columns: 1fr;
+  height: auto;
   }
 
   .alert-column {
-    max-height: 500px;
+  max-height: 500px;
   }
 }
 
 @media (max-width: 768px) {
   .alerts-container-constraints {
-    padding: 1rem;
+  padding: 1rem;
   }
 
   .column-title {
-    font-size: 1.2rem;
+  font-size: 1.2rem;
   }
 
   .data-card {
-    padding: 0.75rem;
+  padding: 0.75rem;
   }
 }
