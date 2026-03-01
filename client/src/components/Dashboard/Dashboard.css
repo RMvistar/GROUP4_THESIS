@@ -1,25 +1,25 @@
 .dashboard-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 40px;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px;
+  align-items: center;
+  justify-content: center;
 }
 
 .dashboard-container {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
 }
 
 .active-nodes-container {
-    color: white;
+  color: white;
 }
 
 .last-clog-alert-container {
-    color: white;
+  color: white;
 }
 
 .live-alerts-feed-container {
-    color: white;
+  color: white;
 }
