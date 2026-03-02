@@ -1,6 +1,9 @@
 import express from "express";
 import { verifyToken } from "../middleware/authMiddleware.js";
-import { checkRole } from "../middleware/role.middleware.js";
+import {
+  requirePermission,
+  requireAnyPermission,
+} from "../middleware/rbac.middleware.js";
 import {
   getMaintenanceLogs,
   getLogsByNode,
@@ -14,47 +17,57 @@ import {
 
 const router = express.Router();
 
-// Admin routes
+// Admin routes (MANAGE_NODES)
 router.get(
   "/",
   verifyToken,
-  checkRole(["super-admin", "admin"]),
+  requirePermission("MANAGE_NODES"),
   getMaintenanceLogs,
 );
 router.get(
   "/node/:nodeId",
   verifyToken,
-  checkRole(["super-admin", "admin"]),
+  requirePermission("MANAGE_NODES"),
   getLogsByNode,
 );
 router.get(
   "/worker/:workerId",
   verifyToken,
-  checkRole(["super-admin", "admin"]),
+  requirePermission("MANAGE_NODES"),
   getLogsByWorker,
 );
 router.get(
   "/download",
   verifyToken,
-  checkRole(["super-admin", "admin"]),
+  requirePermission("MANAGE_NODES"),
   downloadLogs,
 );
 router.delete(
   "/:id",
   verifyToken,
-  checkRole(["super-admin", "admin"]),
+  requirePermission("MANAGE_NODES"),
   deleteLog,
 );
 
-// Worker routes
-router.get("/my-logs", verifyToken, checkRole(["worker"]), getMyLogs);
-router.post("/", verifyToken, checkRole(["worker"]), createMaintenanceLog);
+// Worker routes (ASSIGN_TASKS)
+router.get(
+  "/my-logs",
+  verifyToken,
+  requirePermission("ASSIGN_TASKS"),
+  getMyLogs,
+);
+router.post(
+  "/",
+  verifyToken,
+  requirePermission("ASSIGN_TASKS"),
+  createMaintenanceLog,
+);
 
-// Shared na mga rouites sang Admin kag Worker
+// Shared routes (Admin OR Worker)
 router.get(
   "/:id",
   verifyToken,
-  checkRole(["super-admin", "admin", "worker"]),
+  requireAnyPermission("MANAGE_NODES", "ASSIGN_TASKS"),
   getLogById,
 );
 

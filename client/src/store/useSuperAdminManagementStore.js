@@ -94,6 +94,24 @@ export const useSuperAdminManagementStore = create((set) => ({
     }
   },
 
+  // Get all roles for dropdowns
+  getRolesList: async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE_URL}/api/roles`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch roles");
+      return { success: true, roles: data };
+    } catch (err) {
+      return { success: false, roles: [] };
+    }
+  },
+
   findUserById: async (userId) => {
     set({ loading: true, error: null });
     try {

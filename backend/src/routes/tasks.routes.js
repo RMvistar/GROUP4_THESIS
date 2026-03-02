@@ -1,6 +1,9 @@
 import express from "express";
 import { verifyToken } from "../middleware/authMiddleware.js";
-import { checkRole } from "../middleware/role.middleware.js";
+import {
+  requirePermission,
+  requireAnyPermission,
+} from "../middleware/rbac.middleware.js";
 import {
   getTasks,
   getMyTasks,
@@ -14,37 +17,47 @@ import {
 
 const router = express.Router();
 
-// Admin routes
-router.get("/", verifyToken, checkRole(["super-admin", "admin"]), getTasks);
-router.post("/", verifyToken, checkRole(["super-admin", "admin"]), createTask);
+// Admin routes (MANAGE_TASKS)
+router.get("/", verifyToken, requirePermission("MANAGE_TASKS"), getTasks);
+router.post("/", verifyToken, requirePermission("MANAGE_TASKS"), createTask);
 router.delete(
   "/:id",
   verifyToken,
-  checkRole(["super-admin", "admin"]),
+  requirePermission("MANAGE_TASKS"),
   deleteTask,
 );
 router.patch(
   "/:id/delegate",
   verifyToken,
-  checkRole(["super-admin", "admin"]),
+  requirePermission("MANAGE_TASKS"),
   delegateTask,
 );
 
-// Worker routes
-router.get("/my-tasks", verifyToken, checkRole(["worker"]), getMyTasks);
-router.patch("/:id/accept", verifyToken, checkRole(["worker"]), acceptTask);
+// Worker routes (ASSIGN_TASKS)
+router.get(
+  "/my-tasks",
+  verifyToken,
+  requirePermission("ASSIGN_TASKS"),
+  getMyTasks,
+);
+router.patch(
+  "/:id/accept",
+  verifyToken,
+  requirePermission("ASSIGN_TASKS"),
+  acceptTask,
+);
 
-// Shared routes (Admin and Worker)
+// Shared routes (Admin OR Worker)
 router.get(
   "/:id",
   verifyToken,
-  checkRole(["super-admin", "admin", "worker"]),
+  requireAnyPermission("MANAGE_TASKS", "ASSIGN_TASKS"),
   getTaskById,
 );
 router.patch(
   "/:id/status",
   verifyToken,
-  checkRole(["super-admin", "admin", "worker"]),
+  requireAnyPermission("MANAGE_TASKS", "ASSIGN_TASKS"),
   updateTaskStatus,
 );
 

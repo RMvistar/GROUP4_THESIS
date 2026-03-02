@@ -27,16 +27,18 @@ function UserManagement() {
   const [resetPasswordUser, setResetPasswordUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [roles, setRoles] = useState([]);
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     government_id: "",
-    role: "worker",
+    role: "",
   });
   const {
     register: createUser,
     getUsers,
+    getRolesList,
     deleteUser,
     updateUser,
     findUserById,
@@ -50,24 +52,32 @@ function UserManagement() {
     last_name: user?.last_name || "",
     email: user?.email || "",
     username: user?.username || "",
-    role: user?.role || "worker",
+    role:
+      (typeof user?.role === "object" ? user?.role?.name : user?.role) ||
+      "worker",
     status: user?.status || "Active",
   });
 
   useEffect(() => {
-    const loadUsers = async () => {
-      const result = await getUsers();
+    const loadData = async () => {
+      const [usersResult, rolesResult] = await Promise.all([
+        getUsers(),
+        getRolesList(),
+      ]);
 
-      if (!result?.success) {
-        alert(result?.message || "Failed to fetch users");
-        return;
+      if (!usersResult?.success) {
+        alert(usersResult?.message || "Failed to fetch users");
+      } else {
+        setUsers((usersResult.users || []).map(normalizeUser));
       }
 
-      setUsers((result.users || []).map(normalizeUser));
+      if (rolesResult?.success) {
+        setRoles(rolesResult.roles || []);
+      }
     };
 
-    loadUsers();
-  }, [getUsers]);
+    loadData();
+  }, [getUsers, getRolesList]);
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -112,8 +122,8 @@ function UserManagement() {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    const roleValue =
-      formData.role === "superadmin" ? "super-admin" : formData.role;
+    // formData.role is now a Role ObjectId
+    const roleId = formData.role;
 
     let result;
 
@@ -123,7 +133,7 @@ function UserManagement() {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
-        role: roleValue,
+        role: roleId,
       });
 
       if (!result?.success) {
@@ -146,7 +156,7 @@ function UserManagement() {
         formData.email,
         formData.government_id,
         password,
-        roleValue,
+        roleId,
       );
 
       if (!result?.success) {
@@ -165,9 +175,7 @@ function UserManagement() {
         setUsers((prev) =>
           prev.map((u) =>
             u._id === editUser._id
-              ? normalizeUser(
-                  result?.user ?? { ...u, ...formData, role: roleValue },
-                )
+              ? normalizeUser(result?.user ?? { ...u, ...formData })
               : u,
           ),
         );
@@ -183,7 +191,7 @@ function UserManagement() {
       last_name: "",
       email: "",
       government_id: "",
-      role: "worker",
+      role: "",
     });
   };
   //Edit Function
@@ -194,7 +202,7 @@ function UserManagement() {
       last_name: user.last_name,
       email: user.email || "",
       government_id: user.government_id,
-      role: user.role.toLowerCase(),
+      role: user.roleId || "",
     });
     setIsModalOpen(true);
     setActiveDropdown(null);
@@ -260,8 +268,7 @@ function UserManagement() {
 
     const matchesRole =
       roleFilter === "all" ||
-      user.role.toLowerCase().replace(/[-\s]+/g, "") ===
-        roleFilter.toLowerCase().replace(/[-\s]+/g, "");
+      user.role.toLowerCase() === roleFilter.toLowerCase();
 
     const matchesStatus =
       statusFilter === "all" ||
@@ -307,9 +314,11 @@ function UserManagement() {
                 onChange={(e) => setRoleFilter(e.target.value)}
               >
                 <option value="all">All Roles</option>
-                <option value="superadmin">Super-Admin</option>
-                <option value="admin">Admin</option>
-                <option value="worker">Worker</option>
+                {roles.map((r) => (
+                  <option key={r._id} value={r.name}>
+                    {r.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -490,7 +499,7 @@ function UserManagement() {
                       last_name: "",
                       email: "",
                       government_id: "",
-                      role: "worker",
+                      role: "",
                     });
                   }}
                 >
@@ -562,9 +571,12 @@ function UserManagement() {
                       onChange={handleInputChange}
                       required
                     >
-                      <option value="worker">Worker</option>
-                      <option value="admin">Admin</option>
-                      <option value="superadmin">Super-Admin</option>
+                      <option value="">-- Select a Role --</option>
+                      {roles.map((r) => (
+                        <option key={r._id} value={r._id}>
+                          {r.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>

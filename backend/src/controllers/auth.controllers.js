@@ -50,7 +50,7 @@ export const login = async (req, res) => {
   try {
     const { name, password } = req.body;
 
-    const user = await User.findOne({ name });
+    const user = await User.findOne({ username: name }).populate("role");
     if (!user)
       return res.status(400).json({ message: "Your Credentials are invalid!" });
 
@@ -58,22 +58,19 @@ export const login = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Your Credentials are invalid!" });
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      },
-    );
+    // JWT only embeds id — verifyToken always fetches role from DB
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     res.json({
       message: "Login successful",
       token,
       user: {
         id: user._id,
-        name: user.name,
+        name: user.username,
         email: user.email,
-        role: user.role,
+        role: user.role?.name || "user", // Return role name string, not the object
       },
     });
   } catch (err) {

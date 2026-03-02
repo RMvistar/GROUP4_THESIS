@@ -1,6 +1,6 @@
 import express from "express";
 import { verifyToken } from "../middleware/authMiddleware.js";
-import { checkRole } from "../middleware/role.middleware.js";
+import { requirePermission } from "../middleware/rbac.middleware.js";
 import {
   getNodes,
   getNodeById,
@@ -12,31 +12,20 @@ import {
 
 const router = express.Router();
 
-// Admin only routes
-router.get("/", verifyToken, checkRole(["super-admin", "admin"]), getNodes);
-router.get(
-  "/:id",
-  verifyToken,
-  checkRole(["super-admin", "admin"]),
-  getNodeById,
-);
-router.post("/", verifyToken, checkRole(["super-admin", "admin"]), createNode);
-router.put(
-  "/:id",
-  verifyToken,
-  checkRole(["super-admin", "admin"]),
-  updateNode,
-);
+router.get("/", verifyToken, requirePermission("MANAGE_NODES"), getNodes);
+router.get("/:id", verifyToken, requirePermission("MANAGE_NODES"), getNodeById);
+router.post("/", verifyToken, requirePermission("MANAGE_NODES"), createNode);
+router.put("/:id", verifyToken, requirePermission("MANAGE_NODES"), updateNode);
 router.patch(
   "/:id/status",
   verifyToken,
-  checkRole(["super-admin", "admin"]),
+  requirePermission("MANAGE_NODES"),
   updateNodeStatus,
 );
 router.delete(
   "/:id",
   verifyToken,
-  checkRole(["super-admin", "admin"]),
+  requirePermission("MANAGE_NODES"),
   deleteNode,
 );
 

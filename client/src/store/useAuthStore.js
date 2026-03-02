@@ -32,12 +32,18 @@ export const useAuthStore = create((set) => ({
         token: data.token,
         isAuthenticated: true,
         loading: false,
+        error: null,
       });
 
       return data.user; // allow redirect logic
     } catch (err) {
+      const errorMessage =
+        err.message === "Failed to fetch"
+          ? "Cannot connect to server. Please check if the backend is running."
+          : err.message;
+
       set({
-        error: err.message,
+        error: errorMessage,
         loading: false,
         isAuthenticated: false,
       });

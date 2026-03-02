@@ -8,11 +8,9 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, unique: true },
     government_id: String,
     password: String,
-    role: {
-      type: String,
-      enum: ["super-admin", "admin", "worker", "public-user"],
-      default: "public-user",
-    },
+
+    // Role is a reference to the Role collection (RBAC)
+    role: { type: mongoose.Schema.Types.ObjectId, ref: "Role", default: null },
   },
   {
     timestamps: true,

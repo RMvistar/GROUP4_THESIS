@@ -21,9 +21,9 @@ function LoginPage() {
       console.log("Login successful:", user);
       console.log("Navigating to dashboard...");
       // Route based on role
-      if (user.role === "super-admin") {
+      if (user.role === "Super Admin") {
         navigate("/super-admin");
-      } else if (user.role === "admin") {
+      } else if (user.role === "Admin") {
         navigate("/admin");
       } else {
         navigate("/dashboard");
@@ -45,6 +45,17 @@ function LoginPage() {
         </div>
         <div className="login-container">
           <h1>Login</h1>
+          {error && (
+            <div
+              style={{
+                color: "red",
+                marginBottom: "10px",
+                textAlign: "center",
+              }}
+            >
+              {error}
+            </div>
+          )}
           <form onSubmit={handleLogin}>
             <div className="input-box">
               <input

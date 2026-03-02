@@ -1,11 +1,12 @@
 import User from "../models/User.js";
+import Role from "../models/Role.js";
 import bcrypt from "bcryptjs";
 import { sendCredentialsEmail } from "../utils/mailer.js";
 
 // Get all users (Super Admin only)
 export async function getUsers(req, res) {
   try {
-    const users = await User.find().select("-password");
+    const users = await User.find().select("-password").populate("role");
     res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ message: "Server Error", error: err.message });
@@ -15,7 +16,9 @@ export async function getUsers(req, res) {
 // Get user by ID
 export async function getUserId(req, res) {
   try {
-    const user = await User.findById(req.params.id).select("-password");
+    const user = await User.findById(req.params.id)
+      .select("-password")
+      .populate("role");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -65,6 +68,7 @@ export async function CreateUser(req, res) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // role from req.body should be a Role ObjectId
     const user = await User.create({
       first_name,
       last_name,
@@ -72,8 +76,15 @@ export async function CreateUser(req, res) {
       email,
       password: hashedPassword,
       government_id,
-      role: role || "public-user",
+      role: role || null,
     });
+
+    // Resolve role name for the credentials email
+    let roleName = "Unknown";
+    if (role) {
+      const roleDoc = await Role.findById(role);
+      roleName = roleDoc?.name || "Unknown";
+    }
 
     // Send credentials email (non-blocking — user creation still succeeds if email fails)
     try {
@@ -82,7 +93,7 @@ export async function CreateUser(req, res) {
         firstName: first_name,
         username,
         password, // plain-text — captured before hashing above
-        role: role || "public-user",
+        role: roleName,
       });
       console.log(`Credentials email sent to ${email}`);
     } catch (emailErr) {
