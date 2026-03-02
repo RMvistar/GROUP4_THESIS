@@ -55,6 +55,20 @@ function NewAlerts() {
                   <p className="no-alerts">
                     Sample alerts for Node A will appear here
                   </p>
+                  <div className="data-card">
+                    <div className="card-header">
+                      <span>timestamp</span>
+                    </div>
+                    <div className="card-body">
+                      <span>Clog at Node A</span>
+                      <div className="buttons-container">
+                        <button className="acknowledge-button">
+                          Acknowledge
+                        </button>
+                        <button className="assign-button">Assign</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -97,6 +111,17 @@ function NewAlerts() {
                   <p className="no-alerts">
                     Sample alerts for Node A will appear here
                   </p>
+                  <div className="data-card">
+                    <div className="card-header">
+                      <span>timestamp</span>
+                    </div>
+                    <div className="card-body">
+                      <span>Clog at Node A</span>
+                      <div className="buttons-container">
+                        <button className="resolve-button">Resolve</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -139,6 +164,15 @@ function NewAlerts() {
                   <p className="no-alerts">
                     Sample alerts for Node A will appear here
                   </p>
+                  <div className="data-card">
+                    <div className="card-header">
+                      <span>timestamp</span>
+                    </div>
+                    <div className="card-body">
+                      <span>Clog at Node A</span>
+                      <div className="buttons-container"></div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
