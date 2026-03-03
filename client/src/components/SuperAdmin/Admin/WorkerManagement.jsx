@@ -54,6 +54,7 @@ function WorkerManagement() {
 
   const handleSuspendToggle = async (userId, currentStatus) => {
     try {
+      const newStatus = currentStatus ? "Suspended" : "Active";
       const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
         method: "PUT",
         headers: {
@@ -61,7 +62,7 @@ function WorkerManagement() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          isActive: !currentStatus,
+          status: newStatus,
         }),
       });
 
@@ -81,19 +82,20 @@ function WorkerManagement() {
     const matchesSearch =
       user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (user.firstName &&
-        user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (user.lastName &&
-        user.lastName.toLowerCase().includes(searchTerm.toLowerCase()));
+      (user.first_name &&
+        user.first_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (user.last_name &&
+        user.last_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesRole =
       roleFilter === "all" ||
       (user.role && user.role.name.toLowerCase() === roleFilter.toLowerCase());
 
+    const userStatus = user.status || "Active";
     const matchesStatus =
       statusFilter === "all" ||
-      (statusFilter === "active" && user.isActive) ||
-      (statusFilter === "suspended" && !user.isActive);
+      (statusFilter === "active" && userStatus === "Active") ||
+      (statusFilter === "suspended" && userStatus === "Suspended");
 
     // Only show worker role users
     const isWorker = user.role && user.role.name.toLowerCase() === "worker";
@@ -172,17 +174,19 @@ function WorkerManagement() {
                     <td>{user.username}</td>
                     <td>{user.email}</td>
                     <td>
-                      {user.firstName && user.lastName
-                        ? `${user.firstName} ${user.lastName}`
+                      {user.first_name && user.last_name
+                        ? `${user.first_name} ${user.last_name}`
                         : "N/A"}
                     </td>
                     <td>
                       <span
                         className={`status-badge ${
-                          user.isActive ? "status-active" : "status-suspended"
+                          (user.status || "Active") === "Active"
+                            ? "status-active"
+                            : "status-suspended"
                         }`}
                       >
-                        {user.isActive ? "Active" : "Suspended"}
+                        {user.status || "Active"}
                       </span>
                     </td>
                     <td>
@@ -198,10 +202,13 @@ function WorkerManagement() {
                             <button
                               className="action-menu-item"
                               onClick={() =>
-                                handleSuspendToggle(user._id, user.isActive)
+                                handleSuspendToggle(
+                                  user._id,
+                                  (user.status || "Active") === "Active",
+                                )
                               }
                             >
-                              {user.isActive
+                              {(user.status || "Active") === "Active"
                                 ? "Suspend Worker"
                                 : "Activate Worker"}
                             </button>

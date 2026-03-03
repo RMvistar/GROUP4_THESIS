@@ -12,6 +12,7 @@ import dotenv from "dotenv";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { connectDB } from "./src/Config/db.js";
+import activityLogRoutes from "./src/routes/activityLog.routes.js";
 
 dotenv.config();
 
@@ -54,6 +55,8 @@ app.use("/api/nodes", nodesRoutes);
 app.use("/api/tasks", tasksRoutes);
 app.use("/api/maintenance", maintenanceRoutes);
 app.use("/api/public", publicRoutes);
+
+app.use("/api/activity-logs", activityLogRoutes);
 
 connectDB();
 server.listen(PORT, () => {

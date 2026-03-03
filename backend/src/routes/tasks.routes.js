@@ -15,7 +15,26 @@ import {
   delegateTask,
 } from "../controllers/tasks.controller.js";
 
+import {
+  acknowledgeTask,
+  resolveTask,
+} from "../controllers/tasks.controller.js";
+
 const router = express.Router();
+
+router.patch(
+  "/:id/acknowledge",
+  verifyToken,
+  requireAnyPermission(["MANAGE_TASKS", "ASSIGN_TASKS"]),
+  acknowledgeTask,
+);
+
+router.patch(
+  "/:id/resolve",
+  verifyToken,
+  requireAnyPermission(["MANAGE_TASKS", "ASSIGN_TASKS"]),
+  resolveTask,
+);
 
 // Admin routes (MANAGE_TASKS)
 router.get("/", verifyToken, requirePermission("MANAGE_TASKS"), getTasks);

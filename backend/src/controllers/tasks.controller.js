@@ -1,5 +1,98 @@
 import Task from "../models/Task.js";
 
+//new  methods para sa tasks
+
+import { createActivityLog } from "./activityLog.controller.js";
+
+// Add these NEW functions to the existing file:
+
+// Acknowledge task (moves from pending to ongoing)
+export async function acknowledgeTask(req, res) {
+  try {
+    const task = await Task.findById(req.params.id).populate(
+      "node_id",
+      "node_id location",
+    );
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    if (task.status !== "pending") {
+      return res.status(400).json({
+        message: "Task must be in pending status to acknowledge",
+      });
+    }
+
+    // Update task status
+    const previousStatus = task.status;
+    task.status = "ongoing";
+    await task.save();
+
+    // Create activity log
+    await createActivityLog({
+      task_id: task._id,
+      user_id: req.user._id, // This comes from the JWT token
+      node_id: task.node_id._id,
+      action: "acknowledged",
+      description: `Task "${task.title}" was acknowledged by ${req.user.first_name} ${req.user.last_name}`,
+      previous_status: previousStatus,
+      new_status: "ongoing",
+    });
+
+    res.status(200).json({
+      message: "Task acknowledged successfully",
+      task,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+}
+
+// Resolve task (moves from ongoing to resolved)
+export async function resolveTask(req, res) {
+  try {
+    const task = await Task.findById(req.params.id).populate(
+      "node_id",
+      "node_id location",
+    );
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    if (task.status !== "ongoing") {
+      return res.status(400).json({
+        message: "Task must be in ongoing status to resolve",
+      });
+    }
+
+    // Update task status
+    const previousStatus = task.status;
+    task.status = "resolved";
+    task.completed_date = new Date();
+    await task.save();
+
+    // Create activity log
+    await createActivityLog({
+      task_id: task._id,
+      user_id: req.user._id, // This comes from the JWT token
+      node_id: task.node_id._id,
+      action: "resolved",
+      description: `Task "${task.title}" was resolved by ${req.user.first_name} ${req.user.last_name}`,
+      previous_status: previousStatus,
+      new_status: "resolved",
+    });
+
+    res.status(200).json({
+      message: "Task resolved successfully",
+      task,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+}
+
 // Get all tasks (Admin)
 export async function getTasks(req, res) {
   try {
@@ -51,11 +144,9 @@ export async function createTask(req, res) {
       req.body;
 
     if (!task_id || !title || !description || !node_id) {
-      return res
-        .status(400)
-        .json({
-          message: "Task ID, title, description, and node ID are required",
-        });
+      return res.status(400).json({
+        message: "Task ID, title, description, and node ID are required",
+      });
     }
 
     const existingTask = await Task.findOne({ task_id });

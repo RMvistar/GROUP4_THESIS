@@ -136,6 +136,7 @@ export async function putUserId(req, res) {
       government_id,
       role,
       password,
+      status,
     } = req.body;
 
     const updateData = {
@@ -145,6 +146,7 @@ export async function putUserId(req, res) {
       email,
       government_id,
       role,
+      status,
     };
 
     // Only hash password if it's being updated

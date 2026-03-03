@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, unique: true },
     government_id: String,
     password: String,
+    status: { type: String, default: "Active" }, // Active, Suspended, Inactive
 
     // Role is a reference to the Role collection (RBAC)
     role: { type: mongoose.Schema.Types.ObjectId, ref: "Role", default: null },

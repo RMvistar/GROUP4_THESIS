@@ -1,43 +1,49 @@
 import "./ActivityLog.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaSearch, FaFilter } from "react-icons/fa";
+import { useAuthStore } from "../../store/useAuthStore";
 
 function ActivityLog() {
-  // Sample data
-  const activityLogs = [
-    {
-      id: 1,
-      timestamp: "2026-02-25 14:30:15",
-      user: "John Doe",
-      role: "Admin",
-      nodeLocation: "Building A - Floor 2",
-      description: "High water level detected",
-      status: "Resolved",
-    },
-    {
-      id: 2,
-      timestamp: "2026-02-25 13:15:42",
-      user: "Jane Smith",
-      role: "Worker",
-      nodeLocation: "Building B - Floor 1",
-      description: "Sensor malfunction reported",
-      status: "Ongoing",
-    },
-    {
-      id: 3,
-      timestamp: "2026-02-25 12:05:28",
-      user: "Bob Johnson",
-      role: "Super Admin",
-      nodeLocation: "Building C - Floor 3",
-      description: "Clog detected in drainage system",
-      status: "Unresolved",
-    },
-  ];
+  const { token } = useAuthStore();
+
+  // State for activity logs
+  const [activityLogs, setActivityLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [nodeFilter, setNodeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
+
+  // Fetch activity logs on component mount
+  useEffect(() => {
+    fetchActivityLogs();
+  }, []);
+
+  const fetchActivityLogs = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:5001/api/activity-logs", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch activity logs");
+      }
+
+      const data = await response.json();
+      setActivityLogs(data);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching activity logs:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -57,22 +63,26 @@ function ActivityLog() {
 
   // Filter the activity logs based on search and filters
   const filteredLogs = activityLogs.filter((log) => {
+    const userName = `${log.user_id?.first_name || ""} ${log.user_id?.last_name || ""}`;
+    const nodeLocation = log.node_id?.location || "";
+    const roleName = log.user_id?.role?.name || "";
+
     const matchesSearch =
-      log.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.nodeLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      nodeLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.description.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesNode =
       nodeFilter === "all" ||
-      log.nodeLocation.toLowerCase().includes(nodeFilter.toLowerCase());
+      nodeLocation.toLowerCase().includes(nodeFilter.toLowerCase());
 
     const matchesStatus =
       statusFilter === "all" ||
-      log.status.toLowerCase() === statusFilter.toLowerCase();
+      log.new_status?.toLowerCase() === statusFilter.toLowerCase();
 
     const matchesRole =
       roleFilter === "all" ||
-      log.role.toLowerCase() === roleFilter.toLowerCase();
+      roleName.toLowerCase() === roleFilter.toLowerCase();
 
     return matchesSearch && matchesNode && matchesStatus && matchesRole;
   });
@@ -136,42 +146,66 @@ function ActivityLog() {
         </div>
 
         <div className="table-container">
-          <table className="activity-log-table">
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>User</th>
-                <th>Role</th>
-                <th>Node Location</th>
-                <th>Description</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLogs.map((log) => (
-                <tr key={log.id}>
-                  <td>{log.timestamp}</td>
-                  <td>{log.user}</td>
-                  <td>
-                    <span
-                      className={`role-badge role-${log.role.toLowerCase().replace(" ", "-")}`}
-                    >
-                      {log.role}
-                    </span>
-                  </td>
-                  <td>{log.nodeLocation}</td>
-                  <td>{log.description}</td>
-                  <td>
-                    <span
-                      className={`status-badge status-${log.status.toLowerCase()}`}
-                    >
-                      {log.status}
-                    </span>
-                  </td>
+          {loading && (
+            <p style={{ textAlign: "center", padding: "20px" }}>
+              Loading activity logs...
+            </p>
+          )}
+          {error && (
+            <p style={{ textAlign: "center", padding: "20px", color: "red" }}>
+              Error: {error}
+            </p>
+          )}
+
+          {!loading && !error && (
+            <table className="activity-log-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Node Location</th>
+                  <th>Description</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredLogs.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
+                      No activity logs found
+                    </td>
+                  </tr>
+                ) : (
+                  filteredLogs.map((log) => (
+                    <tr key={log._id}>
+                      <td>{new Date(log.timestamp).toLocaleString()}</td>
+                      <td>{`${log.user_id?.first_name || ""} ${log.user_id?.last_name || ""}`}</td>
+                      <td>
+                        <span
+                          className={`role-badge role-${(log.user_id?.role?.name || "").toLowerCase().replace(" ", "-")}`}
+                        >
+                          {log.user_id?.role?.name || "N/A"}
+                        </span>
+                      </td>
+                      <td>{log.node_id?.location || "N/A"}</td>
+                      <td>{log.description}</td>
+                      <td>
+                        <span
+                          className={`status-badge status-${(log.new_status || "").toLowerCase()}`}
+                        >
+                          {log.new_status || "N/A"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
