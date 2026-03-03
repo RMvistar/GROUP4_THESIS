@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import "./SuperAdminPage.css";
 import SuperAdminNavigation from "./SuperAdminNavigation.jsx";
 import Dashboard from "../Dashboard/Dashboard.jsx";
-import Alerts from "../Alerts/Alerts.jsx";
 import UserManagement from "./UserManagement.jsx";
 import RolesAndPermissions from "./RolesAndPermissions.jsx";
 import ActivityLog from "./ActivityLog.jsx";
