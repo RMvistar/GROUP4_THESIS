@@ -9,6 +9,7 @@ function ActivityLog() {
       id: 1,
       timestamp: "2026-02-25 14:30:15",
       user: "John Doe",
+      role: "Admin",
       nodeLocation: "Building A - Floor 2",
       description: "High water level detected",
       status: "Resolved",
@@ -17,6 +18,7 @@ function ActivityLog() {
       id: 2,
       timestamp: "2026-02-25 13:15:42",
       user: "Jane Smith",
+      role: "Worker",
       nodeLocation: "Building B - Floor 1",
       description: "Sensor malfunction reported",
       status: "Ongoing",
@@ -25,6 +27,7 @@ function ActivityLog() {
       id: 3,
       timestamp: "2026-02-25 12:05:28",
       user: "Bob Johnson",
+      role: "Super Admin",
       nodeLocation: "Building C - Floor 3",
       description: "Clog detected in drainage system",
       status: "Unresolved",
@@ -34,6 +37,7 @@ function ActivityLog() {
   const [searchTerm, setSearchTerm] = useState("");
   const [nodeFilter, setNodeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("all");
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -45,6 +49,10 @@ function ActivityLog() {
 
   const handleStatusFilterChange = (e) => {
     setStatusFilter(e.target.value);
+  };
+
+  const handleRoleFilterChange = (e) => {
+    setRoleFilter(e.target.value);
   };
 
   // Filter the activity logs based on search and filters
@@ -62,7 +70,11 @@ function ActivityLog() {
       statusFilter === "all" ||
       log.status.toLowerCase() === statusFilter.toLowerCase();
 
-    return matchesSearch && matchesNode && matchesStatus;
+    const matchesRole =
+      roleFilter === "all" ||
+      log.role.toLowerCase() === roleFilter.toLowerCase();
+
+    return matchesSearch && matchesNode && matchesStatus && matchesRole;
   });
 
   return (
@@ -101,6 +113,17 @@ function ActivityLog() {
 
             <select
               className="filter-dropdown"
+              value={roleFilter}
+              onChange={handleRoleFilterChange}
+            >
+              <option value="all">All Roles</option>
+              <option value="super admin">Super Admin</option>
+              <option value="admin">Admin</option>
+              <option value="worker">Worker</option>
+            </select>
+
+            <select
+              className="filter-dropdown"
               value={statusFilter}
               onChange={handleStatusFilterChange}
             >
@@ -118,6 +141,7 @@ function ActivityLog() {
               <tr>
                 <th>Timestamp</th>
                 <th>User</th>
+                <th>Role</th>
                 <th>Node Location</th>
                 <th>Description</th>
                 <th>Status</th>
@@ -128,6 +152,13 @@ function ActivityLog() {
                 <tr key={log.id}>
                   <td>{log.timestamp}</td>
                   <td>{log.user}</td>
+                  <td>
+                    <span
+                      className={`role-badge role-${log.role.toLowerCase().replace(" ", "-")}`}
+                    >
+                      {log.role}
+                    </span>
+                  </td>
                   <td>{log.nodeLocation}</td>
                   <td>{log.description}</td>
                   <td>

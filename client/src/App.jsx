@@ -13,6 +13,7 @@ import React from "react";
 import LoginPage from "./LoginPage.jsx";
 import RegisterPage from "./RegisterPage.jsx";
 import SuperAdminPage from "./components/SuperAdmin/SuperAdminPage.jsx";
+import AdminPage from "./components/SuperAdmin/Admin/AdminPage.jsx";
 import "./App.css";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/super-admin" element={<SuperAdminPage />} />
+        <Route path="/admin" element={<AdminPage />} />
 
         {/* Guest-accessible routes (no ProtectedRoute) */}
         <Route

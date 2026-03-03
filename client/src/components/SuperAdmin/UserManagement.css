@@ -143,6 +143,7 @@
 /* Table Styles */
 .table-container {
   margin-top: 20px;
+  overflow: visible;
 }
 
 .users-table {
@@ -150,6 +151,7 @@
   border-collapse: collapse;
   background: #0f1b2e;
   border-radius: 8px;
+  overflow: visible;
 }
 
 .users-table thead {
