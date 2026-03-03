@@ -8,6 +8,8 @@
 .super-admin-page-wrapper {
   display: flex;
   min-height: 100vh;
+  background: linear-gradient(to bottom, #020E2A 0%, #0F172A 50%, #0B2154 100%);
+  background-attachment: fixed;
 }
 
 .super-admin-content {
