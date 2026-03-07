@@ -11,6 +11,7 @@
   padding: 0 40px; /* matches the 40px padding on the content */
   box-sizing: border-box;
   color: white;
+  z-index: 1000;
 }
 
 .navigation-bar ul {
