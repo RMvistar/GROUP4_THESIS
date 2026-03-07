@@ -14,17 +14,19 @@ import LoginPage from "./LoginPage.jsx";
 import RegisterPage from "./RegisterPage.jsx";
 import SuperAdminPage from "./components/SuperAdmin/SuperAdminPage.jsx";
 import AdminPage from "./components/SuperAdmin/Admin/AdminPage.jsx";
+import LandingPage from "./components/LandingPage.jsx";
 import "./App.css";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/super-admin" element={<SuperAdminPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/home" element={<LandingPage />} />
 
         {/* Guest-accessible routes (no ProtectedRoute) */}
         <Route

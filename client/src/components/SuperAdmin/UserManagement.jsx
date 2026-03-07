@@ -95,7 +95,7 @@ function UserManagement() {
     // Username: FirstLetterOfFirstname.LastName (e.g., J.Doe)
     const username =
       firstName && lastName
-        ? `${firstName.charAt(0).toLowerCase()}.${lastName.toLowerCase()}`
+        ? `${lastName.toUpperCase()}-${idNumber.toUpperCase()}`
         : "";
 
     // Password: FirstLetterOfFirstName + FirstLetterOfLastName + IDNumber

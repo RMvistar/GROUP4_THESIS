@@ -32,7 +32,10 @@ function NavigationBar() {
           </li>
         )}
         <li>
-          <NavLink to="/Dashboard">Dashboard</NavLink>
+          <NavLink to="/home">Home</NavLink>
+        </li>
+        <li>
+          <NavLink to="/dashboard">Dashboard</NavLink>
         </li>
         <li>
           <NavLink to="/node-details">Node Details</NavLink>

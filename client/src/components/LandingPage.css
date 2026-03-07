@@ -1,0 +1,142 @@
+.landing-page-wrapper {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(2, 14, 42, 1) 0%,
+    rgba(15, 23, 42, 0.9) 50%,
+    rgba(11, 33, 84, 0.5) 100%
+  ),
+  url("../assets/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  padding-top: 100px;
+  gap: 30px;
+}
+
+.landing-page-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px;
+  color: white;
+  text-align: center;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.landing-page-content h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.landing-page-logo {
+  width: 200px;
+  height: auto;
+}
+
+.header-text {
+  border-bottom: 1px solid white;
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+  display: inline-block;
+  width: 80%;
+}
+
+.header-text-2 {
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+  display: inline-block;
+  width: 80%;
+}
+
+.subheader-text {
+  margin: 0 0 30px 0;
+  font-size: 24px;  
+  font-weight: 300;
+  display: inline-block;
+  width: 85%;
+  line-height: 1.4;
+}
+
+.description-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 50px;
+  background-color: rgba(20, 33, 64, 0.8);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 16px;
+  margin-top: 10px;
+  padding: 50px 30px;
+  width: 90%;
+  max-width: 900px;
+}
+
+.description {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 250px;
+}
+
+.icon-wrapper {
+  width: 60px;
+  height: 60px;
+  background: rgba(59, 130, 246, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  font-size: 28px;
+  color: #3b82f6;
+}
+
+.description h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: white;
+}
+
+.description p {
+  font-size: 14px;
+  font-weight: 300;
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.5;
+}
+.landing-page-wrapper-2 {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(2, 14, 42, 1) 0%,
+    rgba(15, 23, 42, 0.9) 50%,
+    rgba(11, 33, 84, 0.5) 100%
+  ),
+  url("../assets/background2.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  padding-top: 100px;
+  gap: 30px;
+  position: relative;
+  z-index: 1;
+}
