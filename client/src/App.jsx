@@ -14,6 +14,7 @@ import LoginPage from "./LoginPage.jsx";
 import RegisterPage from "./RegisterPage.jsx";
 import SuperAdminPage from "./components/SuperAdmin/SuperAdminPage.jsx";
 import AdminPage from "./components/SuperAdmin/Admin/AdminPage.jsx";
+import WorkerPage from "./components/Worker/WorkerPage.jsx";
 import LandingPage from "./components/LandingPage.jsx";
 import "./App.css";
 
@@ -26,6 +27,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/super-admin" element={<SuperAdminPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/worker" element={<WorkerPage />} />
         <Route path="/home" element={<LandingPage />} />
 
         {/* Guest-accessible routes (no ProtectedRoute) */}
