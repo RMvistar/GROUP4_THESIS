@@ -1,4 +1,4 @@
-.admin-navigation-wrapper {
+.worker-navigation-wrapper {
   width: 250px;
   height: 100vh;
   background: #121E33;
@@ -236,7 +236,7 @@
   border-color: #d32f2f;
 }
 
-.admin-navigation-wrapper .logo-container {
+.worker-navigation-wrapper .logo-container {
   display: flex;
   justify-content: flex-start;
   padding-left: 20px;
@@ -244,7 +244,7 @@
   width: 100%;
 }
 
-.admin-navigation-wrapper .logo {
+.worker-navigation-wrapper .logo {
   height: auto;
   width: 25%;
   object-fit: contain;

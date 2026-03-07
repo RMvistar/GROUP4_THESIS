@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import "./AdminPage.css";
 import AdminNavigation from "./AdminNavigation.jsx";
-import Dashboard from "../../Dashboard/Dashboard.jsx";
-import AdminNodeDetails from "../AdminNodeDetails.jsx";
+import WorkNodeDetails from "../WorkNodeDetails.jsx";
 import AdminAlerts from "../../Alerts/AdminAlerts.jsx";
 import ActivityLog from "../ActivityLog.jsx";
 import WorkerManagement from "./WorkerManagement.jsx";
+import WorkDashboard from "../WorkDashboard.jsx";
 
 function AdminPage() {
   const [activeSection, setActiveSection] = useState(() => {
@@ -23,11 +23,11 @@ function AdminPage() {
         onSectionChange={setActiveSection}
       />
       <div className="admin-content">
-        {activeSection === "dashboard" && <Dashboard />}
+        {activeSection === "dashboard" && <WorkDashboard />}
         {activeSection === "alerts" && <AdminAlerts />}
         {activeSection === "worker-management" && <WorkerManagement />}
         {activeSection === "activity-log" && <ActivityLog />}
-        {activeSection === "node-details" && <AdminNodeDetails />}
+        {activeSection === "node-details" && <WorkNodeDetails />}
       </div>
     </div>
   );

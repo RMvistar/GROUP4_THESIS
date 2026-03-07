@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import "./SuperAdminPage.css";
 import SuperAdminNavigation from "./SuperAdminNavigation.jsx";
-import Dashboard from "../Dashboard/Dashboard.jsx";
-import Alerts from "../Alerts/Alerts.jsx";
 import UserManagement from "./UserManagement.jsx";
 import RolesAndPermissions from "./RolesAndPermissions.jsx";
 import ActivityLog from "./ActivityLog.jsx";
 import AdminNodeDetails from "./AdminNodeDetails.jsx";
 import AdminAlerts from "../Alerts/AdminAlerts.jsx";
+import WorkDashboard from "./WorkDashboard.jsx";
 
 function SuperAdminPage() {
   const [activeSection, setActiveSection] = useState(() => {
@@ -25,7 +24,7 @@ function SuperAdminPage() {
         onSectionChange={setActiveSection}
       />
       <div className="super-admin-content">
-        {activeSection === "dashboard" && <Dashboard />}
+        {activeSection === "dashboard" && <WorkDashboard />}
         {activeSection === "alerts" && <AdminAlerts />}
         {activeSection === "user-management" && <UserManagement />}
         {activeSection === "roles-permissions" && <RolesAndPermissions />}
