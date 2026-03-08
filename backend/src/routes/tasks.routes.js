@@ -36,8 +36,13 @@ router.patch(
   resolveTask,
 );
 
-// Admin routes (MANAGE_TASKS)
-router.get("/", verifyToken, requirePermission("MANAGE_TASKS"), getTasks);
+// Admin + Worker routes
+router.get(
+  "/",
+  verifyToken,
+  requireAnyPermission(["MANAGE_TASKS", "ASSIGN_TASKS"]),
+  getTasks,
+);
 router.post("/", verifyToken, requirePermission("MANAGE_TASKS"), createTask);
 router.delete(
   "/:id",

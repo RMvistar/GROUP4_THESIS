@@ -14,7 +14,7 @@ export const requirePermission = (...perms) => {
   };
 };
 
-// User must have AT LEAST ONE of the listed permissions (for shared routes)
+// User must have AT LEAST ONE of the listed permission
 export const requireAnyPermission = (...perms) => {
   return (req, res, next) => {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });

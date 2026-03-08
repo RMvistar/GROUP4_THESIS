@@ -15,20 +15,48 @@ function ActivityLog() {
   const [nodeFilter, setNodeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [nodes, setNodes] = useState([]);
 
-  // Fetch activity logs on component mount
+  // Fetch real node list once on mount for the dropdown
+  useEffect(() => {
+    const fetchNodes = async () => {
+      try {
+        const res = await fetch("http://localhost:5001/api/nodes", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setNodes(data);
+        }
+      } catch (err) {
+        console.error("Error fetching nodes:", err);
+      }
+    };
+    fetchNodes();
+  }, [token]);
+
+  // Re-fetch whenever any filter or search term changes
   useEffect(() => {
     fetchActivityLogs();
-  }, []);
+  }, [nodeFilter, roleFilter, statusFilter, searchTerm]);
 
   const fetchActivityLogs = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5001/api/activity-logs", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const params = new URLSearchParams();
+      if (nodeFilter !== "all") params.append("nodeLocation", nodeFilter);
+      if (roleFilter !== "all") params.append("role", roleFilter);
+      if (statusFilter !== "all") params.append("status", statusFilter);
+      if (searchTerm) params.append("search", searchTerm);
+
+      const response = await fetch(
+        `http://localhost:5001/api/activity-logs?${params}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch activity logs");
@@ -61,31 +89,8 @@ function ActivityLog() {
     setRoleFilter(e.target.value);
   };
 
-  // Filter the activity logs based on search and filters
-  const filteredLogs = activityLogs.filter((log) => {
-    const userName = `${log.user_id?.first_name || ""} ${log.user_id?.last_name || ""}`;
-    const nodeLocation = log.node_id?.location || "";
-    const roleName = log.user_id?.role?.name || "";
-
-    const matchesSearch =
-      userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      nodeLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesNode =
-      nodeFilter === "all" ||
-      nodeLocation.toLowerCase().includes(nodeFilter.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "all" ||
-      log.new_status?.toLowerCase() === statusFilter.toLowerCase();
-
-    const matchesRole =
-      roleFilter === "all" ||
-      roleName.toLowerCase() === roleFilter.toLowerCase();
-
-    return matchesSearch && matchesNode && matchesStatus && matchesRole;
-  });
+  // Filtering is handled server-side; activityLogs already reflects active filters
+  const filteredLogs = activityLogs;
 
   return (
     <div className="activity-log-wrapper">
@@ -115,9 +120,11 @@ function ActivityLog() {
                 onChange={handleNodeFilterChange}
               >
                 <option value="all">All Nodes</option>
-                <option value="building a">Node A</option>
-                <option value="building b">Node B</option>
-                <option value="building c">Node C</option>
+                {nodes.map((node) => (
+                  <option key={node._id} value={node.location}>
+                    {node.location}
+                  </option>
+                ))}
               </select>
             </div>
 

@@ -110,7 +110,8 @@ export async function getTasks(req, res) {
 // Get tasks assigned to current worker
 export async function getMyTasks(req, res) {
   try {
-    const tasks = await Task.find({ assigned_to: req.user.userId })
+    const tasks = await Task.find({ assigned_to: req.user._id })
+      .populate("assigned_to", "first_name last_name email")
       .populate("created_by", "first_name last_name email")
       .populate("node_id", "node_id location")
       .sort({ createdAt: -1 });

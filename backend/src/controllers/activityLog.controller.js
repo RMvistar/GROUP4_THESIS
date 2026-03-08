@@ -2,12 +2,19 @@ import ActivityLog from "../models/ActivityLog.js";
 
 export async function getActivityLogs(req, res) {
   try {
-    const { nodeId, status, role, search } = req.query;
+    const { nodeId, nodeLocation, status, role, search } = req.query;
     let query = {};
 
+    // Filter by nodeId (MongoDB ObjectId) if provided
     if (nodeId && nodeId !== "all") {
       query.node_id = nodeId;
     }
+
+    // Filter by status at the DB level
+    if (status && status !== "all") {
+      query.new_status = { $regex: new RegExp(`^${status}$`, "i") };
+    }
+
     const logs = await ActivityLog.find(query)
       .populate("user_id", "first_name last_name email")
       .populate({
@@ -19,6 +26,14 @@ export async function getActivityLogs(req, res) {
       .sort({ timestamp: -1 });
 
     let filteredLogs = logs;
+
+    // Filter by node location string (e.g. "building b - floor 1")
+    if (nodeLocation && nodeLocation !== "all") {
+      const locationLower = nodeLocation.toLowerCase();
+      filteredLogs = filteredLogs.filter((log) =>
+        log.node_id?.location?.toLowerCase().includes(locationLower),
+      );
+    }
 
     // Filter by role
     if (role && role !== "all") {

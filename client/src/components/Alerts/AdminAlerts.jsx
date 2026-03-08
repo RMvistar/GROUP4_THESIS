@@ -1,5 +1,5 @@
 import "./AdminAlerts.css";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
 
@@ -10,6 +10,13 @@ function NewAlerts() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Assign modal state
+  const [assignModal, setAssignModal] = useState({ open: false, taskId: null });
+  const [users, setUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [selectedUser, setSelectedUser] = useState("");
+  const [assigning, setAssigning] = useState(false);
 
   // Dropdown state for each node in each column
   const [unresolvedNodeAOpen, setUnresolvedNodeAOpen] = useState(false);
@@ -72,6 +79,65 @@ function NewAlerts() {
     } catch (err) {
       console.error("Error acknowledging task:", err);
       alert(err.message);
+    }
+  };
+
+  // Open assign modal and fetch users
+  const openAssignModal = async (taskId) => {
+    setAssignModal({ open: true, taskId });
+    setSelectedUser("");
+    setUsersLoading(true);
+    try {
+      const response = await fetch("http://localhost:5001/api/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Failed to fetch users");
+      const data = await response.json();
+      // Filter out super-admin users
+      const filtered = data.filter(
+        (u) =>
+          u.role && u.role.name && u.role.name.toLowerCase() !== "super admin",
+      );
+      setUsers(filtered);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+      setUsers([]);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  const closeAssignModal = () => {
+    setAssignModal({ open: false, taskId: null });
+    setSelectedUser("");
+  };
+
+  const handleAssignSubmit = async () => {
+    if (!selectedUser) return;
+    setAssigning(true);
+    try {
+      const response = await fetch(
+        `http://localhost:5001/api/tasks/${assignModal.taskId}/delegate`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ assigned_to: selectedUser }),
+        },
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to assign task");
+      }
+      closeAssignModal();
+      await fetchTasks();
+    } catch (err) {
+      console.error("Error assigning task:", err);
+      alert(err.message);
+    } finally {
+      setAssigning(false);
     }
   };
 
@@ -200,7 +266,12 @@ function NewAlerts() {
                             >
                               Acknowledge
                             </button>
-                            <button className="assign-button">Assign</button>
+                            <button
+                              className="assign-button"
+                              onClick={() => openAssignModal(task._id)}
+                            >
+                              Assign
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -309,6 +380,73 @@ function NewAlerts() {
           </div>
         </div>
       </div>
+
+      {/* Assign Modal */}
+      {assignModal.open && (
+        <div className="assign-modal-overlay" onClick={closeAssignModal}>
+          <div className="assign-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="assign-modal-header">
+              <h3 className="assign-modal-title">Assign Task</h3>
+              <button className="assign-modal-close" onClick={closeAssignModal}>
+                <FaTimes />
+              </button>
+            </div>
+            <div className="assign-modal-body">
+              <p className="assign-modal-label">
+                Select a user to assign this task to:
+              </p>
+              {usersLoading ? (
+                <p className="assign-modal-loading">Loading users...</p>
+              ) : users.length === 0 ? (
+                <p className="assign-modal-empty">No assignable users found.</p>
+              ) : (
+                <div className="assign-user-list">
+                  {users.map((user) => (
+                    <div
+                      key={user._id}
+                      className={`assign-user-item${
+                        selectedUser === user._id ? " selected" : ""
+                      }`}
+                      onClick={() => setSelectedUser(user._id)}
+                    >
+                      <div className="assign-user-avatar">
+                        {user.first_name?.[0]}
+                        {user.last_name?.[0]}
+                      </div>
+                      <div className="assign-user-info">
+                        <span className="assign-user-name">
+                          {user.first_name} {user.last_name}
+                        </span>
+                        <span className="assign-user-role">
+                          {user.role?.name || "No Role"}
+                        </span>
+                      </div>
+                      {selectedUser === user._id && (
+                        <div className="assign-user-check">&#10003;</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="assign-modal-footer">
+              <button
+                className="assign-modal-cancel"
+                onClick={closeAssignModal}
+              >
+                Cancel
+              </button>
+              <button
+                className="assign-modal-confirm"
+                onClick={handleAssignSubmit}
+                disabled={!selectedUser || assigning}
+              >
+                {assigning ? "Assigning..." : "Confirm Assign"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
