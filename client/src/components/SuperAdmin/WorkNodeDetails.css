@@ -64,6 +64,157 @@
 
 .nodeCard .card-body {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* Metrics Grid */
+.nodeCard .metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.nodeCard .metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border-left: 3px solid rgba(59, 130, 246, 0.5);
+  transition: all 0.2s ease;
+}
+
+.nodeCard .metric-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-left-color: #3b82f6;
+}
+
+.nodeCard .metric-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nodeCard .metric-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+}
+
+.nodeCard .metric-value.status-normal {
+  color: #10b981;
+}
+
+.nodeCard .metric-value.battery-value {
+  color: #10b981;
+}
+
+/* Insights Section */
+.nodeCard .insights-section {
+  padding: 1.25rem;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.nodeCard .section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #3b82f6;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nodeCard .insights-text {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Actions Section */
+.nodeCard .actions-section {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 0.5rem;
+}
+
+.nodeCard .historical-trends-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.nodeCard .historical-trends-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.5);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.nodeCard .historical-trends-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.nodeCard .historical-trends-button svg {
+  font-size: 1rem;
+}
+
+/* Node Card Styles */
+.nodeCard {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.nodeCard .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nodeCard .status-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.nodeCard .timestamp {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.nodeCard .card-body {
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem 1rem;

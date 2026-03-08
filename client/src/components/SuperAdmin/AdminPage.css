@@ -220,6 +220,19 @@
   padding: 0.5rem 0;
 }
 
+.data-row-insights {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.5rem 0;
+}
+
+.data-row-insights-description {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.5rem 0;
+}
 .data-label {
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
