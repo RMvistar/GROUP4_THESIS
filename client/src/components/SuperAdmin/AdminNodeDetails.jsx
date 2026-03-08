@@ -1,5 +1,5 @@
 import "./AdminNodeDetails.css";
-import { FaPlus, FaTimes } from "react-icons/fa";
+import { FaPlus, FaTimes, FaChartLine } from "react-icons/fa";
 import { useState } from "react";
 
 function AdminNodeDetails() {
@@ -58,49 +58,65 @@ function AdminNodeDetails() {
             </span>
           </div>
           <div className="card-body">
-            <div className="data-row">
-              <span className="data-label">Node Location:</span>
-              <span className="data-value">USLS</span>
+            {/* Primary Metrics Grid */}
+            <div className="metrics-grid">
+              <div className="metric-item">
+                <span className="metric-label">Node Location</span>
+                <span className="metric-value">USLS</span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Status</span>
+                <span className="metric-value status-normal">Normal</span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Battery</span>
+                <span className="metric-value battery-value">
+                  {sensor.batteryPercent !== undefined
+                    ? `${sensor.batteryPercent}%`
+                    : "N/A"}
+                </span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Clog Status</span>
+                <span className="metric-value">
+                  {sensor.distance !== undefined
+                    ? `${sensor.distance} cm`
+                    : "N/A"}
+                </span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Water Level</span>
+                <span className="metric-value">
+                  {sensor.water_level !== undefined
+                    ? `${sensor.water_level.toFixed(2)} cm`
+                    : "N/A"}
+                </span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Water Flow</span>
+                <span className="metric-value">
+                  {sensor.flow_rate !== undefined
+                    ? `${sensor.flow_rate} cm/s`
+                    : "N/A"}
+                </span>
+              </div>
             </div>
-            <div className="data-row">
-              <span className="data-label">Status:</span>
-              <span className="data-value">Normal</span>
+
+            {/* System Insights Section */}
+            <div className="insights-section">
+              <h3 className="section-title">System Prediction & Insights</h3>
+              <p className="insights-text">
+                No prediction data available. Historical trends analysis can
+                provide predictive insights.
+              </p>
             </div>
-            <div className="data-row">
-              <span className="data-label">Battery:</span>
-              <span className="data-value">
-                {sensor.batteryPercent !== undefined
-                  ? `${sensor.batteryPercent}%`
-                  : "N/A"}
-              </span>
-            </div>
-            <div className="data-row">
-              <span className="data-label">Clog Status:</span>
-              <span className="data-value">
-                {sensor.distance !== undefined
-                  ? `${sensor.distance} cm`
-                  : "N/A"}
-              </span>
-            </div>
-            <div className="data-row">
-              <span className="data-label">Water Level:</span>
-              <span className="data-value">
-                {sensor.water_level !== undefined
-                  ? `${sensor.water_level.toFixed(2)} cm`
-                  : "N/A"}
-              </span>
-            </div>
-            <div className="data-row">
-              <span className="data-label">Water Flow:</span>
-              <span className="data-value">
-                {sensor.flow_rate !== undefined
-                  ? `${sensor.flow_rate} cm/s`
-                  : "N/A"}
-              </span>
-            </div>
-            <div className="data-row">
-              <span className="data-label">System Prediction/Insights:</span>
-              <span className="data-value"></span>
+
+            {/* Actions Section */}
+            <div className="actions-section">
+              <button className="historical-trends-button">
+                <FaChartLine />
+                View Historical Trends
+              </button>
             </div>
           </div>
         </div>

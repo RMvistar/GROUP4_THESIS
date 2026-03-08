@@ -4,6 +4,7 @@ import WorkerNavigation from "./WorkerNavigation.jsx";
 import WorkDashboard from "../SuperAdmin/WorkDashboard.jsx";
 import WorkNodeDetails from "../SuperAdmin/WorkNodeDetails.jsx";
 import WorkerAlerts from "./WorkerAlerts.jsx";
+import Tasks from "./Tasks.jsx";
 
 function WorkerPage() {
   const [activeSection, setActiveSection] = useState(() => {
@@ -24,8 +25,7 @@ function WorkerPage() {
         {activeSection === "dashboard" && <WorkDashboard />}
         {activeSection === "node-details" && <WorkNodeDetails />}
         {activeSection === "alerts" && <WorkerAlerts />}
-        {/* Tasks section to be implemented later */}
-        {activeSection === "tasks" && <div>Tasks Component Coming Soon</div>}
+        {activeSection === "tasks" && <Tasks />}
       </div>
     </div>
   );
