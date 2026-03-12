@@ -6,7 +6,6 @@ import {
   FaBell,
   FaCog,
   FaChevronRight,
-  FaEllipsisV,
   FaUser,
   FaUserShield,
   FaHistory,
@@ -42,9 +41,6 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
         <div className="profile-info">
           <span className="profile-name">Super Admin</span>
         </div>
-        <button className="profile-menu-btn">
-          <FaEllipsisV />
-        </button>
       </div>
 
       {/* Navigation Menu */}
