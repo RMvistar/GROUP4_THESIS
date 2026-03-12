@@ -126,28 +126,32 @@ function WorkerAlerts() {
   const totalResolved = tasks.filter((t) => t.status === "resolved").length;
   const totalTasks = tasks.length;
   return (
-    <div className="alerts-wrapper">
-      <div className="alerts-content">
-        <div className="header-section">
-          <h2 className="page-title">Alerts</h2>
+    <div className="worker-alerts-wrapper">
+      <div className="worker-alerts-content">
+        <div className="worker-header-section">
+          <h2 className="worker-page-title">Alerts</h2>
         </div>
 
-        <div className="counters-section">
-          <div className="total-alerts-counter">
-            <span className="alert-label">Total alerts</span>
-            <span className="number-total-alerts">{totalTasks}</span>
+        <div className="worker-counters-section">
+          <div className="worker-total-alerts-counter">
+            <span className="worker-alert-label">Total alerts</span>
+            <span className="worker-number-total-alerts">{totalTasks}</span>
           </div>
-          <div className="unresolved-alerts-counter">
-            <span className="alert-label">Unresolved alerts</span>
-            <span className="number-unresolved-alerts">{totalPending}</span>
+          <div className="worker-unresolved-alerts-counter">
+            <span className="worker-alert-label">Unresolved alerts</span>
+            <span className="worker-number-unresolved-alerts">
+              {totalPending}
+            </span>
           </div>
-          <div className="ongoing-alerts-counter">
-            <span className="alert-label">Ongoing alerts</span>
-            <span className="number-ongoing-alerts">{totalOngoing}</span>
+          <div className="worker-ongoing-alerts-counter">
+            <span className="worker-alert-label">Ongoing alerts</span>
+            <span className="worker-number-ongoing-alerts">{totalOngoing}</span>
           </div>
-          <div className="resolved-alerts-counter">
-            <span className="alert-label">Resolved alerts</span>
-            <span className="number-resolved-alerts">{totalResolved}</span>
+          <div className="worker-resolved-alerts-counter">
+            <span className="worker-alert-label">Resolved alerts</span>
+            <span className="worker-number-resolved-alerts">
+              {totalResolved}
+            </span>
           </div>
         </div>
 
@@ -162,40 +166,42 @@ function WorkerAlerts() {
           </p>
         )}
 
-        <div className="body-section">
-          <div className="unresolved-alerts-column">
-            <span className="admin-column-title">Unresolved Alerts</span>
+        <div className="worker-body-section">
+          <div className="worker-unresolved-alerts-column">
+            <span className="worker-admin-column-title">Unresolved Alerts</span>
 
             {Object.entries(pendingTasks).map(
               ([nodeLocation, nodeTasks], index) => (
-                <div key={nodeLocation} className="node-dropdown-card">
+                <div key={nodeLocation} className="worker-node-dropdown-card">
                   <div
-                    className="node-dropdown-header"
+                    className="worker-node-dropdown-header"
                     onClick={() => {
                       const stateKey = `unresolvedNode${index}Open`;
                       eval(`setUnresolvedNode${index}Open(!${stateKey})`);
                     }}
                   >
-                    <span className="node-name">{nodeLocation}</span>
-                    <span className="node-badge">{nodeTasks.length}</span>
+                    <span className="worker-node-name">{nodeLocation}</span>
+                    <span className="worker-node-badge">
+                      {nodeTasks.length}
+                    </span>
                     <FaChevronDown />
                   </div>
-                  <div className="node-dropdown-content">
+                  <div className="worker-node-dropdown-content">
                     {nodeTasks.map((task) => (
-                      <div key={task._id} className="data-card">
-                        <div className="card-header">
+                      <div key={task._id} className="worker-data-card">
+                        <div className="worker-card-header">
                           <span>
                             {new Date(task.created_date).toLocaleString()}
                           </span>
                         </div>
-                        <div className="card-body">
+                        <div className="worker-card-body">
                           <span>
                             <strong>{task.title}</strong>
                           </span>
                           <p>{task.description}</p>
-                          <div className="buttons-container">
+                          <div className="worker-buttons-container">
                             <button
-                              className="acknowledge-button"
+                              className="worker-acknowledge-button"
                               onClick={() => handleAcknowledge(task._id)}
                             >
                               Acknowledge
@@ -205,7 +211,7 @@ function WorkerAlerts() {
                       </div>
                     ))}
                     {nodeTasks.length === 0 && (
-                      <p className="no-alerts">
+                      <p className="worker-no-alerts">
                         No pending alerts for this node
                       </p>
                     )}
@@ -215,36 +221,36 @@ function WorkerAlerts() {
             )}
 
             {Object.keys(pendingTasks).length === 0 && !loading && (
-              <p className="no-alerts">No unresolved alerts</p>
+              <p className="worker-no-alerts">No unresolved alerts</p>
             )}
           </div>
 
-          <div className="ongoing-alerts-column">
-            <span className="admin-column-title">Ongoing Alerts</span>
+          <div className="worker-ongoing-alerts-column">
+            <span className="worker-admin-column-title">Ongoing Alerts</span>
 
             {Object.entries(ongoingTasks).map(([nodeLocation, nodeTasks]) => (
-              <div key={nodeLocation} className="node-dropdown-card">
-                <div className="node-dropdown-header">
-                  <span className="node-name">{nodeLocation}</span>
-                  <span className="node-badge">{nodeTasks.length}</span>
+              <div key={nodeLocation} className="worker-node-dropdown-card">
+                <div className="worker-node-dropdown-header">
+                  <span className="worker-node-name">{nodeLocation}</span>
+                  <span className="worker-node-badge">{nodeTasks.length}</span>
                   <FaChevronDown />
                 </div>
-                <div className="node-dropdown-content">
+                <div className="worker-node-dropdown-content">
                   {nodeTasks.map((task) => (
-                    <div key={task._id} className="data-card">
-                      <div className="card-header">
+                    <div key={task._id} className="worker-data-card">
+                      <div className="worker-card-header">
                         <span>
                           {new Date(task.created_date).toLocaleString()}
                         </span>
                       </div>
-                      <div className="card-body">
+                      <div className="worker-card-body">
                         <span>
                           <strong>{task.title}</strong>
                         </span>
                         <p>{task.description}</p>
-                        <div className="buttons-container">
+                        <div className="worker-buttons-container">
                           <button
-                            className="resolve-button"
+                            className="worker-resolve-button"
                             onClick={() => handleResolve(task._id)}
                           >
                             Resolve
@@ -254,38 +260,40 @@ function WorkerAlerts() {
                     </div>
                   ))}
                   {nodeTasks.length === 0 && (
-                    <p className="no-alerts">No ongoing alerts for this node</p>
+                    <p className="worker-no-alerts">
+                      No ongoing alerts for this node
+                    </p>
                   )}
                 </div>
               </div>
             ))}
 
             {Object.keys(ongoingTasks).length === 0 && !loading && (
-              <p className="no-alerts">No ongoing alerts</p>
+              <p className="worker-no-alerts">No ongoing alerts</p>
             )}
           </div>
 
-          <div className="resolved-alerts-column">
-            <span className="admin-column-title">Resolved Alerts</span>
+          <div className="worker-resolved-alerts-column">
+            <span className="worker-admin-column-title">Resolved Alerts</span>
 
             {Object.entries(resolvedTasks).map(([nodeLocation, nodeTasks]) => (
-              <div key={nodeLocation} className="node-dropdown-card">
-                <div className="node-dropdown-header">
-                  <span className="node-name">{nodeLocation}</span>
-                  <span className="node-badge">{nodeTasks.length}</span>
+              <div key={nodeLocation} className="worker-node-dropdown-card">
+                <div className="worker-node-dropdown-header">
+                  <span className="worker-node-name">{nodeLocation}</span>
+                  <span className="worker-node-badge">{nodeTasks.length}</span>
                   <FaChevronDown />
                 </div>
-                <div className="node-dropdown-content">
+                <div className="worker-node-dropdown-content">
                   {nodeTasks.map((task) => (
-                    <div key={task._id} className="data-card">
-                      <div className="card-header">
+                    <div key={task._id} className="worker-data-card">
+                      <div className="worker-card-header">
                         <span>
                           {new Date(
                             task.completed_date || task.created_date,
                           ).toLocaleString()}
                         </span>
                       </div>
-                      <div className="card-body">
+                      <div className="worker-card-body">
                         <span>
                           <strong>{task.title}</strong>
                         </span>
@@ -294,7 +302,7 @@ function WorkerAlerts() {
                     </div>
                   ))}
                   {nodeTasks.length === 0 && (
-                    <p className="no-alerts">
+                    <p className="worker-no-alerts">
                       No resolved alerts for this node
                     </p>
                   )}
@@ -303,7 +311,7 @@ function WorkerAlerts() {
             ))}
 
             {Object.keys(resolvedTasks).length === 0 && !loading && (
-              <p className="no-alerts">No resolved alerts</p>
+              <p className="worker-no-alerts">No resolved alerts</p>
             )}
           </div>
         </div>
