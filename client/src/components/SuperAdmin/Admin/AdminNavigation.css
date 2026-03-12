@@ -49,20 +49,6 @@
   color: #b4b4b4;
 }
 
-.profile-menu-btn {
-  background: none;
-  border: none;
-  color: #b4b4b4;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .profile-menu-btn:hover {
   color: #fff;
 }

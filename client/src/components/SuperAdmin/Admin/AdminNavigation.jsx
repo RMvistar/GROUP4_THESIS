@@ -26,9 +26,6 @@ function AdminNavigation({ activeSection, onSectionChange }) {
         <div className="profile-info">
           <span className="profile-name">Admin</span>
         </div>
-        <button className="profile-menu-btn">
-          <FaEllipsisV />
-        </button>
       </div>
 
       {/* Navigation Menu */}

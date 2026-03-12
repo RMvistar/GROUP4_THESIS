@@ -25,9 +25,6 @@ function WorkerNavigation({ activeSection, onSectionChange }) {
         <div className="profile-info">
           <span className="profile-name">Worker</span>
         </div>
-        <button className="profile-menu-btn">
-          <FaEllipsisV />
-        </button>
       </div>
 
       {/* Navigation Menu */}
