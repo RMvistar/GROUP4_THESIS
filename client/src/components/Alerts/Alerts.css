@@ -20,6 +20,7 @@
 .alerts-content {
   background-color: #1a2942;
   border-radius: 12px;
+  width: 80%;
   padding: 30px;
   color: #fff;
   overflow: visible;
