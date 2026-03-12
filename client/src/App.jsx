@@ -10,7 +10,6 @@ import NodeDetails from "./components/NodeDetails/NodeDetails.jsx";
 import Alerts from "./components/Alerts/Alerts.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import React from "react";
-import LoginPage from "./LoginPage.jsx";
 import RegisterPage from "./RegisterPage.jsx";
 import SuperAdminPage from "./components/SuperAdmin/SuperAdminPage.jsx";
 import AdminPage from "./components/SuperAdmin/Admin/AdminPage.jsx";
@@ -23,7 +22,6 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/super-admin" element={<SuperAdminPage />} />
         <Route path="/admin" element={<AdminPage />} />
