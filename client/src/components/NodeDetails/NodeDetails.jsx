@@ -4,7 +4,7 @@ import "./NodeDetails.css";
 
 function NodeDetails() {
   return (
-    <div className="node-details">
+    <div className="node-details-container">
       <NodeContainer />
     </div>
   );

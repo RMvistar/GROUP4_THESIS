@@ -12,9 +12,8 @@
   min-height: 100vh;
   padding: 40px;
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.node-details-container h1 {
-  font-size: 32px;
-  margin-bottom: 20px;
-}

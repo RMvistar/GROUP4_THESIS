@@ -12,10 +12,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: 20px;
-  padding-top: 100px;
+  padding-top: 120px;
   gap: 30px;
 }
 
@@ -135,7 +133,7 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  padding-top: 100px;
+  padding-top: 80px;
   gap: 30px;
   position: relative;
   z-index: 1;

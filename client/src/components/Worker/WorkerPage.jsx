@@ -3,7 +3,7 @@ import "./WorkerPage.css";
 import WorkerNavigation from "./WorkerNavigation.jsx";
 import WorkDashboard from "../SuperAdmin/WorkDashboard.jsx";
 import WorkNodeDetails from "../SuperAdmin/WorkNodeDetails.jsx";
-import WorkerAlerts from "./WorkerAlerts.jsx";
+import WorkerAlerts from "../Alerts/WorkerAlerts.jsx";
 import Tasks from "./Tasks.jsx";
 
 function WorkerPage() {
