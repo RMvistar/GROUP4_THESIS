@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore.js";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
@@ -23,7 +24,7 @@ export const useSuperAdminManagementStore = create((set) => ({
     set({ loading: true, error: null });
 
     try {
-      const token = localStorage.getItem("token");
+      const token = useAuthStore.getState().token;
 
       const res = await fetch(`${API_BASE_URL}/api/users/CreateUser`, {
         method: "POST",
@@ -67,7 +68,7 @@ export const useSuperAdminManagementStore = create((set) => ({
     set({ loading: true, error: null });
 
     try {
-      const token = localStorage.getItem("token");
+      const token = useAuthStore.getState().token;
 
       const res = await fetch(`${API_BASE_URL}/api/users`, {
         method: "GET",
@@ -97,7 +98,7 @@ export const useSuperAdminManagementStore = create((set) => ({
   // Get all roles for dropdowns
   getRolesList: async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       const res = await fetch(`${API_BASE_URL}/api/roles`, {
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +116,7 @@ export const useSuperAdminManagementStore = create((set) => ({
   findUserById: async (userId) => {
     set({ loading: true, error: null });
     try {
-      const token = localStorage.getItem("token");
+      const token = useAuthStore.getState().token;
       const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
         method: "GET",
         headers: {
@@ -141,7 +142,7 @@ export const useSuperAdminManagementStore = create((set) => ({
   updateUser: async (userId, { first_name, last_name, email, role }) => {
     set({ loading: true, error: null });
     try {
-      const token = localStorage.getItem("token");
+      const token = useAuthStore.getState().token;
 
       const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
         method: "PUT",
@@ -175,7 +176,7 @@ export const useSuperAdminManagementStore = create((set) => ({
   deleteUser: async (userId) => {
     set({ loading: true, error: null });
     try {
-      const token = localStorage.getItem("token");
+      const token = useAuthStore.getState().token;
 
       const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
         method: "DELETE",

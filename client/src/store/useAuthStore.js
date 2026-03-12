@@ -1,10 +1,21 @@
 import { create } from "zustand";
+import {
+  getStoredToken,
+  isTokenExpired,
+  clearAuthStorage,
+} from "../utils/authToken.js";
+
+// On startup, clear any stale/expired/malformed token so it never gets sent to the server
+const _initialToken = getStoredToken();
+if (!_initialToken || isTokenExpired(_initialToken)) {
+  clearAuthStorage();
+}
 
 export const useAuthStore = create((set) => ({
-  //ang initial state - Load from localStorage
+  //ang initial state - Load from localStorage (re-read after cleanup above)
   user: JSON.parse(localStorage.getItem("user")) || null,
-  token: localStorage.getItem("token") || null,
-  isAuthenticated: !!localStorage.getItem("token"),
+  token: getStoredToken(),
+  isAuthenticated: !!getStoredToken(),
   loading: false,
   error: null,
 

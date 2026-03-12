@@ -1,5 +1,5 @@
 import "./Alerts.css";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import { useState, useEffect } from "react";
 
 function Alerts() {
@@ -24,10 +24,12 @@ function Alerts() {
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5001/api/tasks");
+      const API_BASE_URL =
+        import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
+      const response = await fetch(`${API_BASE_URL}/api/public/alerts`);
 
       if (!response.ok) {
-        throw new Error("Failed to fetch tasks");
+        throw new Error("Failed to fetch alerts");
       }
 
       const data = await response.json();
@@ -41,118 +43,7 @@ function Alerts() {
     }
   };
 
-  // Handle acknowledge button
-  const handleAcknowledge = async (taskId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5001/api/tasks/${taskId}/acknowledge`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to acknowledge task");
-      }
-
-      // Refresh tasks after successful acknowledgment
-      await fetchTasks();
-    } catch (err) {
-      console.error("Error acknowledging task:", err);
-      alert(err.message);
-    }
-  };
-
-  // Open assign modal and fetch users
-  const openAssignModal = async (taskId) => {
-    setAssignModal({ open: true, taskId });
-    setSelectedUser("");
-    setUsersLoading(true);
-    try {
-      const response = await fetch("http://localhost:5001/api/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error("Failed to fetch users");
-      const data = await response.json();
-      // Filter out super-admin users
-      const filtered = data.filter(
-        (u) =>
-          u.role && u.role.name && u.role.name.toLowerCase() !== "super admin",
-      );
-      setUsers(filtered);
-    } catch (err) {
-      console.error("Error fetching users:", err);
-      setUsers([]);
-    } finally {
-      setUsersLoading(false);
-    }
-  };
-
-  const closeAssignModal = () => {
-    setAssignModal({ open: false, taskId: null });
-    setSelectedUser("");
-  };
-
-  const handleAssignSubmit = async () => {
-    if (!selectedUser) return;
-    setAssigning(true);
-    try {
-      const response = await fetch(
-        `http://localhost:5001/api/tasks/${assignModal.taskId}/delegate`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ assigned_to: selectedUser }),
-        },
-      );
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to assign task");
-      }
-      closeAssignModal();
-      await fetchTasks();
-    } catch (err) {
-      console.error("Error assigning task:", err);
-      alert(err.message);
-    } finally {
-      setAssigning(false);
-    }
-  };
-
-  // Handle resolve button
-  const handleResolve = async (taskId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5001/api/tasks/${taskId}/resolve`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to resolve task");
-      }
-
-      // Refresh tasks after successful resolution
-      await fetchTasks();
-    } catch (err) {
-      console.error("Error resolving task:", err);
-      alert(err.message);
-    }
-  };
+  // Public view — no action handlers needed
 
   // Group tasks by status and node
   const groupTasksByNodeAndStatus = (status) => {

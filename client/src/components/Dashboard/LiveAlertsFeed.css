@@ -1,7 +1,7 @@
 .live-alerts-feed {
   width: 640px;
   min-height: 500px;
-  background: linear-gradient(to bottom, #121E33 0%, #0C1F3E 50%, #13223C 100%);
+  background: linear-gradient(to bottom, #121e33 0%, #0c1f3e 50%, #13223c 100%);
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   padding: 2rem;
@@ -30,5 +30,55 @@
 }
 
 .feed-content {
-  /* Content area for alerts */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.feed-alert-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid rgba(255, 255, 255, 0.1);
+}
+
+.feed-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.feed-alert-status {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.feed-alert-location {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #a8c4f0;
+}
+
+.feed-alert-time {
+  font-size: 0.75rem;
+  color: #6b8bb5;
+  margin-left: auto;
+}
+
+.feed-alert-body strong {
+  font-size: 0.9rem;
+  color: #e0eaff;
+}
+
+.feed-alert-body p {
+  font-size: 0.8rem;
+  color: #8aa5c8;
+  margin: 0.25rem 0 0;
 }

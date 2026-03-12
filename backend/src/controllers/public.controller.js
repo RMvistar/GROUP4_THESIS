@@ -1,5 +1,6 @@
 import Data from "../models/Data.js";
 import Node from "../models/Node.js";
+import Task from "../models/Task.js";
 
 // Get flood risk information for all active nodes
 export async function getFloodRiskInfo(req, res) {
@@ -164,6 +165,19 @@ export async function getNodeHistoricalData(req, res) {
       historical_events: formattedData,
       total_events: formattedData.length,
     });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+}
+
+// Get public alerts (tasks) — read-only, no auth required
+export async function getPublicAlerts(req, res) {
+  try {
+    const tasks = await Task.find()
+      .populate("node_id", "location node_id")
+      .sort({ created_date: -1 })
+      .select("title description status created_date completed_date node_id");
+    res.status(200).json(tasks);
   } catch (err) {
     res.status(500).json({ message: "Server Error", error: err.message });
   }

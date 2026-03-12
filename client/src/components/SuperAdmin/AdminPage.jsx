@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./AdminPage.css";
 
 function AdminPage() {
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const navigate = useNavigate();
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,6 @@ function AdminPage() {
       if (isInitialLoad) {
         setLoading(true);
       }
-      const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5001/api/data/export", {
         method: "GET",
         headers: {
@@ -61,7 +60,6 @@ function AdminPage() {
 
   const updateAlertStatus = async (dataId, newStatus) => {
     try {
-      const token = localStorage.getItem("token");
       const response = await fetch(
         `http://localhost:5001/api/data/alert-status/${dataId}`,
         {

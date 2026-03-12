@@ -5,6 +5,7 @@ import {
   getPublicNodeDetails,
   getNodeHistoricalData,
   getActiveNodes,
+  getPublicAlerts,
 } from "../controllers/public.controller.js";
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.get("/overflow-predictions", getOverflowPredictions);
 router.get("/nodes", getActiveNodes);
 router.get("/nodes/:nodeId", getPublicNodeDetails);
 router.get("/nodes/:nodeId/history", getNodeHistoricalData);
+router.get("/alerts", getPublicAlerts);
 
 export default router;
