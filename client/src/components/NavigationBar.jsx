@@ -1,19 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, replace, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore.js";
 import logo from "../assets/ARCOMLogo2.png";
+import LoginModal from "./LoginModal.jsx";
 import "./NavigationBar.css";
 
 function NavigationBar() {
   const { logout, user } = useAuthStore();
   const navigate = useNavigate();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate("/dashboard");
   };
+
   const handleAdminLogin = () => {
-    navigate("/login");
+    setIsLoginModalOpen(true);
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
   };
 
   const isAdmin = user?.role === "admin";
@@ -53,11 +60,13 @@ function NavigationBar() {
         {!isAdmin && (
           <li>
             <button className="admin-login-button" onClick={handleAdminLogin}>
-              Admin Login
+              Login
             </button>
           </li>
         )}
       </ul>
+
+      <LoginModal isOpen={isLoginModalOpen} onClose={handleCloseLoginModal} />
     </nav>
   );
 }

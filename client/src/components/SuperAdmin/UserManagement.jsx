@@ -92,14 +92,13 @@ function UserManagement() {
 
   // Generate username and password based on user data
   const generateCredentials = (firstName, lastName, idNumber) => {
-    // Username: FirstLetterOfFirstname.LastName (e.g., J.Doe)
+    // Username: LASTNAME-IDNUMBER
     const username =
       firstName && lastName
         ? `${lastName.toUpperCase()}-${idNumber.toUpperCase()}`
         : "";
 
     // Password: FirstLetterOfFirstName + FirstLetterOfLastName + IDNumber
-    // Example: John Doe with EMP-2024-001 = JDEMP-2024-001
     const password =
       firstName && lastName && idNumber
         ? `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}${idNumber}`
