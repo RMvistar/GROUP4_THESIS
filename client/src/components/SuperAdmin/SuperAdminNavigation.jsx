@@ -91,18 +91,6 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
 
               <div
                 className={`nav-subitem ${
-                  activeSection === "roles-permissions" ? "active" : ""
-                }`}
-                onClick={() => onSectionChange("roles-permissions")}
-              >
-                <span className="nav-icon">
-                  <FaUserShield />
-                </span>
-                <span className="nav-label">Roles & Permissions</span>
-              </div>
-
-              <div
-                className={`nav-subitem ${
                   activeSection === "activity-log" ? "active" : ""
                 }`}
                 onClick={() => onSectionChange("activity-log")}

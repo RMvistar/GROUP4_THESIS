@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import "./SuperAdminPage.css";
 import SuperAdminNavigation from "./SuperAdminNavigation.jsx";
 import UserManagement from "./UserManagement.jsx";
-import RolesAndPermissions from "./RolesAndPermissions.jsx";
 import ActivityLog from "./ActivityLog.jsx";
 import AdminNodeDetails from "./AdminNodeDetails.jsx";
 import AdminAlerts from "../Alerts/AdminAlerts.jsx";
@@ -27,7 +26,7 @@ function SuperAdminPage() {
         {activeSection === "dashboard" && <WorkDashboard />}
         {activeSection === "alerts" && <AdminAlerts />}
         {activeSection === "user-management" && <UserManagement />}
-        {activeSection === "roles-permissions" && <RolesAndPermissions />}
+
         {activeSection === "activity-log" && <ActivityLog />}
         {activeSection === "node-details" && <AdminNodeDetails />}
       </div>
