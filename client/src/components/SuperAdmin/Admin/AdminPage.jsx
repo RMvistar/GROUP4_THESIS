@@ -6,6 +6,7 @@ import AdminAlerts from "../../Alerts/AdminAlerts.jsx";
 import ActivityLog from "../ActivityLog.jsx";
 import WorkerManagement from "./WorkerManagement.jsx";
 import WorkDashboard from "../WorkDashboard.jsx";
+import AccountSettings from "../../AccountSettings/AccountSettings.jsx";
 
 function AdminPage() {
   const [activeSection, setActiveSection] = useState(() => {
@@ -28,6 +29,7 @@ function AdminPage() {
         {activeSection === "worker-management" && <WorkerManagement />}
         {activeSection === "activity-log" && <ActivityLog />}
         {activeSection === "node-details" && <WorkNodeDetails />}
+        {activeSection === "account-settings" && <AccountSettings />}
       </div>
     </div>
   );
