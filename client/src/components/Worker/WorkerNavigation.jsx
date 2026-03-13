@@ -6,6 +6,7 @@ import {
   FaEllipsisV,
   FaUser,
   FaTasks,
+  FaCog,
 } from "react-icons/fa";
 import logo from "../../assets/ARCOMLogo2.png";
 import "./WorkerNavigation.css";
@@ -71,6 +72,16 @@ function WorkerNavigation({ activeSection, onSectionChange }) {
             <FaTasks />
           </span>
           <span className="nav-label">Tasks</span>
+        </div>
+
+        <div
+          className={`nav-item ${activeSection === "account-settings" ? "active" : ""}`}
+          onClick={() => onSectionChange("account-settings")}
+        >
+          <span className="nav-icon">
+            <FaCog />
+          </span>
+          <span className="nav-label">Account Settings</span>
         </div>
 
         <button className="log-out-button">Log out</button>

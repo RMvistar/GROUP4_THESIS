@@ -7,6 +7,7 @@ import {
   FaUser,
   FaUsers,
   FaHistory,
+  FaCog,
 } from "react-icons/fa";
 import logo from "../../../assets/ARCOMLogo2.png";
 import "./AdminNavigation.css";
@@ -83,6 +84,16 @@ function AdminNavigation({ activeSection, onSectionChange }) {
             <FaBell />
           </span>
           <span className="nav-label">Alerts</span>
+        </div>
+
+        <div
+          className={`nav-item ${activeSection === "account-settings" ? "active" : ""}`}
+          onClick={() => onSectionChange("account-settings")}
+        >
+          <span className="nav-icon">
+            <FaCog />
+          </span>
+          <span className="nav-label">Account Settings</span>
         </div>
         <button className="log-out-button">Log out</button>
       </nav>

@@ -5,6 +5,7 @@ import WorkDashboard from "../SuperAdmin/WorkDashboard.jsx";
 import WorkNodeDetails from "../SuperAdmin/WorkNodeDetails.jsx";
 import WorkerAlerts from "../Alerts/WorkerAlerts.jsx";
 import Tasks from "./Tasks.jsx";
+import AccountSettings from "../AccountSettings/AccountSettings.jsx";
 
 function WorkerPage() {
   const [activeSection, setActiveSection] = useState(() => {
@@ -26,6 +27,7 @@ function WorkerPage() {
         {activeSection === "node-details" && <WorkNodeDetails />}
         {activeSection === "alerts" && <WorkerAlerts />}
         {activeSection === "tasks" && <Tasks />}
+        {activeSection === "account-settings" && <AccountSettings />}
       </div>
     </div>
   );

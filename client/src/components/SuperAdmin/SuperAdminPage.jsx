@@ -6,6 +6,7 @@ import ActivityLog from "./ActivityLog.jsx";
 import AdminNodeDetails from "./AdminNodeDetails.jsx";
 import AdminAlerts from "../Alerts/AdminAlerts.jsx";
 import WorkDashboard from "./WorkDashboard.jsx";
+import AccountSettings from "../AccountSettings/AccountSettings.jsx";
 
 function SuperAdminPage() {
   const [activeSection, setActiveSection] = useState(() => {
@@ -29,6 +30,7 @@ function SuperAdminPage() {
 
         {activeSection === "activity-log" && <ActivityLog />}
         {activeSection === "node-details" && <AdminNodeDetails />}
+        {activeSection === "account-settings" && <AccountSettings />}
       </div>
     </div>
   );
