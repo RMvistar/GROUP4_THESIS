@@ -1,8 +1,12 @@
-import React from "react";
+import { useState } from "react";
 import { FaChartLine } from "react-icons/fa";
+import HistoricalTrendsModal from "../HistoricalTrends/HistoricalTrendsModal";
 import "./NodeContainer.css";
 
 function NodeContainer() {
+  const [isTrendsModalOpen, setIsTrendsModalOpen] = useState(false);
+  const [selectedSensor, setSelectedSensor] = useState(null);
+
   // Sample data for display (not fetching from API for now)
   const sampleSensors = [
     {
@@ -14,6 +18,30 @@ function NodeContainer() {
       location: "USLS",
     },
   ];
+
+  const historicalEvents = [
+    { date: "2026-03-14", type: "clog" },
+    { date: "2026-03-13", type: "overflow" },
+    { date: "2026-03-13", type: "clog" },
+    { date: "2026-03-12", type: "clog" },
+    { date: "2026-03-12", type: "overflow" },
+    { date: "2026-03-11", type: "overflow" },
+    { date: "2026-03-10", type: "clog" },
+    { date: "2026-03-09", type: "clog" },
+    { date: "2026-03-08", type: "overflow" },
+    { date: "2026-02-28", type: "clog" },
+    { date: "2026-02-22", type: "overflow" },
+    { date: "2026-02-12", type: "clog" },
+    { date: "2026-01-20", type: "overflow" },
+    { date: "2026-01-14", type: "clog" },
+    { date: "2025-12-18", type: "clog" },
+    { date: "2025-12-05", type: "overflow" },
+    { date: "2025-11-21", type: "clog" },
+    { date: "2025-11-10", type: "overflow" },
+    { date: "2025-10-30", type: "clog" },
+  ];
+
+  const activeSensor = selectedSensor || sampleSensors[0];
 
   const displaySensors = sampleSensors;
 
@@ -98,7 +126,13 @@ function NodeContainer() {
 
           {/* Actions Section */}
           <div className="actions-section">
-            <button className="historical-trends-button">
+            <button
+              className="historical-trends-button"
+              onClick={() => {
+                setSelectedSensor(sensor);
+                setIsTrendsModalOpen(true);
+              }}
+            >
               <FaChartLine />
               View Trends
             </button>
@@ -113,6 +147,15 @@ function NodeContainer() {
       <div className="node-container-1">
         <div className="node-1">{renderNodeCard(displaySensors[0], 1)}</div>
       </div>
+
+      <HistoricalTrendsModal
+        isOpen={isTrendsModalOpen}
+        onClose={() => setIsTrendsModalOpen(false)}
+        sensor={activeSensor}
+        nodeLabel={activeSensor?.location || "USLS"}
+        events={historicalEvents}
+        selectId="node-trend-view-select"
+      />
     </div>
   );
 }

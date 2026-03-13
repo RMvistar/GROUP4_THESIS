@@ -1,9 +1,11 @@
 import "./AdminNodeDetails.css";
 import { FaPlus, FaTimes, FaChartLine } from "react-icons/fa";
 import { useState } from "react";
+import HistoricalTrendsModal from "../HistoricalTrends/HistoricalTrendsModal";
 
 function AdminNodeDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTrendsModalOpen, setIsTrendsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     nodeLocation: "",
     macAddress: "",
@@ -17,6 +19,28 @@ function AdminNodeDetails() {
     water_level: 186.13,
     flow_rate: 0.14,
   };
+
+  const historicalEvents = [
+    { date: "2026-03-14", type: "clog" },
+    { date: "2026-03-13", type: "overflow" },
+    { date: "2026-03-13", type: "clog" },
+    { date: "2026-03-12", type: "clog" },
+    { date: "2026-03-12", type: "overflow" },
+    { date: "2026-03-11", type: "overflow" },
+    { date: "2026-03-10", type: "clog" },
+    { date: "2026-03-09", type: "clog" },
+    { date: "2026-03-08", type: "overflow" },
+    { date: "2026-02-28", type: "clog" },
+    { date: "2026-02-22", type: "overflow" },
+    { date: "2026-02-12", type: "clog" },
+    { date: "2026-01-20", type: "overflow" },
+    { date: "2026-01-14", type: "clog" },
+    { date: "2025-12-18", type: "clog" },
+    { date: "2025-12-05", type: "overflow" },
+    { date: "2025-11-21", type: "clog" },
+    { date: "2025-11-10", type: "overflow" },
+    { date: "2025-10-30", type: "clog" },
+  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -113,7 +137,10 @@ function AdminNodeDetails() {
 
             {/* Actions Section */}
             <div className="actions-section">
-              <button className="historical-trends-button">
+              <button
+                className="historical-trends-button"
+                onClick={() => setIsTrendsModalOpen(true)}
+              >
                 <FaChartLine />
                 View Historical Trends
               </button>
@@ -175,6 +202,15 @@ function AdminNodeDetails() {
           </div>
         </div>
       )}
+
+      <HistoricalTrendsModal
+        isOpen={isTrendsModalOpen}
+        onClose={() => setIsTrendsModalOpen(false)}
+        sensor={sensor}
+        nodeLabel="USLS"
+        events={historicalEvents}
+        selectId="trend-view-select"
+      />
     </div>
   );
 }
