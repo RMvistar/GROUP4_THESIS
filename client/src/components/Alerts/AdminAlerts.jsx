@@ -18,13 +18,7 @@ function AdminAlerts() {
   const [selectedUser, setSelectedUser] = useState("");
   const [assigning, setAssigning] = useState(false);
 
-  // Dropdown state for each node in each column
-  const [unresolvedNodeAOpen, setUnresolvedNodeAOpen] = useState(false);
-  const [unresolvedNodeBOpen, setUnresolvedNodeBOpen] = useState(false);
-  const [ongoingNodeAOpen, setOngoingNodeAOpen] = useState(false);
-  const [ongoingNodeBOpen, setOngoingNodeBOpen] = useState(false);
-  const [resolvedNodeAOpen, setResolvedNodeAOpen] = useState(false);
-  const [resolvedNodeBOpen, setResolvedNodeBOpen] = useState(false);
+  const [openDropdowns, setOpenDropdowns] = useState({});
 
   // Fetch tasks on component mount
   useEffect(() => {
@@ -186,6 +180,21 @@ function AdminAlerts() {
   const ongoingTasks = groupTasksByNodeAndStatus("ongoing");
   const resolvedTasks = groupTasksByNodeAndStatus("resolved");
 
+  const getDropdownKey = (status, nodeLocation) => `${status}-${nodeLocation}`;
+
+  const isDropdownOpen = (status, nodeLocation) => {
+    const key = getDropdownKey(status, nodeLocation);
+    return openDropdowns[key] ?? true;
+  };
+
+  const toggleDropdown = (status, nodeLocation) => {
+    const key = getDropdownKey(status, nodeLocation);
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [key]: !(prev[key] ?? true),
+    }));
+  };
+
   // Count total tasks by status
   const totalPending = tasks.filter((t) => t.status === "pending").length;
   const totalOngoing = tasks.filter((t) => t.status === "ongoing").length;
@@ -205,7 +214,9 @@ function AdminAlerts() {
           </div>
           <div className="admin-unresolved-alerts-counter">
             <span className="admin-alert-label">Unresolved alerts</span>
-            <span className="admin-number-unresolved-alerts">{totalPending}</span>
+            <span className="admin-number-unresolved-alerts">
+              {totalPending}
+            </span>
           </div>
           <div className="admin-ongoing-alerts-counter">
             <span className="admin-alert-label">Ongoing alerts</span>
@@ -213,7 +224,9 @@ function AdminAlerts() {
           </div>
           <div className="admin-resolved-alerts-counter">
             <span className="admin-alert-label">Resolved alerts</span>
-            <span className="admin-number-resolved-alerts">{totalResolved}</span>
+            <span className="admin-number-resolved-alerts">
+              {totalResolved}
+            </span>
           </div>
         </div>
 
@@ -232,59 +245,60 @@ function AdminAlerts() {
           <div className="admin-unresolved-alerts-column">
             <span className="admin-column-title">Unresolved Alerts</span>
 
-            {Object.entries(pendingTasks).map(
-              ([nodeLocation, nodeTasks], index) => (
+            {Object.entries(pendingTasks).map(([nodeLocation, nodeTasks]) => {
+              const isOpen = isDropdownOpen("pending", nodeLocation);
+
+              return (
                 <div key={nodeLocation} className="admin-node-dropdown-card">
                   <div
                     className="admin-node-dropdown-header"
-                    onClick={() => {
-                      const stateKey = `unresolvedNode${index}Open`;
-                      eval(`setUnresolvedNode${index}Open(!${stateKey})`);
-                    }}
+                    onClick={() => toggleDropdown("pending", nodeLocation)}
                   >
                     <span className="admin-node-name">{nodeLocation}</span>
                     <span className="admin-node-badge">{nodeTasks.length}</span>
-                    <FaChevronDown />
+                    {isOpen ? <FaChevronDown /> : <FaChevronUp />}
                   </div>
-                  <div className="admin-node-dropdown-content">
-                    {nodeTasks.map((task) => (
-                      <div key={task._id} className="admin-data-card">
-                        <div className="admin-card-header">
-                          <span>
-                            {new Date(task.created_date).toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="admin-card-body">
-                          <span>
-                            <strong>{task.title}</strong>
-                          </span>
-                          <p>{task.description}</p>
-                          <div className="admin-buttons-container">
-                            <button
-                              className="admin-acknowledge-button"
-                              onClick={() => handleAcknowledge(task._id)}
-                            >
-                              Acknowledge
-                            </button>
-                            <button
-                              className="admin-assign-button"
-                              onClick={() => openAssignModal(task._id)}
-                            >
-                              Assign
-                            </button>
+                  {isOpen && (
+                    <div className="admin-node-dropdown-content">
+                      {nodeTasks.map((task) => (
+                        <div key={task._id} className="admin-data-card">
+                          <div className="admin-card-header">
+                            <span>
+                              {new Date(task.created_date).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="admin-card-body">
+                            <span>
+                              <strong>{task.title}</strong>
+                            </span>
+                            <p>{task.description}</p>
+                            <div className="admin-buttons-container">
+                              <button
+                                className="admin-acknowledge-button"
+                                onClick={() => handleAcknowledge(task._id)}
+                              >
+                                Acknowledge
+                              </button>
+                              <button
+                                className="admin-assign-button"
+                                onClick={() => openAssignModal(task._id)}
+                              >
+                                Assign
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                    {nodeTasks.length === 0 && (
-                      <p className="admin-no-alerts">
-                        No pending alerts for this node
-                      </p>
-                    )}
-                  </div>
+                      ))}
+                      {nodeTasks.length === 0 && (
+                        <p className="admin-no-alerts">
+                          No pending alerts for this node
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
-              ),
-            )}
+              );
+            })}
 
             {Object.keys(pendingTasks).length === 0 && !loading && (
               <p className="admin-no-alerts">No unresolved alerts</p>
@@ -294,43 +308,54 @@ function AdminAlerts() {
           <div className="admin-ongoing-alerts-column">
             <span className="admin-column-title">Ongoing Alerts</span>
 
-            {Object.entries(ongoingTasks).map(([nodeLocation, nodeTasks]) => (
-              <div key={nodeLocation} className="admin-node-dropdown-card">
-                <div className="admin-node-dropdown-header">
-                  <span className="admin-node-name">{nodeLocation}</span>
-                  <span className="admin-node-badge">{nodeTasks.length}</span>
-                  <FaChevronDown />
-                </div>
-                <div className="admin-node-dropdown-content">
-                  {nodeTasks.map((task) => (
-                    <div key={task._id} className="admin-data-card">
-                      <div className="admin-card-header">
-                        <span>
-                          {new Date(task.created_date).toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="admin-card-body">
-                        <span>
-                          <strong>{task.title}</strong>
-                        </span>
-                        <p>{task.description}</p>
-                        <div className="admin-buttons-container">
-                          <button
-                            className="admin-resolve-button"
-                            onClick={() => handleResolve(task._id)}
-                          >
-                            Resolve
-                          </button>
+            {Object.entries(ongoingTasks).map(([nodeLocation, nodeTasks]) => {
+              const isOpen = isDropdownOpen("ongoing", nodeLocation);
+
+              return (
+                <div key={nodeLocation} className="admin-node-dropdown-card">
+                  <div
+                    className="admin-node-dropdown-header"
+                    onClick={() => toggleDropdown("ongoing", nodeLocation)}
+                  >
+                    <span className="admin-node-name">{nodeLocation}</span>
+                    <span className="admin-node-badge">{nodeTasks.length}</span>
+                    {isOpen ? <FaChevronDown /> : <FaChevronUp />}
+                  </div>
+                  {isOpen && (
+                    <div className="admin-node-dropdown-content">
+                      {nodeTasks.map((task) => (
+                        <div key={task._id} className="admin-data-card">
+                          <div className="admin-card-header">
+                            <span>
+                              {new Date(task.created_date).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="admin-card-body">
+                            <span>
+                              <strong>{task.title}</strong>
+                            </span>
+                            <p>{task.description}</p>
+                            <div className="admin-buttons-container">
+                              <button
+                                className="admin-resolve-button"
+                                onClick={() => handleResolve(task._id)}
+                              >
+                                Resolve
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      ))}
+                      {nodeTasks.length === 0 && (
+                        <p className="admin-no-alerts">
+                          No ongoing alerts for this node
+                        </p>
+                      )}
                     </div>
-                  ))}
-                  {nodeTasks.length === 0 && (
-                    <p className="admin-no-alerts">No ongoing alerts for this node</p>
                   )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {Object.keys(ongoingTasks).length === 0 && !loading && (
               <p className="admin-no-alerts">No ongoing alerts</p>
@@ -340,39 +365,48 @@ function AdminAlerts() {
           <div className="admin-resolved-alerts-column">
             <span className="admin-column-title">Resolved Alerts</span>
 
-            {Object.entries(resolvedTasks).map(([nodeLocation, nodeTasks]) => (
-              <div key={nodeLocation} className="admin-node-dropdown-card">
-                <div className="admin-node-dropdown-header">
-                  <span className="admin-node-name">{nodeLocation}</span>
-                  <span className="admin-node-badge">{nodeTasks.length}</span>
-                  <FaChevronDown />
-                </div>
-                <div className="admin-node-dropdown-content">
-                  {nodeTasks.map((task) => (
-                    <div key={task._id} className="admin-data-card">
-                      <div className="admin-card-header">
-                        <span>
-                          {new Date(
-                            task.completed_date || task.created_date,
-                          ).toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="admin-card-body">
-                        <span>
-                          <strong>{task.title}</strong>
-                        </span>
-                        <p>{task.description}</p>
-                      </div>
+            {Object.entries(resolvedTasks).map(([nodeLocation, nodeTasks]) => {
+              const isOpen = isDropdownOpen("resolved", nodeLocation);
+
+              return (
+                <div key={nodeLocation} className="admin-node-dropdown-card">
+                  <div
+                    className="admin-node-dropdown-header"
+                    onClick={() => toggleDropdown("resolved", nodeLocation)}
+                  >
+                    <span className="admin-node-name">{nodeLocation}</span>
+                    <span className="admin-node-badge">{nodeTasks.length}</span>
+                    {isOpen ? <FaChevronDown /> : <FaChevronUp />}
+                  </div>
+                  {isOpen && (
+                    <div className="admin-node-dropdown-content">
+                      {nodeTasks.map((task) => (
+                        <div key={task._id} className="admin-data-card">
+                          <div className="admin-card-header">
+                            <span>
+                              {new Date(
+                                task.completed_date || task.created_date,
+                              ).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="admin-card-body">
+                            <span>
+                              <strong>{task.title}</strong>
+                            </span>
+                            <p>{task.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                      {nodeTasks.length === 0 && (
+                        <p className="admin-no-alerts">
+                          No resolved alerts for this node
+                        </p>
+                      )}
                     </div>
-                  ))}
-                  {nodeTasks.length === 0 && (
-                    <p className="admin-no-alerts">
-                      No resolved alerts for this node
-                    </p>
                   )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {Object.keys(resolvedTasks).length === 0 && !loading && (
               <p className="admin-no-alerts">No resolved alerts</p>

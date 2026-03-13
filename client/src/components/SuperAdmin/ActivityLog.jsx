@@ -5,6 +5,8 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { Pagination } from "antd";
 import { ConfigProvider, theme } from "antd";
 import { FaTable } from "react-icons/fa";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 function ActivityLog() {
   const { token } = useAuthStore();
@@ -78,6 +80,42 @@ function ActivityLog() {
       setLoading(false);
     }
   };
+  const handleDownloadExcel = () => {
+    if (!filteredLogs.length) return;
+
+    const rows = filteredLogs.map((log) => ({
+      Timestamp: new Date(log.timestamp).toLocaleString(),
+      User: `${log.user_id?.first_name || ""} ${log.user_id?.last_name || ""}`.trim(),
+      Role: log.user_id?.role?.name || "N/A",
+      NodeLocation: log.node_id?.location || "N/A",
+      Description: log.description || "",
+      Status: log.new_status || "N/A",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    worksheet["!cols"] = [
+      { wch: 22 }, // para sa Timestamp
+      { wch: 24 }, // dayun sa User
+      { wch: 14 }, // para sa Role
+      { wch: 28 }, // para sa NodeLocation
+      { wch: 60 }, // para sa  Description
+      { wch: 14 }, //and then  Status
+    ];
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Activity Logs");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const fileData = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
+
+    const now = new Date().toISOString().slice(0, 10);
+    saveAs(fileData, `activity-logs-${now}.xlsx`);
+  };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -111,7 +149,11 @@ function ActivityLog() {
       <div className="activity-log-content">
         <div className="header-section">
           <h2 className="header-title">Activity Log</h2>
-          <button className="download-excel-btn">
+          <button
+            className="download-excel-btn"
+            onClick={handleDownloadExcel}
+            disabled={!filteredLogs.length}
+          >
             <FaTable />
             Download Excel
           </button>
