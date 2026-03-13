@@ -1,0 +1,236 @@
+.historical-trends-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.historical-trends-modal-content {
+  background: #1a3050;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 980px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.historical-trends-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.historical-trends-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.historical-trends-close-btn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.historical-trends-close-btn:hover {
+  color: #fff;
+}
+
+.historical-trends-modal-body {
+  padding: 24px 30px 30px;
+}
+
+.historical-trends-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.historical-trends-summary-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.historical-trends-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.historical-trends-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.historical-trends-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.historical-trends-description {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 520px;
+}
+
+.historical-trends-view-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.historical-trends-view-label {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.historical-trends-view-select {
+  min-width: 150px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #0f1b2e;
+  color: #fff;
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.historical-trends-view-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.historical-trends-chart-wrapper {
+  background: #0f1b2e;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px 18px 12px;
+}
+
+.historical-trends-legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.historical-trends-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.historical-trends-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.historical-trends-legend-dot.clog {
+  background: #ef4444;
+}
+
+.historical-trends-legend-dot.overflow {
+  background: #f59e0b;
+}
+
+.historical-trends-chart {
+  width: 100%;
+  height: 320px;
+  display: block;
+}
+
+.historical-trends-grid-line {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1;
+}
+
+.historical-trends-axis-line {
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1;
+}
+
+.historical-trends-y-label {
+  fill: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  text-anchor: end;
+}
+
+.historical-trends-x-label {
+  fill: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+}
+
+.historical-trends-bar {
+  transition: opacity 0.2s ease;
+}
+
+.historical-trends-bar:hover {
+  opacity: 0.85;
+}
+
+.historical-trends-bar.clog-bar {
+  fill: #ef4444;
+}
+
+.historical-trends-bar.overflow-bar {
+  fill: #f59e0b;
+}
+
+@media (max-width: 900px) {
+  .historical-trends-toolbar {
+    align-items: stretch;
+  }
+
+  .historical-trends-view-switch {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .historical-trends-chart {
+    height: 260px;
+  }
+}
