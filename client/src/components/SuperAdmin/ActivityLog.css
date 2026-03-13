@@ -218,3 +218,92 @@
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
+
+/* Pagination */
+.pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #2a3f5f;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* Antd Pagination dark overrides */
+.ant-pagination .ant-pagination-item {
+  background: #0f1b2e;
+  border-color: #2a3f5f;
+}
+
+.ant-pagination .ant-pagination-item a {
+  color: #9ca3af;
+}
+
+.ant-pagination .ant-pagination-item:hover {
+  border-color: #3b82f6;
+}
+
+.ant-pagination .ant-pagination-item:hover a {
+  color: #3b82f6;
+}
+
+.ant-pagination .ant-pagination-item-active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.ant-pagination .ant-pagination-item-active a {
+  color: #fff;
+}
+
+.ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination .ant-pagination-next .ant-pagination-item-link {
+  background: #0f1b2e;
+  border-color: #2a3f5f;
+  color: #9ca3af;
+}
+
+.ant-pagination .ant-pagination-prev:hover .ant-pagination-item-link,
+.ant-pagination .ant-pagination-next:hover .ant-pagination-item-link {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.ant-pagination .ant-pagination-disabled .ant-pagination-item-link {
+  background: #0f1b2e;
+  border-color: #1e2d45;
+  color: #374151;
+  cursor: not-allowed;
+}
+
+.ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-ellipsis,
+.ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis {
+  color: #6b7280;
+}
+
+.ant-pagination .ant-pagination-total-text {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.download-excel-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}

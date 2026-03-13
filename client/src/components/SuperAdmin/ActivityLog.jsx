@@ -2,6 +2,9 @@ import "./ActivityLog.css";
 import { useState, useEffect } from "react";
 import { FaSearch, FaFilter } from "react-icons/fa";
 import { useAuthStore } from "../../store/useAuthStore";
+import { Pagination } from "antd";
+import { ConfigProvider, theme } from "antd";
+import { FaTable } from "react-icons/fa";
 
 function ActivityLog() {
   const { token } = useAuthStore();
@@ -16,6 +19,9 @@ function ActivityLog() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
   const [nodes, setNodes] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10; // Number of logs per page
 
   // Fetch real node list once on mount for the dropdown
   useEffect(() => {
@@ -91,12 +97,24 @@ function ActivityLog() {
 
   // Filtering is handled server-side; activityLogs already reflects active filters
   const filteredLogs = activityLogs;
+  const paginatedLogs = filteredLogs.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
+  useEffect(() => {
+    setCurrentPage(1); // Reset to first page whenever filters or search term changes
+  }, [nodeFilter, roleFilter, statusFilter, searchTerm]);
 
   return (
     <div className="activity-log-wrapper">
       <div className="activity-log-content">
         <div className="header-section">
           <h2 className="header-title">Activity Log</h2>
+          <button className="download-excel-btn">
+            <FaTable />
+            Download Excel
+          </button>
         </div>
 
         <div className="search-filter-section">
@@ -165,53 +183,69 @@ function ActivityLog() {
           )}
 
           {!loading && !error && (
-            <table className="activity-log-table">
-              <thead>
-                <tr>
-                  <th>Timestamp</th>
-                  <th>User</th>
-                  <th>Role</th>
-                  <th>Node Location</th>
-                  <th>Description</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredLogs.length === 0 ? (
+            <>
+              <table className="activity-log-table">
+                <thead>
                   <tr>
-                    <td
-                      colSpan="6"
-                      style={{ textAlign: "center", padding: "20px" }}
-                    >
-                      No activity logs found
-                    </td>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Node Location</th>
+                    <th>Description</th>
+                    <th>Status</th>
                   </tr>
-                ) : (
-                  filteredLogs.map((log) => (
-                    <tr key={log._id}>
-                      <td>{new Date(log.timestamp).toLocaleString()}</td>
-                      <td>{`${log.user_id?.first_name || ""} ${log.user_id?.last_name || ""}`}</td>
-                      <td>
-                        <span
-                          className={`role-badge role-${(log.user_id?.role?.name || "").toLowerCase().replace(" ", "-")}`}
-                        >
-                          {log.user_id?.role?.name || "N/A"}
-                        </span>
-                      </td>
-                      <td>{log.node_id?.location || "N/A"}</td>
-                      <td>{log.description}</td>
-                      <td>
-                        <span
-                          className={`status-badge status-${(log.new_status || "").toLowerCase()}`}
-                        >
-                          {log.new_status || "N/A"}
-                        </span>
+                </thead>
+                <tbody>
+                  {filteredLogs.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="6"
+                        style={{ textAlign: "center", padding: "20px" }}
+                      >
+                        No activity logs found
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    paginatedLogs.map((log) => (
+                      <tr key={log._id}>
+                        <td>{new Date(log.timestamp).toLocaleString()}</td>
+                        <td>{`${log.user_id?.first_name || ""} ${log.user_id?.last_name || ""}`}</td>
+                        <td>
+                          <span
+                            className={`role-badge role-${(log.user_id?.role?.name || "").toLowerCase().replace(" ", "-")}`}
+                          >
+                            {log.user_id?.role?.name || "N/A"}
+                          </span>
+                        </td>
+                        <td>{log.node_id?.location || "N/A"}</td>
+                        <td>{log.description}</td>
+                        <td>
+                          <span
+                            className={`status-badge status-${(log.new_status || "").toLowerCase()}`}
+                          >
+                            {log.new_status || "N/A"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+
+              <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+                <Pagination
+                  current={currentPage}
+                  total={filteredLogs.length}
+                  pageSize={pageSize}
+                  onChange={(page) => setCurrentPage(page)}
+                  showTotal={(total, range) =>
+                    `${range[0]}-${range[1]} of ${total} entries`
+                  }
+                  showSizeChanger={false}
+                  style={{ marginTop: "20px", textAlign: "right" }}
+                />
+              </ConfigProvider>
+            </>
           )}
         </div>
       </div>
