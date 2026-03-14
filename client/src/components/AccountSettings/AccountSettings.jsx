@@ -1,8 +1,17 @@
 import { useMemo, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useAuthStore } from "../../store/useAuthStore";
 import "./AccountSettings.css";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
+
 function AccountSettings() {
+  // useAuthStore gives us the JWT token so we can make authenticated requests.
+  const { token } = useAuthStore();
+
+  // storedUser is the user object that was saved to localStorage when they logged in.
+  // It includes the mustChangePassword flag the backend sends with every login.
   const storedUser = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem("user")) || {};
@@ -33,6 +42,12 @@ function AccountSettings() {
     passwordType: "",
   });
 
+  // mustChangePassword comes from the user object stored in localStorage.
+  // It is true when an admin just created the account or reset the password.
+  const [mustChange, setMustChange] = useState(
+    storedUser.mustChangePassword === true,
+  );
+
   const setSectionMessage = (section, type, text) => {
     setMessages((previous) => ({
       ...previous,
@@ -61,7 +76,10 @@ function AccountSettings() {
     );
   };
 
-  const handlePasswordSubmit = (event) => {
+  // handlePasswordSubmit now actually calls the backend instead of just
+  // validating locally.  The backend checks the current password, hashes the
+  // new one, saves it, and clears the mustChangePassword flag in the database.
+  const handlePasswordSubmit = async (event) => {
     event.preventDefault();
 
     if (!passwordForm.currentPassword || !passwordForm.newPassword) {
@@ -91,11 +109,60 @@ function AccountSettings() {
       return;
     }
 
-    setSectionMessage(
-      "password",
-      "success",
-      "Password change is validated in UI. API integration is pending.",
-    );
+    try {
+      // PATCH /api/users/change-password is protected by verifyToken.
+      // We send the JWT in the Authorization header so the backend knows who we are.
+      const res = await fetch(`${API_BASE_URL}/api/users/change-password`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          // The JWT token that was stored in localStorage during login.
+          Authorization: `Bearer ${token}`,
+        },
+        // Send both passwords in the request body as JSON.
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        // The backend returned an error (e.g. wrong current password).
+        setSectionMessage(
+          "password",
+          "error",
+          data.message || "Failed to change password.",
+        );
+        return;
+      }
+
+      // ✅ Success path:
+      // 1. Clear the form fields.
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      // 2. Clear the mustChangePassword banner locally so the warning disappears.
+      setMustChange(false);
+      // 3. Update localStorage so the flag stays cleared if the page refreshes.
+      const updatedUser = { ...storedUser, mustChangePassword: false };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      setSectionMessage(
+        "password",
+        "success",
+        "Password changed successfully!",
+      );
+    } catch {
+      setSectionMessage(
+        "password",
+        "error",
+        "Could not connect to server. Please try again.",
+      );
+    }
   };
 
   const togglePasswordVisibility = (field) => {
@@ -111,6 +178,17 @@ function AccountSettings() {
         <header className="settings-header">
           <h2>Account Settings</h2>
         </header>
+
+        {/* ─── Temporary-password banner ─────────────────────────────────────
+            This warning appears whenever mustChangePassword is still true.
+            It disappears the moment the user successfully changes their password
+            because handlePasswordSubmit sets setMustChange(false) on success. */}
+        {mustChange && (
+          <div className="settings-temp-password-banner">
+            ⚠️ You are using a <strong>temporary password</strong>. Please
+            change it now using the form below before continuing.
+          </div>
+        )}
 
         <section className="settings-card">
           <h3>Change Email</h3>

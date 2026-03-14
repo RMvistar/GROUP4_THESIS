@@ -71,6 +71,8 @@ export const login = async (req, res) => {
         name: user.username,
         email: user.email,
         role: user.role?.name || "user", // Return role name string, not the object
+        // Tell the frontend whether this is a temporary password the user must change.
+        mustChangePassword: user.mustChangePassword || false,
       },
     });
   } catch (err) {

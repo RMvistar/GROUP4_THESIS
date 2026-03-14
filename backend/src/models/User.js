@@ -12,6 +12,10 @@ const UserSchema = new mongoose.Schema(
 
     // Role is a reference to the Role collection (RBAC)
     role: { type: mongoose.Schema.Types.ObjectId, ref: "Role", default: null },
+
+    // When true the user must change their password before using the system.
+    // Set to true when an admin creates or resets the account.
+    mustChangePassword: { type: Boolean, default: false },
   },
   {
     timestamps: true,

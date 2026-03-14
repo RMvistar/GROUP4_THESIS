@@ -94,9 +94,18 @@ export async function resolveTask(req, res) {
 }
 
 // Get all tasks (Admin)
+// Resolved alerts older than 24 hours are excluded.
 export async function getTasks(req, res) {
   try {
-    const tasks = await Task.find()
+    // Tasks resolved more than 24 hours ago should not appear.
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const tasks = await Task.find({
+      $or: [
+        { status: { $ne: "resolved" } },
+        { status: "resolved", completed_date: { $gte: twentyFourHoursAgo } },
+      ],
+    })
       .populate("assigned_to", "first_name last_name email")
       .populate("created_by", "first_name last_name email")
       .populate("node_id", "node_id location")
@@ -108,9 +117,18 @@ export async function getTasks(req, res) {
 }
 
 // Get tasks assigned to current worker
+// Resolved alerts older than 24 hours are excluded.
 export async function getMyTasks(req, res) {
   try {
-    const tasks = await Task.find({ assigned_to: req.user._id })
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const tasks = await Task.find({
+      assigned_to: req.user._id,
+      $or: [
+        { status: { $ne: "resolved" } },
+        { status: "resolved", completed_date: { $gte: twentyFourHoursAgo } },
+      ],
+    })
       .populate("assigned_to", "first_name last_name email")
       .populate("created_by", "first_name last_name email")
       .populate("node_id", "node_id location")

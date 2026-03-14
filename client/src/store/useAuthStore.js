@@ -36,6 +36,7 @@ export const useAuthStore = create((set) => ({
 
       // Save to localStorage
       localStorage.setItem("token", data.token);
+      // data.user now includes mustChangePassword from the backend.
       localStorage.setItem("user", JSON.stringify(data.user));
 
       set({

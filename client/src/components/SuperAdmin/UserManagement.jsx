@@ -42,6 +42,7 @@ function UserManagement() {
     deleteUser,
     updateUser,
     findUserById,
+    resetPassword,
   } = useSuperAdminManagementStore();
 
   const normalizeUser = (user) => ({
@@ -227,14 +228,30 @@ function UserManagement() {
     setDeleteConfirm(null);
   };
   // end sang delete function
-  const handleResetPassword = (user) => {
-    const { password } = generateCredentials(
-      user.first_name,
-      user.last_name,
-      user.government_id,
-    );
-    setResetPasswordUser({ ...user, newPassword: password });
+  const handleResetPassword = async (user) => {
+    // Show the modal immediately so the admin sees feedback.
+    setResetPasswordUser({
+      ...user,
+      sending: true,
+      done: false,
+      failed: false,
+    });
     setActiveDropdown(null);
+
+    // Call the backend: it generates a random temp password, saves it, and emails the user.
+    const result = await resetPassword(user._id);
+
+    if (result?.success) {
+      // Update the modal state to show success.
+      setResetPasswordUser((prev) => ({ ...prev, sending: false, done: true }));
+    } else {
+      setResetPasswordUser((prev) => ({
+        ...prev,
+        sending: false,
+        failed: true,
+        errorMessage: result?.message || "Failed to reset password",
+      }));
+    }
   };
 
   const handleToggleStatus = (user) => {
@@ -457,19 +474,40 @@ function UserManagement() {
           >
             <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
               <h3>Password Reset</h3>
-              <p>
-                New password for{" "}
-                <strong>
-                  {resetPasswordUser.first_name} {resetPasswordUser.last_name}
-                </strong>
-                :
-              </p>
-              <div className="password-display">
-                <code>{resetPasswordUser.newPassword}</code>
-              </div>
-              <p className="password-note">
-                Please save this password and share it securely with the user.
-              </p>
+
+              {/* Show a spinner while the API call is in flight */}
+              {resetPasswordUser.sending && (
+                <p>
+                  Sending reset email to{" "}
+                  <strong>{resetPasswordUser.email}</strong>…
+                </p>
+              )}
+
+              {/* Show success feedback once the email was sent */}
+              {resetPasswordUser.done && (
+                <>
+                  <p>
+                    ✅ A temporary password has been sent to{" "}
+                    <strong>{resetPasswordUser.email}</strong>.
+                  </p>
+                  <p className="password-note">
+                    <strong>
+                      {resetPasswordUser.first_name}{" "}
+                      {resetPasswordUser.last_name}
+                    </strong>{" "}
+                    will be prompted to change it on their next login via
+                    Account Settings.
+                  </p>
+                </>
+              )}
+
+              {/* Show error if the API call failed */}
+              {resetPasswordUser.failed && (
+                <p style={{ color: "red" }}>
+                  ❌ {resetPasswordUser.errorMessage}
+                </p>
+              )}
+
               <div className="confirm-actions">
                 <button
                   className="submit-btn"

@@ -207,4 +207,35 @@ export const useSuperAdminManagementStore = create((set) => ({
       return { success: false, message };
     }
   },
+
+  // Super Admin resets another user's password.
+  // The backend generates a random temporary password, saves it (hashed),
+  // sets mustChangePassword: true, and emails the user.
+  resetPassword: async (userId) => {
+    try {
+      const token = useAuthStore.getState().token;
+
+      const res = await fetch(
+        `${API_BASE_URL}/api/users/${userId}/reset-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to reset password");
+
+      return { success: true, message: data.message };
+    } catch (err) {
+      const message =
+        err?.name === "TypeError"
+          ? "Cannot connect to backend server. Please make sure backend is running on port 5001."
+          : err.message;
+      return { success: false, message };
+    }
+  },
 }));

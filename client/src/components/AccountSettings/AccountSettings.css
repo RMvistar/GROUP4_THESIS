@@ -4,6 +4,17 @@
   padding: 40px;
 }
 
+/* ── Temporary-password warning banner ─────────────────────────────────────── */
+.settings-temp-password-banner {
+  background-color: #7d1c1c;
+  border: 1px solid #e74c3c;
+  border-radius: 8px;
+  color: #ffd5d5;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 .account-settings-content {
   background-color: #1a2942;
   border-radius: 12px;

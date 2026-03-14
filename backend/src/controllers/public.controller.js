@@ -171,12 +171,24 @@ export async function getNodeHistoricalData(req, res) {
 }
 
 // Get public alerts (tasks) — read-only, no auth required
+// Resolved alerts are only shown for 24 hours after they were resolved.
 export async function getPublicAlerts(req, res) {
   try {
-    const tasks = await Task.find()
+    // Calculate the cutoff: anything resolved MORE than 24 hours ago is hidden.
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const tasks = await Task.find({
+      $or: [
+        // Rule 1: Show all tasks that are NOT resolved (pending or ongoing).
+        { status: { $ne: "resolved" } },
+        // Rule 2: Show resolved tasks ONLY if they were resolved within the last 24 hours.
+        { status: "resolved", completed_date: { $gte: twentyFourHoursAgo } },
+      ],
+    })
       .populate("node_id", "location node_id")
       .sort({ created_date: -1 })
       .select("title description status created_date completed_date node_id");
+
     res.status(200).json(tasks);
   } catch (err) {
     res.status(500).json({ message: "Server Error", error: err.message });
