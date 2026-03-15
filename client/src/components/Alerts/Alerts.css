@@ -181,7 +181,7 @@
   border-radius: 0 0 8px 8px;
 }
 
-.admin-column-title {
+.column-title {
   color: white;
   width: 100%;
   font-size: 18px;
@@ -243,6 +243,40 @@
   padding: 0 12px 16px 12px;
   box-sizing: border-box;
   animation: slideDown 0.2s ease;
+}
+
+.node-pagination-wrapper {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.node-pagination-wrapper .ant-pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.node-pagination-wrapper .ant-pagination-item,
+.node-pagination-wrapper .ant-pagination-prev,
+.node-pagination-wrapper .ant-pagination-next {
+  background: #0f1b2e;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.node-pagination-wrapper .ant-pagination-item a,
+.node-pagination-wrapper .ant-pagination-prev .ant-pagination-item-link,
+.node-pagination-wrapper .ant-pagination-next .ant-pagination-item-link {
+  color: #dbeafe;
+}
+
+.node-pagination-wrapper .ant-pagination-item-active {
+  background: #1d4ed8;
+  border-color: #3b82f6;
+}
+
+.node-pagination-wrapper .ant-pagination-item-active a {
+  color: #eff6ff;
 }
 
 @keyframes slideDown {
@@ -392,13 +426,20 @@
 
 .card-body > span {
   color: #ffffff;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 600;
-  margin-bottom: 20px;
-  line-height: 1.4;
+  margin-bottom: 10px;
+  line-height: 1.35;
   word-wrap: break-word;
   word-break: break-word;
   overflow-wrap: break-word;
+}
+
+.card-body p {
+  margin: 0 0 14px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 /* Alert status variants */

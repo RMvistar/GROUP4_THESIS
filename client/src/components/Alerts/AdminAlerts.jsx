@@ -2,8 +2,10 @@ import "./AdminAlerts.css";
 import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
+import { ConfigProvider, Pagination } from "antd";
 
 function AdminAlerts() {
+  const ALERTS_PER_PAGE = 2;
   const { token } = useAuthStore();
 
   // State for tasks
@@ -19,6 +21,7 @@ function AdminAlerts() {
   const [assigning, setAssigning] = useState(false);
 
   const [openDropdowns, setOpenDropdowns] = useState({});
+  const [nodePages, setNodePages] = useState({});
 
   // Fetch tasks on component mount
   useEffect(() => {
@@ -195,6 +198,28 @@ function AdminAlerts() {
     }));
   };
 
+  const getNodePageKey = (status, nodeLocation) => `${status}-${nodeLocation}`;
+
+  const getCurrentPage = (status, nodeLocation, totalItems) => {
+    const key = getNodePageKey(status, nodeLocation);
+    const maxPage = Math.max(1, Math.ceil(totalItems / ALERTS_PER_PAGE));
+    return Math.min(nodePages[key] || 1, maxPage);
+  };
+
+  const getPaginatedNodeTasks = (status, nodeLocation, nodeTasks) => {
+    const currentPage = getCurrentPage(status, nodeLocation, nodeTasks.length);
+    const start = (currentPage - 1) * ALERTS_PER_PAGE;
+    return nodeTasks.slice(start, start + ALERTS_PER_PAGE);
+  };
+
+  const handleNodePageChange = (status, nodeLocation, page) => {
+    const key = getNodePageKey(status, nodeLocation);
+    setNodePages((prev) => ({
+      ...prev,
+      [key]: page,
+    }));
+  };
+
   // Count total tasks by status
   const totalPending = tasks.filter((t) => t.status === "pending").length;
   const totalOngoing = tasks.filter((t) => t.status === "ongoing").length;
@@ -247,6 +272,16 @@ function AdminAlerts() {
 
             {Object.entries(pendingTasks).map(([nodeLocation, nodeTasks]) => {
               const isOpen = isDropdownOpen("pending", nodeLocation);
+              const currentPage = getCurrentPage(
+                "pending",
+                nodeLocation,
+                nodeTasks.length,
+              );
+              const paginatedTasks = getPaginatedNodeTasks(
+                "pending",
+                nodeLocation,
+                nodeTasks,
+              );
 
               return (
                 <div key={nodeLocation} className="admin-node-dropdown-card">
@@ -260,7 +295,7 @@ function AdminAlerts() {
                   </div>
                   {isOpen && (
                     <div className="admin-node-dropdown-content">
-                      {nodeTasks.map((task) => (
+                      {paginatedTasks.map((task) => (
                         <div key={task._id} className="admin-data-card">
                           <div className="admin-card-header">
                             <span>
@@ -294,6 +329,36 @@ function AdminAlerts() {
                           No pending alerts for this node
                         </p>
                       )}
+                      {nodeTasks.length > ALERTS_PER_PAGE && (
+                        <div className="admin-node-pagination-wrapper">
+                          <ConfigProvider
+                            theme={{
+                              token: {
+                                colorText: "#dbeafe",
+                                colorTextDisabled: "rgba(219, 234, 254, 0.45)",
+                                colorPrimary: "#3b82f6",
+                                colorBgContainer: "#0f1b2e",
+                                borderRadius: 6,
+                              },
+                            }}
+                          >
+                            <Pagination
+                              current={currentPage}
+                              pageSize={ALERTS_PER_PAGE}
+                              total={nodeTasks.length}
+                              onChange={(page) =>
+                                handleNodePageChange(
+                                  "pending",
+                                  nodeLocation,
+                                  page,
+                                )
+                              }
+                              showSizeChanger={false}
+                              size="small"
+                            />
+                          </ConfigProvider>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -310,6 +375,16 @@ function AdminAlerts() {
 
             {Object.entries(ongoingTasks).map(([nodeLocation, nodeTasks]) => {
               const isOpen = isDropdownOpen("ongoing", nodeLocation);
+              const currentPage = getCurrentPage(
+                "ongoing",
+                nodeLocation,
+                nodeTasks.length,
+              );
+              const paginatedTasks = getPaginatedNodeTasks(
+                "ongoing",
+                nodeLocation,
+                nodeTasks,
+              );
 
               return (
                 <div key={nodeLocation} className="admin-node-dropdown-card">
@@ -323,7 +398,7 @@ function AdminAlerts() {
                   </div>
                   {isOpen && (
                     <div className="admin-node-dropdown-content">
-                      {nodeTasks.map((task) => (
+                      {paginatedTasks.map((task) => (
                         <div key={task._id} className="admin-data-card">
                           <div className="admin-card-header">
                             <span>
@@ -351,6 +426,36 @@ function AdminAlerts() {
                           No ongoing alerts for this node
                         </p>
                       )}
+                      {nodeTasks.length > ALERTS_PER_PAGE && (
+                        <div className="admin-node-pagination-wrapper">
+                          <ConfigProvider
+                            theme={{
+                              token: {
+                                colorText: "#dbeafe",
+                                colorTextDisabled: "rgba(219, 234, 254, 0.45)",
+                                colorPrimary: "#3b82f6",
+                                colorBgContainer: "#0f1b2e",
+                                borderRadius: 6,
+                              },
+                            }}
+                          >
+                            <Pagination
+                              current={currentPage}
+                              pageSize={ALERTS_PER_PAGE}
+                              total={nodeTasks.length}
+                              onChange={(page) =>
+                                handleNodePageChange(
+                                  "ongoing",
+                                  nodeLocation,
+                                  page,
+                                )
+                              }
+                              showSizeChanger={false}
+                              size="small"
+                            />
+                          </ConfigProvider>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -367,6 +472,16 @@ function AdminAlerts() {
 
             {Object.entries(resolvedTasks).map(([nodeLocation, nodeTasks]) => {
               const isOpen = isDropdownOpen("resolved", nodeLocation);
+              const currentPage = getCurrentPage(
+                "resolved",
+                nodeLocation,
+                nodeTasks.length,
+              );
+              const paginatedTasks = getPaginatedNodeTasks(
+                "resolved",
+                nodeLocation,
+                nodeTasks,
+              );
 
               return (
                 <div key={nodeLocation} className="admin-node-dropdown-card">
@@ -380,7 +495,7 @@ function AdminAlerts() {
                   </div>
                   {isOpen && (
                     <div className="admin-node-dropdown-content">
-                      {nodeTasks.map((task) => (
+                      {paginatedTasks.map((task) => (
                         <div key={task._id} className="admin-data-card">
                           <div className="admin-card-header">
                             <span>
@@ -401,6 +516,36 @@ function AdminAlerts() {
                         <p className="admin-no-alerts">
                           No resolved alerts for this node
                         </p>
+                      )}
+                      {nodeTasks.length > ALERTS_PER_PAGE && (
+                        <div className="admin-node-pagination-wrapper">
+                          <ConfigProvider
+                            theme={{
+                              token: {
+                                colorText: "#dbeafe",
+                                colorTextDisabled: "rgba(219, 234, 254, 0.45)",
+                                colorPrimary: "#3b82f6",
+                                colorBgContainer: "#0f1b2e",
+                                borderRadius: 6,
+                              },
+                            }}
+                          >
+                            <Pagination
+                              current={currentPage}
+                              pageSize={ALERTS_PER_PAGE}
+                              total={nodeTasks.length}
+                              onChange={(page) =>
+                                handleNodePageChange(
+                                  "resolved",
+                                  nodeLocation,
+                                  page,
+                                )
+                              }
+                              showSizeChanger={false}
+                              size="small"
+                            />
+                          </ConfigProvider>
+                        </div>
                       )}
                     </div>
                   )}
