@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, replace, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore.js";
 import logo from "../assets/ARCOMLogo2.png";
 import LoginModal from "./LoginModal.jsx";
@@ -12,7 +12,7 @@ function NavigationBar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/dashboard");
+    navigate("/home");
   };
 
   const handleAdminLogin = () => {
@@ -23,7 +23,10 @@ function NavigationBar() {
     setIsLoginModalOpen(false);
   };
 
-  const isAdmin = user?.role === "admin";
+  const roleName =
+    typeof user?.role === "string" ? user.role : user?.role?.name;
+  const isAdmin = roleName?.toLowerCase() === "admin";
+  const isLoggedIn = !!user;
 
   return (
     <nav className="navigation-bar">
@@ -50,14 +53,14 @@ function NavigationBar() {
         <li>
           <NavLink to="/alerts">Alerts</NavLink>
         </li>
-        {isAdmin && (
+        {isLoggedIn && (
           <li>
             <button className="logout-button" onClick={handleLogout}>
               Logout
             </button>
           </li>
         )}
-        {!isAdmin && (
+        {!isLoggedIn && (
           <li>
             <button className="admin-login-button" onClick={handleAdminLogin}>
               Login

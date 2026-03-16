@@ -1,17 +1,26 @@
-import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaChartLine,
   FaNetworkWired,
   FaBell,
-  FaEllipsisV,
   FaUser,
   FaTasks,
   FaCog,
 } from "react-icons/fa";
+import { useAuthStore } from "../../store/useAuthStore";
 import logo from "../../assets/ARCOMLogo2.png";
 import "./WorkerNavigation.css";
 
 function WorkerNavigation({ activeSection, onSectionChange }) {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem("workerActiveSection");
+    navigate("/home");
+  };
+
   return (
     <div className="worker-navigation-wrapper">
       {/* User Profile Section */}
@@ -84,7 +93,9 @@ function WorkerNavigation({ activeSection, onSectionChange }) {
           <span className="nav-label">Account Settings</span>
         </div>
 
-        <button className="log-out-button">Log out</button>
+        <button className="log-out-button" onClick={handleLogout}>
+          Log out
+        </button>
       </nav>
     </div>
   );

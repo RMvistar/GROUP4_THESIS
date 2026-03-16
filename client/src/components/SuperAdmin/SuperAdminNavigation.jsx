@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaChartLine,
   FaUsers,
@@ -10,10 +11,13 @@ import {
   FaUserCog,
   FaCog,
 } from "react-icons/fa";
+import { useAuthStore } from "../../store/useAuthStore";
 import logo from "../../assets/ARCOMLogo2.png";
 import "./SuperAdminNavigation.css";
 
 function SuperAdminNavigation({ activeSection, onSectionChange }) {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
   const [isUsersExpanded, setIsUsersExpanded] = useState(() => {
     return localStorage.getItem("usersMenuExpanded") === "true";
   });
@@ -24,6 +28,13 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
 
   const toggleUsers = () => {
     setIsUsersExpanded(!isUsersExpanded);
+  };
+
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem("superAdminActiveSection");
+    localStorage.removeItem("usersMenuExpanded");
+    navigate("/home");
   };
 
   return (
@@ -130,7 +141,9 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
           </span>
           <span className="nav-label">Account Settings</span>
         </div>
-        <button className="log-out-button">Log out</button>
+        <button className="log-out-button" onClick={handleLogout}>
+          Log out
+        </button>
       </nav>
     </div>
   );
