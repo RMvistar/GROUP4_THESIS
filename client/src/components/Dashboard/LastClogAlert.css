@@ -1,46 +1,56 @@
 .last-clog-alert {
-  width: 300px;
-  height: 350px;
-  background: linear-gradient(to bottom, #2a1520 0%, #3c1528 50%, #2a1520 100%);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  border-radius: 10px;
+  width: 100%;
+  min-height: 320px;
+  background: linear-gradient(155deg, #2a1721 0%, #3a1a2b 54%, #2a1721 100%);
+  box-shadow: 0 12px 30px rgba(2, 10, 22, 0.45);
+  border-radius: 14px;
+  border: 1px solid rgba(239, 68, 68, 0.24);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 2rem 1.8rem;
   color: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.last-clog-alert:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(2, 10, 22, 0.52);
 }
 
 .icon-container {
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
 }
 
 .alert-icon {
-  font-size: 4rem;
-  color: #ff0000;
+  font-size: 3.4rem;
+  color: #f87171;
 }
 
 .widget-title {
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
-  color: white;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.85rem;
+  color: #ffe4e6;
+  letter-spacing: 0.02em;
 }
 
 .alert-time {
-  font-size: 4rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  font-size: 3.25rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  line-height: 1;
 }
 
 .alert-period {
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 1rem;
+  font-size: 1.05rem;
+  color: rgba(255, 228, 230, 0.88);
+  margin-bottom: 0.7rem;
 }
 
 .alert-location {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92rem;
+  color: rgba(255, 228, 230, 0.74);
+  text-align: center;
 }
