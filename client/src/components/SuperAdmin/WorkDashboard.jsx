@@ -34,10 +34,9 @@ function WorkDashboard() {
         <div className="work-last-clog-alert-container">
           <LastClogAlert />
         </div>
-      </div>
-
-      <div className="work-live-alerts-feed-container">
-        <LiveAlertsFeed />
+        <div className="work-live-alerts-feed-container">
+          <LiveAlertsFeed />
+        </div>
       </div>
     </div>
   );

@@ -35,10 +35,9 @@ function Dashboard() {
         <div className="last-clog-alert-container">
           <LastClogAlert />
         </div>
-      </div>
-
-      <div className="live-alerts-feed-container">
-        <LiveAlertsFeed />
+        <div className="live-alerts-feed-container">
+          <LiveAlertsFeed />
+        </div>
       </div>
     </div>
   );

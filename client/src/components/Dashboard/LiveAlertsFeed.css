@@ -1,10 +1,11 @@
 .live-alerts-feed {
-  width: 640px;
+  width: 100%;
   min-height: 500px;
-  background: linear-gradient(to bottom, #121e33 0%, #0c1f3e 50%, #13223c 100%);
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  padding: 2rem;
+  background: linear-gradient(155deg, #12213b 0%, #0d1f3a 54%, #12213b 100%);
+  border-radius: 14px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 14px 34px rgba(2, 10, 22, 0.45);
+  padding: 1.6rem 1.5rem;
   color: white;
 }
 
@@ -12,7 +13,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .live-indicator {
@@ -24,9 +25,10 @@
 }
 
 .feed-title {
-  font-size: 1.5rem;
-  font-weight: 500;
+  font-size: 1.2rem;
+  font-weight: 600;
   margin: 0;
+  color: #dbeafe;
 }
 
 .feed-content {
@@ -36,10 +38,16 @@
 }
 
 .feed-alert-item {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.045);
+  border-radius: 10px;
+  padding: 0.85rem 0.95rem;
   border-left: 3px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.feed-alert-item:hover {
+  background: rgba(255, 255, 255, 0.075);
+  transform: translateY(-1px);
 }
 
 .feed-alert-header {
@@ -61,32 +69,44 @@
 }
 
 .feed-alert-location {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: #a8c4f0;
 }
 
 .feed-alert-time {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #6b8bb5;
   margin-left: auto;
 }
 
 .feed-alert-body strong {
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   color: #e0eaff;
 }
 
 .feed-alert-body p {
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   color: #8aa5c8;
   margin: 0.25rem 0 0;
+  line-height: 1.45;
 }
 
 .live-alerts-pagination-wrapper {
-  margin-top: 0.75rem;
+  margin-top: 0.9rem;
   display: flex;
   justify-content: flex-end;
+}
+
+@media (max-width: 900px) {
+  .live-alerts-feed {
+    min-height: 460px;
+    padding: 1.25rem 1.1rem;
+  }
+
+  .feed-title {
+    font-size: 1.05rem;
+  }
 }
 
 .live-alerts-pagination-wrapper .ant-pagination {
