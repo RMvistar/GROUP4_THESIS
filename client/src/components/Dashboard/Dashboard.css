@@ -19,7 +19,7 @@
 }
 
 .dashboard-container {
-  width: 50%;
+  width: 75%;
   max-width: 1040px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
