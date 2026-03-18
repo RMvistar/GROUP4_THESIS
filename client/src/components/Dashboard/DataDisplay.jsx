@@ -1,15 +1,28 @@
 import React from "react";
 import "./DataDisplay.css";
 
+// ML 5-state labels (from ml_state field)
+const ML_STATE_CONFIG = {
+  optimal: { label: "Optimal", color: "#4CAF50", icon: "✓" },
+  warning: { label: "Warning", color: "#FFEB3B", icon: "⚠" },
+  at_risk: { label: "At Risk", color: "#FF9800", icon: "⚠" },
+  clogged: { label: "Clogged", color: "#F44336", icon: "⚠" },
+  overflow: { label: "Overflow", color: "#9C27B0", icon: "⚠" },
+};
+
+// Fallback for non-ML data (ESP / legacy format)
 const STATUS_CONFIG = {
-  0: { label: "Normal", color: "#4CAF50", icon: "✓" },
+  0: { label: "Optimal", color: "#4CAF50", icon: "✓" },
   1: { label: "At Risk", color: "#FF9800", icon: "⚠" },
   2: { label: "Clogged", color: "#F44336", icon: "⚠" },
   3: { label: "Overflow", color: "#9C27B0", icon: "⚠" },
 };
 
 function DataDisplay({ data }) {
-  const statusInfo = STATUS_CONFIG[data.status] || STATUS_CONFIG[0];
+  const statusInfo =
+    (data.ml_state && ML_STATE_CONFIG[data.ml_state]) ||
+    STATUS_CONFIG[data.status] ||
+    STATUS_CONFIG[0];
 
   return (
     <div className="data-display-container">

@@ -47,6 +47,9 @@ io.on("connection", (socket) => {
   });
 });
 
+// Make io accessible inside Express controllers via req.app.get('io')
+app.set("io", io);
+
 app.use("/api/data", dataRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);

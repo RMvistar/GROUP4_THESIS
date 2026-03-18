@@ -1,51 +1,94 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaChartLine } from "react-icons/fa";
 import HistoricalTrendsModal from "../HistoricalTrends/HistoricalTrendsModal";
 import "./NodeContainer.css";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
+
+const STATUS_LABEL = {
+  0: "Optimal",
+  1: "At Risk",
+  2: "Clogged",
+  3: "Overflow",
+};
+
 function NodeContainer() {
   const [isTrendsModalOpen, setIsTrendsModalOpen] = useState(false);
-  const [selectedSensor, setSelectedSensor] = useState(null);
+  const [nodeDetails, setNodeDetails] = useState(null);
+  const [historicalEvents, setHistoricalEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Sample data for display (not fetching from API for now)
-  const sampleSensors = [
-    {
-      timestamp: new Date().toISOString(),
-      batteryPercent: 100,
-      distance: 184,
-      water_level: 186.13,
-      flow_rate: 0.14,
-      location: "USLS",
-    },
-  ];
+  useEffect(() => {
+    const fetchNodeData = async () => {
+      try {
+        const nodesRes = await fetch(`${API_BASE_URL}/api/public/nodes`);
+        if (!nodesRes.ok) throw new Error("Failed to fetch nodes");
+        const nodes = await nodesRes.json();
 
-  const historicalEvents = [
-    { date: "2026-03-14", type: "clog" },
-    { date: "2026-03-13", type: "overflow" },
-    { date: "2026-03-13", type: "clog" },
-    { date: "2026-03-12", type: "clog" },
-    { date: "2026-03-12", type: "overflow" },
-    { date: "2026-03-11", type: "overflow" },
-    { date: "2026-03-10", type: "clog" },
-    { date: "2026-03-09", type: "clog" },
-    { date: "2026-03-08", type: "overflow" },
-    { date: "2026-02-28", type: "clog" },
-    { date: "2026-02-22", type: "overflow" },
-    { date: "2026-02-12", type: "clog" },
-    { date: "2026-01-20", type: "overflow" },
-    { date: "2026-01-14", type: "clog" },
-    { date: "2025-12-18", type: "clog" },
-    { date: "2025-12-05", type: "overflow" },
-    { date: "2025-11-21", type: "clog" },
-    { date: "2025-11-10", type: "overflow" },
-    { date: "2025-10-30", type: "clog" },
-  ];
+        if (!Array.isArray(nodes) || nodes.length === 0) {
+          setNodeDetails(null);
+          setHistoricalEvents([]);
+          return;
+        }
 
-  const activeSensor = selectedSensor || sampleSensors[0];
+        const firstNodeId = nodes[0].node_id;
+        const [detailsRes, historyRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/public/nodes/${firstNodeId}`),
+          fetch(
+            `${API_BASE_URL}/api/public/nodes/${firstNodeId}/history?limit=100`,
+          ),
+        ]);
 
-  const displaySensors = sampleSensors;
+        if (detailsRes.ok) {
+          const details = await detailsRes.json();
+          setNodeDetails(details);
+        }
 
-  const renderNodeCard = (sensor, nodeNumber) => {
+        if (historyRes.ok) {
+          const history = await historyRes.json();
+          const mappedEvents = (history.historical_events || []).map((e) => ({
+            date: new Date(e.timestamp).toISOString().slice(0, 10),
+            type: (e.event_type || "").toLowerCase(),
+          }));
+          setHistoricalEvents(mappedEvents);
+        }
+      } catch (err) {
+        console.error("Error fetching node details:", err);
+        setNodeDetails(null);
+        setHistoricalEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNodeData();
+    const interval = setInterval(fetchNodeData, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const statusLabel = useMemo(() => {
+    if (!nodeDetails) return "No Data";
+    if (nodeDetails.ml_state) {
+      return nodeDetails.ml_state
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (m) => m.toUpperCase());
+    }
+    return STATUS_LABEL[nodeDetails.status] || "Unknown";
+  }, [nodeDetails]);
+
+  const renderNodeCard = (sensor) => {
+    if (loading) {
+      return (
+        <div className="nodeCard">
+          <div className="card-header">
+            <span className="status-badge">LOADING</span>
+            <span className="timestamp">Fetching latest sensor data...</span>
+          </div>
+        </div>
+      );
+    }
+
     if (!sensor) {
       return (
         <div className="nodeCard">
@@ -55,7 +98,7 @@ function NodeContainer() {
           </div>
           <div className="card-body">
             <div className="data-row">
-              <span className="data-label">Node {nodeNumber}:</span>
+              <span className="data-label">Node:</span>
               <span className="data-value">Not connected</span>
             </div>
           </div>
@@ -66,9 +109,11 @@ function NodeContainer() {
     return (
       <div className="nodeCard">
         <div className="card-header">
-          <span className="status-badge">NORMAL</span>
+          <span className="status-badge">{statusLabel.toUpperCase()}</span>
           <span className="timestamp">
-            {new Date(sensor.timestamp).toLocaleString()}
+            {sensor.last_update
+              ? new Date(sensor.last_update).toLocaleString()
+              : "No timestamp"}
           </span>
         </div>
         <div className="card-body">
@@ -76,16 +121,17 @@ function NodeContainer() {
           <div className="metrics-grid">
             <div className="metric-item">
               <span className="metric-label">Node Location</span>
-              <span className="metric-value">{sensor.location || "USLS"}</span>
+              <span className="metric-value">{sensor.location || "N/A"}</span>
             </div>
             <div className="metric-item">
               <span className="metric-label">Status</span>
-              <span className="metric-value status-normal">Normal</span>
+              <span className="metric-value status-normal">{statusLabel}</span>
             </div>
             <div className="metric-item">
               <span className="metric-label">Battery</span>
               <span className="metric-value battery-value">
-                {sensor.batteryPercent !== undefined
+                {sensor.batteryPercent !== undefined &&
+                sensor.batteryPercent !== null
                   ? `${sensor.batteryPercent}%`
                   : "N/A"}
               </span>
@@ -93,7 +139,7 @@ function NodeContainer() {
             <div className="metric-item">
               <span className="metric-label">Clog Status</span>
               <span className="metric-value">
-                {sensor.distance !== undefined
+                {sensor.distance !== undefined && sensor.distance !== null
                   ? `${sensor.distance} cm`
                   : "N/A"}
               </span>
@@ -101,7 +147,7 @@ function NodeContainer() {
             <div className="metric-item">
               <span className="metric-label">Water Level</span>
               <span className="metric-value">
-                {sensor.water_level !== undefined
+                {sensor.water_level !== undefined && sensor.water_level !== null
                   ? `${sensor.water_level.toFixed(2)} cm`
                   : "N/A"}
               </span>
@@ -109,7 +155,7 @@ function NodeContainer() {
             <div className="metric-item">
               <span className="metric-label">Water Flow</span>
               <span className="metric-value">
-                {sensor.flow_rate !== undefined
+                {sensor.flow_rate !== undefined && sensor.flow_rate !== null
                   ? `${sensor.flow_rate} cm/s`
                   : "N/A"}
               </span>
@@ -120,7 +166,9 @@ function NodeContainer() {
           <div className="insights-section">
             <h3 className="section-title">System Insights</h3>
             <p className="insights-text">
-              No prediction data available. View historical trends for analysis.
+              {sensor.ml_state
+                ? `ML state: ${statusLabel}. Real-time values are from live sensor data.`
+                : "No ML prediction on latest sample. View historical trends for analysis."}
             </p>
           </div>
 
@@ -129,7 +177,6 @@ function NodeContainer() {
             <button
               className="historical-trends-button"
               onClick={() => {
-                setSelectedSensor(sensor);
                 setIsTrendsModalOpen(true);
               }}
             >
@@ -145,14 +192,14 @@ function NodeContainer() {
   return (
     <div className="node-wrapper">
       <div className="node-container-1">
-        <div className="node-1">{renderNodeCard(displaySensors[0], 1)}</div>
+        <div className="node-1">{renderNodeCard(nodeDetails)}</div>
       </div>
 
       <HistoricalTrendsModal
         isOpen={isTrendsModalOpen}
         onClose={() => setIsTrendsModalOpen(false)}
-        sensor={activeSensor}
-        nodeLabel={activeSensor?.location || "USLS"}
+        sensor={nodeDetails}
+        nodeLabel={nodeDetails?.location || "N/A"}
         events={historicalEvents}
         selectId="node-trend-view-select"
       />

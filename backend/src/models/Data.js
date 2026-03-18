@@ -30,6 +30,16 @@ const dataSchema = new mongoose.Schema(
     rain: Number,
     batteryVoltage: Number,
     batteryPercent: Number,
+    // ML prediction fields (populated when Python ML script posts results)
+    ml_label: { type: Number, min: 0, max: 4 },
+    ml_state: { type: String },
+    rate_of_change: { type: Number },
+    estimated_time_to_overflow_s: { type: Number },
+    estimated_time_to_overflow_min: { type: Number },
+    estimated_time_to_at_risk_s: { type: Number },
+    estimated_time_to_at_risk_min: { type: Number },
+    class_probabilities: { type: Object },
+    samples_aggregated: { type: Number },
     timestamp: {
       type: Date,
       default: Date.now,

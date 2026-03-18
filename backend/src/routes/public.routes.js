@@ -6,6 +6,7 @@ import {
   getNodeHistoricalData,
   getActiveNodes,
   getPublicAlerts,
+  getRecentPredictions,
 } from "../controllers/public.controller.js";
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.get("/nodes", getActiveNodes);
 router.get("/nodes/:nodeId", getPublicNodeDetails);
 router.get("/nodes/:nodeId/history", getNodeHistoricalData);
 router.get("/alerts", getPublicAlerts);
+router.get("/predictions", getRecentPredictions);
 
 export default router;

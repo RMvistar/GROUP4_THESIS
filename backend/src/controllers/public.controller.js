@@ -106,8 +106,13 @@ export async function getPublicNodeDetails(req, res) {
       coordinates: node.coordinates,
       description: node.description,
       status: latestData ? latestData.status : 0,
+      ml_state: latestData ? latestData.ml_state : null,
       water_level: latestData ? latestData.water_level : null,
       flow_rate: latestData ? latestData.flow_rate : null,
+      batteryPercent: latestData ? latestData.batteryPercent : null,
+      batteryVoltage: latestData ? latestData.batteryVoltage : null,
+      distance: latestData ? latestData.distance : null,
+      rate_of_change: latestData ? latestData.rate_of_change : null,
       alertStatus: latestData ? latestData.alertStatus : "unresolved",
       last_update: latestData ? latestData.timestamp : null,
     };
@@ -190,6 +195,22 @@ export async function getPublicAlerts(req, res) {
       .select("title description status created_date completed_date node_id");
 
     res.status(200).json(tasks);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+}
+
+// Get recent ML predictions from sensor data (public, no auth)
+export async function getRecentPredictions(req, res) {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+    const data = await Data.find({ ml_state: { $exists: true } })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .select(
+        "ml_state ml_label sensor_id water_level flow_rate estimated_time_to_overflow_s estimated_time_to_overflow_min estimated_time_to_at_risk_s estimated_time_to_at_risk_min batteryPercent createdAt",
+      );
+    res.status(200).json(data);
   } catch (err) {
     res.status(500).json({ message: "Server Error", error: err.message });
   }
