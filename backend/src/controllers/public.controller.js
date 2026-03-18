@@ -134,13 +134,9 @@ export async function getNodeHistoricalData(req, res) {
       return res.status(404).json({ message: "Node not found" });
     }
 
-    // Build query for historical data
+    // Build query for historical data - return all sensor data, not just critical events
     const query = {
       sensor_id: node.sensor_id,
-      $or: [
-        { status: { $in: [2, 3] } }, // Clogged or Overflow
-        { alertStatus: { $in: ["ongoing", "resolved"] } },
-      ],
     };
 
     if (startDate || endDate) {
@@ -160,7 +156,7 @@ export async function getNodeHistoricalData(req, res) {
       alertStatus: data.alertStatus,
       timestamp: data.timestamp,
       event_type:
-        data.status === 3 ? "Overflow" : data.status === 2 ? "Clog" : "At Risk",
+        data.status === 3 ? "overflow" : data.status === 2 ? "clog" : "at_risk",
     }));
 
     res.status(200).json({
