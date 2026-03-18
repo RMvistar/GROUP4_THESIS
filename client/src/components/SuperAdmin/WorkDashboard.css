@@ -32,7 +32,7 @@
 }
 
 .work-active-nodes-container .active-nodes {
-  width: 300px;
+  width: 100%;
   min-height: 350px;
   background: linear-gradient(155deg, #122b25 0%, #0f352b 54%, #122b25 100%);
   border-radius: 10px;
@@ -83,7 +83,7 @@
 }
 
 .work-last-clog-alert-container .last-clog-alert {
-  width: 300px;
+  width: 100%;
   min-height: 350px;
   background: linear-gradient(155deg, #2a1721 0%, #3a1a2b 54%, #2a1721 100%);
   border-radius: 10px;
@@ -134,7 +134,7 @@
 }
 
 .work-live-alerts-feed-container .live-alerts-feed {
-  width: 640px;
+  width: 100%;
   min-height: 500px;
   border-radius: 10px;
   border: 1px solid rgba(59, 130, 246, 0.2);
