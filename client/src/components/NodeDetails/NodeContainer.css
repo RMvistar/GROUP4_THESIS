@@ -76,22 +76,47 @@
   padding-bottom: 0.6rem;
 }
 
-.node-wrapper .nodeCard .status-badge {
+.node-wrapper .nodeCard .node-status-badge {
   padding: 0.25rem 0.625rem;
   border-radius: 16px;
   font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
-  background-color: #d4edda;
-  color: #155724;
+  border: 1px solid transparent;
+  letter-spacing: 0.04em;
 }
 
-.node-wrapper.full-width .nodeCard .status-badge {
+.node-wrapper.full-width .nodeCard .node-status-badge {
   padding: 0.32rem 0.68rem;
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.04em;
+}
+
+.node-wrapper .nodeCard .node-status-optimal {
+  background: rgba(209, 232, 211, 0.98);
+  color: #1f5130;
+  border-color: rgba(209, 232, 211, 0.95);
+}
+
+.node-wrapper .nodeCard .node-status-risk {
+  background: rgba(251, 191, 36, 0.18);
+  color: #fcd34d;
+  border-color: rgba(251, 191, 36, 0.24);
+}
+
+.node-wrapper .nodeCard .node-status-clogged,
+.node-wrapper .nodeCard .node-status-overflow {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.24);
+}
+
+.node-wrapper .nodeCard .node-status-muted {
+  background: rgba(148, 163, 184, 0.18);
+  color: #cbd5e1;
+  border-color: rgba(148, 163, 184, 0.22);
 }
 
 .node-wrapper .nodeCard .timestamp {
@@ -174,12 +199,49 @@
   font-size: 0.9rem;
 }
 
-.node-wrapper .nodeCard .metric-value.status-normal {
+.node-wrapper .nodeCard .metric-value.battery-value {
   color: #10b981;
 }
 
-.node-wrapper .nodeCard .metric-value.battery-value {
-  color: #10b981;
+.node-wrapper .nodeCard .node-metric-status {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  line-height: 1.2;
+  border: 1px solid transparent;
+}
+
+.node-wrapper.full-width .nodeCard .node-metric-status {
+  font-size: 0.78rem;
+}
+
+.node-wrapper .nodeCard .node-metric-status-optimal {
+  color: #6ee7b7;
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.22);
+}
+
+.node-wrapper .nodeCard .node-metric-status-risk {
+  color: #fcd34d;
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.2);
+}
+
+.node-wrapper .nodeCard .node-metric-status-clogged,
+.node-wrapper .nodeCard .node-metric-status-overflow {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.node-wrapper .nodeCard .node-metric-status-muted {
+  color: #cbd5e1;
+  background: rgba(148, 163, 184, 0.14);
+  border-color: rgba(148, 163, 184, 0.2);
 }
 
 .node-wrapper .nodeCard .insights-section {
