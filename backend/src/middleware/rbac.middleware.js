@@ -25,10 +25,23 @@ export const requireAnyPermission = (...perms) => {
   return (req, res, next) => {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
+
     // Super Admin bypass
     if (req.user.role?.name === "Super Admin") return next();
     // Admin bypass for alerts/tasks
     if (req.user.role?.name === "Admin") return next();
+    // Worker bypass for acknowledge and resolve endpoints
+    if (
+      req.user.role?.name === "Worker" &&
+      req.method === "PATCH" &&
+      req.baseUrl.includes("tasks") &&
+      (
+        req.path.match(/\/[^/]+\/acknowledge$/) ||
+        req.path.match(/\/[^/]+\/resolve$/)
+      )
+    ) {
+      return next();
+    }
 
     const userPerms = req.user.role?.permissions || [];
     const hasAny = perms.some((p) => userPerms.includes(p));
