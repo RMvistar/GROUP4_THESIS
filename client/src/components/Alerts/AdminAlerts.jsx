@@ -90,10 +90,9 @@ function AdminAlerts() {
       });
       if (!response.ok) throw new Error("Failed to fetch users");
       const data = await response.json();
-      // Filter out super-admin users
+      // Only include users with Worker role
       const filtered = data.filter(
-        (u) =>
-          u.role && u.role.name && u.role.name.toLowerCase() !== "super admin",
+        (u) => u.role && u.role.name && u.role.name.toLowerCase() === "worker"
       );
       setUsers(filtered);
     } catch (err) {
