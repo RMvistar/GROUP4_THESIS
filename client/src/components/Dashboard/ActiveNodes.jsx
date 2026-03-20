@@ -4,6 +4,7 @@ import "./ActiveNodes.css";
 
 function ActiveNodes() {
   const [activeCount, setActiveCount] = useState(0);
+  const [offlineCount, setOfflineCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -12,10 +13,18 @@ function ActiveNodes() {
         const res = await fetch("http://localhost:5001/api/public/nodes");
         if (!res.ok) throw new Error("Failed to fetch active nodes");
         const nodes = await res.json();
-        setActiveCount(Array.isArray(nodes) ? nodes.length : 0);
+        if (Array.isArray(nodes)) {
+          const onlineNodes = nodes.filter((node) => node.is_online);
+          setActiveCount(onlineNodes.length);
+          setOfflineCount(nodes.length - onlineNodes.length);
+        } else {
+          setActiveCount(0);
+          setOfflineCount(0);
+        }
       } catch (err) {
         console.error("Error fetching active nodes:", err);
         setActiveCount(0);
+        setOfflineCount(0);
       } finally {
         setLoading(false);
       }
@@ -34,7 +43,13 @@ function ActiveNodes() {
       <h3 className="widget-title">Active Nodes</h3>
       <div className="node-count">{activeCount}</div>
       <div className="node-status">{loading ? "Loading..." : "Live"}</div>
-      <div className="node-status-text">Online</div>
+      <div className="node-status-text">
+        {loading
+          ? "Checking connectivity"
+          : offlineCount > 0
+            ? `${offlineCount} Offline`
+            : "All Online"}
+      </div>
     </div>
   );
 }

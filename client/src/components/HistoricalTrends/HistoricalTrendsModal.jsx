@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import "./HistoricalTrendsModal.css";
 
@@ -16,11 +16,16 @@ function HistoricalTrendsModal({
 }) {
   const [viewMode, setViewMode] = useState("day");
 
-  useEffect(() => {
-    if (isOpen) {
-      setViewMode("day");
-    }
-  }, [isOpen]);
+  const incidentEntries = useMemo(() => {
+    return [...events]
+      .filter((eventItem) => eventItem?.timestamp && eventItem?.type)
+      .sort(
+        (firstEvent, secondEvent) =>
+          new Date(secondEvent.timestamp).getTime() -
+          new Date(firstEvent.timestamp).getTime(),
+      )
+      .slice(0, 8);
+  }, [events]);
 
   const trendsSeries = useMemo(() => {
     const now = new Date(sensor?.timestamp || new Date().toISOString());
@@ -85,7 +90,9 @@ function HistoricalTrendsModal({
     }
 
     events.forEach((eventItem) => {
-      const eventDate = new Date(eventItem.date);
+      const eventDate = new Date(
+        eventItem.timestamp || eventItem.date || now.toISOString(),
+      );
       const bucketKey =
         viewMode === "day"
           ? eventDate.toISOString().split("T")[0]
@@ -326,6 +333,49 @@ function HistoricalTrendsModal({
                 );
               })}
             </svg>
+          </div>
+
+          <div className="historical-trends-incidents-wrapper">
+            <div className="historical-trends-incidents-header">
+              <h3>Recent Clog and Overflow Incidents</h3>
+              <span>{incidentEntries.length} visible</span>
+            </div>
+
+            {incidentEntries.length === 0 ? (
+              <div className="historical-trends-empty-state">
+                No clog or overflow incidents available for this node yet.
+              </div>
+            ) : (
+              <div className="historical-trends-incidents-list">
+                {incidentEntries.map((eventItem) => (
+                  <div
+                    key={eventItem.id || `${eventItem.type}-${eventItem.timestamp}`}
+                    className="historical-trends-incident-card"
+                  >
+                    <div className="historical-trends-incident-top">
+                      <span
+                        className={`historical-trends-incident-badge ${eventItem.type}`}
+                      >
+                        {eventItem.type === "overflow" ? "Overflow" : "Clog"}
+                      </span>
+                      <span className="historical-trends-incident-source">
+                        {eventItem.source || "Sensor Feed"}
+                      </span>
+                    </div>
+                    <div className="historical-trends-incident-title">
+                      {eventItem.title ||
+                        (eventItem.type === "overflow" ? "Overflow" : "Clog")}
+                    </div>
+                    <div className="historical-trends-incident-description">
+                      {eventItem.description || "Incident recorded."}
+                    </div>
+                    <div className="historical-trends-incident-timestamp">
+                      {new Date(eventItem.timestamp).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

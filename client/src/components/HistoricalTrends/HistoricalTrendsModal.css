@@ -146,6 +146,7 @@
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 18px 18px 12px;
+  margin-bottom: 18px;
 }
 
 .historical-trends-legend {
@@ -220,6 +221,109 @@
   fill: #f59e0b;
 }
 
+.historical-trends-incidents-wrapper {
+  background: #0f1b2e;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px;
+}
+
+.historical-trends-incidents-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.historical-trends-incidents-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 15px;
+}
+
+.historical-trends-incidents-header span {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.historical-trends-empty-state {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px 12px;
+}
+
+.historical-trends-incidents-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.historical-trends-incident-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historical-trends-incident-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.historical-trends-incident-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.historical-trends-incident-badge.clog {
+  background: #ef4444;
+}
+
+.historical-trends-incident-badge.overflow {
+  background: #f59e0b;
+}
+
+.historical-trends-incident-source {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.historical-trends-incident-title {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.historical-trends-incident-description {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.historical-trends-incident-timestamp {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+}
+
 @media (max-width: 900px) {
   .historical-trends-toolbar {
     align-items: stretch;
@@ -232,5 +336,10 @@
 
   .historical-trends-chart {
     height: 260px;
+  }
+
+  .historical-trends-incidents-header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
