@@ -3,23 +3,35 @@ import {
   FaChartLine,
   FaNetworkWired,
   FaBell,
-  FaUser,
   FaTasks,
   FaCog,
 } from "react-icons/fa";
 import { useAuthStore } from "../../store/useAuthStore";
+import {
+  getFullName,
+  getProfileInitials,
+  getRoleName,
+  getUserIdLabel,
+  getUsernameLabel,
+} from "../../utils/profileDisplay.js";
 import logo from "../../assets/ARCOMLogo2.png";
 import "./WorkerNavigation.css";
 
 function WorkerNavigation({ activeSection, onSectionChange }) {
   const navigate = useNavigate();
-  const { logout } = useAuthStore();
+  const { logout, user } = useAuthStore();
 
   const handleLogout = () => {
     logout();
     localStorage.removeItem("workerActiveSection");
     navigate("/home");
   };
+
+  const fullName = getFullName(user);
+  const roleName = getRoleName(user);
+  const userIdLabel = getUserIdLabel(user);
+  const usernameLabel = getUsernameLabel(user);
+  const profileInitials = getProfileInitials(user);
 
   return (
     <div className="worker-navigation-wrapper">
@@ -30,10 +42,15 @@ function WorkerNavigation({ activeSection, onSectionChange }) {
       </div>
       <div className="nav-profile">
         <div className="profile-avatar">
-          <FaUser />
+          <span className="profile-initials">{profileInitials}</span>
         </div>
         <div className="profile-info">
-          <span className="profile-name">Worker</span>
+          <span className="profile-name">{fullName}</span>
+          <span className="profile-role">{roleName}</span>
+          {userIdLabel && <span className="profile-id">ID {userIdLabel}</span>}
+          {usernameLabel && (
+            <span className="profile-username">@{usernameLabel}</span>
+          )}
         </div>
       </div>
 

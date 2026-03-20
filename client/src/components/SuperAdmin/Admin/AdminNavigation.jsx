@@ -1,10 +1,7 @@
-import { useState, useEffect } from "react";
 import {
   FaChartLine,
   FaNetworkWired,
   FaBell,
-  FaEllipsisV,
-  FaUser,
   FaUsers,
   FaHistory,
   FaCog,
@@ -13,15 +10,28 @@ import logo from "../../../assets/ARCOMLogo2.png";
 import "./AdminNavigation.css";
 import { useAuthStore } from "../../../store/useAuthStore.js";
 import { useNavigate } from "react-router-dom";
+import {
+  getFullName,
+  getProfileInitials,
+  getRoleName,
+  getUserIdLabel,
+  getUsernameLabel,
+} from "../../../utils/profileDisplay.js";
 
 function AdminNavigation({ activeSection, onSectionChange }) {
-  const { logout } = useAuthStore();
+  const { logout, user } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate("/home");
   };
+
+  const fullName = getFullName(user);
+  const roleName = getRoleName(user);
+  const userIdLabel = getUserIdLabel(user);
+  const usernameLabel = getUsernameLabel(user);
+  const profileInitials = getProfileInitials(user);
 
   return (
     <div className="admin-navigation-wrapper">
@@ -32,10 +42,15 @@ function AdminNavigation({ activeSection, onSectionChange }) {
       </div>
       <div className="nav-profile">
         <div className="profile-avatar">
-          <FaUser />
+          <span className="profile-initials">{profileInitials}</span>
         </div>
         <div className="profile-info">
-          <span className="profile-name">Admin</span>
+          <span className="profile-name">{fullName}</span>
+          <span className="profile-role">{roleName}</span>
+          {userIdLabel && <span className="profile-id">ID {userIdLabel}</span>}
+          {usernameLabel && (
+            <span className="profile-username">@{usernameLabel}</span>
+          )}
         </div>
       </div>
 

@@ -11,13 +11,53 @@ if (!_initialToken || isTokenExpired(_initialToken)) {
   clearAuthStorage();
 }
 
-export const useAuthStore = create((set) => ({
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
+
+const normalizeAuthUser = (user) => ({
+  id: user?.id || user?._id || "",
+  name: user?.name || user?.username || "",
+  first_name: user?.first_name || "",
+  last_name: user?.last_name || "",
+  email: user?.email || "",
+  government_id: user?.government_id || "",
+  role: user?.role || null,
+  mustChangePassword: user?.mustChangePassword || false,
+});
+
+export const useAuthStore = create((set, get) => ({
   //ang initial state - Load from localStorage (re-read after cleanup above)
   user: JSON.parse(localStorage.getItem("user")) || null,
   token: getStoredToken(),
   isAuthenticated: !!getStoredToken(),
   loading: false,
   error: null,
+
+  fetchCurrentUser: async () => {
+    const token = get().token || getStoredToken();
+    if (!token) return null;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch current user");
+      }
+
+      const data = await res.json();
+      const normalizedUser = normalizeAuthUser(data);
+      localStorage.setItem("user", JSON.stringify(normalizedUser));
+      set({ user: normalizedUser, isAuthenticated: true });
+      return normalizedUser;
+    } catch (err) {
+      console.error("Failed to hydrate current user:", err);
+      return null;
+    }
+  },
 
   // Login functions namun
   login: async (name, password) => {
@@ -34,20 +74,22 @@ export const useAuthStore = create((set) => ({
 
       if (!res.ok) throw new Error(data.message || "Login failed");
 
+      const normalizedUser = normalizeAuthUser(data.user);
+
       // Save to localStorage
       localStorage.setItem("token", data.token);
       // data.user now includes mustChangePassword from the backend.
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("user", JSON.stringify(normalizedUser));
 
       set({
-        user: data.user, // contains role
+        user: normalizedUser, // contains role
         token: data.token,
         isAuthenticated: true,
         loading: false,
         error: null,
       });
 
-      return data.user; // allow redirect logic
+      return normalizedUser; // allow redirect logic
     } catch (err) {
       const errorMessage =
         err.message === "Failed to fetch"
@@ -110,3 +152,7 @@ export const useAuthStore = create((set) => ({
     set({ error: null });
   },
 }));
+
+if (_initialToken && !isTokenExpired(_initialToken)) {
+  useAuthStore.getState().fetchCurrentUser();
+}

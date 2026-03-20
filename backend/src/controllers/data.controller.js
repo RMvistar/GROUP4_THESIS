@@ -3,6 +3,13 @@ import Node from "../models/Node.js";
 import Task from "../models/Task.js";
 import User from "../models/User.js";
 import Role from "../models/Role.js";
+import {
+  buildAutoNodeId,
+  buildSensorIdQuery,
+  buildUnclaimedLocation,
+  isUnclaimedNodeLocation,
+  normalizeSensorId,
+} from "../utils/nodeMetadata.js";
 
 // ML label (0-4) → backend status (0-3) mapping
 const ML_TO_STATUS = { 0: 0, 1: 0, 2: 1, 3: 2, 4: 3 };
@@ -22,22 +29,26 @@ const ML_STATE_DISPLAY = {
 };
 const STATUS_PRIORITY = { 1: "medium", 2: "high", 3: "high" };
 
-function buildAutoNodeId(sensor_id) {
-  const cleaned = String(sensor_id || "NODE")
-    .replace(/[^a-zA-Z0-9]/g, "")
-    .toUpperCase()
-    .slice(0, 12);
-  return `NODE-${cleaned || "AUTO"}`;
-}
-
 async function ensureNodeForSensor(sensor_id) {
-  if (!sensor_id) return null;
+  const normalizedSensorId = normalizeSensorId(sensor_id);
+  if (!normalizedSensorId) return null;
 
-  let node = await Node.findOne({ sensor_id });
-  if (node) return node;
+  let node = await Node.findOne({
+    sensor_id: buildSensorIdQuery(normalizedSensorId),
+  });
+  if (node) {
+    if (node.is_claimed === undefined && isUnclaimedNodeLocation(node.location)) {
+      node.location = buildUnclaimedLocation(normalizedSensorId);
+      node.is_claimed = false;
+      node.description = "Waiting for a super admin to claim this node.";
+      await node.save();
+    }
 
-  const baseNodeId = buildAutoNodeId(sensor_id);
-  const baseLocation = `Auto Node ${sensor_id}`;
+    return node;
+  }
+
+  const baseNodeId = buildAutoNodeId(normalizedSensorId);
+  const baseLocation = buildUnclaimedLocation(normalizedSensorId);
 
   // Retry a few times in case of race conditions or duplicate node_id.
   for (let i = 0; i < 5; i += 1) {
@@ -48,14 +59,19 @@ async function ensureNodeForSensor(sensor_id) {
         node_id,
         location: baseLocation,
         status: "active",
-        sensor_id,
-        description: "Auto-created from incoming sensor/ML data",
+        sensor_id: normalizedSensorId,
+        is_claimed: false,
+        description: "Waiting for a super admin to claim this node.",
       });
-      console.log(`Auto-created node: ${node.node_id} for sensor ${sensor_id}`);
+      console.log(
+        `Auto-created node: ${node.node_id} for sensor ${normalizedSensorId}`,
+      );
       return node;
     } catch (err) {
       if (err?.code === 11000) {
-        const existing = await Node.findOne({ sensor_id });
+        const existing = await Node.findOne({
+          sensor_id: buildSensorIdQuery(normalizedSensorId),
+        });
         if (existing) return existing;
         continue;
       }
@@ -63,13 +79,16 @@ async function ensureNodeForSensor(sensor_id) {
     }
   }
 
-  return Node.findOne({ sensor_id });
+  return Node.findOne({
+    sensor_id: buildSensorIdQuery(normalizedSensorId),
+  });
 }
 
 async function autoCreateAlertTask(sensor_id, status, ml_state) {
   if (status < 1) return; // Normal — no alert needed
   try {
-    const node = await ensureNodeForSensor(sensor_id);
+    const normalizedSensorId = normalizeSensorId(sensor_id);
+    const node = await ensureNodeForSensor(normalizedSensorId);
     if (!node) return; // No registered node for this sensor, skip
 
     // Deduplicate: skip if an active (pending/ongoing) task already exists
@@ -94,7 +113,7 @@ async function autoCreateAlertTask(sensor_id, status, ml_state) {
     await Task.create({
       task_id: `AUTO-${node.node_id}-${Date.now()}`,
       title: `${STATUS_ALERT_TITLE[status]} – ${node.location}`,
-      description: `Drainage state detected: ${stateLabel}. Auto-generated from sensor ${sensor_id}.`,
+      description: `Drainage state detected: ${stateLabel}. Auto-generated from sensor ${normalizedSensorId}.`,
       node_id: node._id,
       created_by: systemUser._id,
       priority: STATUS_PRIORITY[status] || "medium",
@@ -140,7 +159,7 @@ export async function postData(req, res) {
       } = req.body;
 
       const status = ML_TO_STATUS[Number(ml_label)] ?? 0;
-      const sensorId = "DRAINAGE_Module_01";
+      const sensorId = normalizeSensorId("DRAINAGE_Module_01");
 
       // Ensure this sensor exists as a Node so it can appear in live alerts/details.
       await ensureNodeForSensor(sensorId);
@@ -181,9 +200,10 @@ export async function postData(req, res) {
     }
     if (req.body.mac && req.body.data) {
       const { mac, data, timestamp } = req.body;
+      const normalizedMac = normalizeSensorId(mac);
 
       // Ensure this sensor exists as a Node so it can appear in live alerts/details.
-      await ensureNodeForSensor(mac);
+      await ensureNodeForSensor(normalizedMac);
 
       // Transform ESP data to backend format
       const flow_rate = data.velocity || 0;
@@ -207,7 +227,7 @@ export async function postData(req, res) {
       }
 
       const newData = new Data({
-        sensor_id: mac,
+        sensor_id: normalizedMac,
         flow_rate,
         water_level,
         status,

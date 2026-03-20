@@ -1,16 +1,19 @@
 import Data from "../models/Data.js";
 import Node from "../models/Node.js";
 import Task from "../models/Task.js";
+import { buildSensorIdQuery, isNodeClaimed } from "../utils/nodeMetadata.js";
 
 // Get flood risk information for all active nodes
 export async function getFloodRiskInfo(req, res) {
   try {
-    const nodes = await Node.find({ status: "active" });
+    const nodes = (await Node.find({ status: "active" })).filter(isNodeClaimed);
 
     const floodRiskData = await Promise.all(
       nodes.map(async (node) => {
         // Get latest data for this node
-        const latestData = await Data.findOne({ sensor_id: node.sensor_id })
+        const latestData = await Data.findOne({
+          sensor_id: buildSensorIdQuery(node.sensor_id),
+        })
           .sort({ timestamp: -1 })
           .limit(1);
 
@@ -57,12 +60,14 @@ export async function getOverflowPredictions(req, res) {
     // Get node details
     const predictionList = await Promise.all(
       Object.values(predictions).map(async (data) => {
-        const node = await Node.findOne({ sensor_id: data.sensor_id });
+        const node = await Node.findOne({
+          sensor_id: buildSensorIdQuery(data.sensor_id),
+        });
 
         return {
           sensor_id: data.sensor_id,
-          location: node ? node.location : "Unknown",
-          coordinates: node ? node.coordinates : null,
+          location: node && isNodeClaimed(node) ? node.location : "Unknown",
+          coordinates: node && isNodeClaimed(node) ? node.coordinates : null,
           water_level: data.water_level,
           flow_rate: data.flow_rate,
           status: data.status,
@@ -91,12 +96,14 @@ export async function getPublicNodeDetails(req, res) {
       status: "active",
     });
 
-    if (!node) {
+    if (!node || !isNodeClaimed(node)) {
       return res.status(404).json({ message: "Node not found or inactive" });
     }
 
     // Get latest data for this node
-    const latestData = await Data.findOne({ sensor_id: node.sensor_id })
+    const latestData = await Data.findOne({
+      sensor_id: buildSensorIdQuery(node.sensor_id),
+    })
       .sort({ timestamp: -1 })
       .limit(1);
 
@@ -136,7 +143,7 @@ export async function getNodeHistoricalData(req, res) {
 
     // Build query for historical data - return all sensor data, not just critical events
     const query = {
-      sensor_id: node.sensor_id,
+      sensor_id: buildSensorIdQuery(node.sensor_id),
     };
 
     if (startDate || endDate) {
@@ -186,11 +193,16 @@ export async function getPublicAlerts(req, res) {
         { status: "resolved", completed_date: { $gte: twentyFourHoursAgo } },
       ],
     })
-      .populate("node_id", "location node_id")
+      .populate({
+        path: "node_id",
+        select: "location node_id",
+      })
       .sort({ created_date: -1 })
       .select("title description status created_date completed_date node_id");
 
-    res.status(200).json(tasks);
+    res
+      .status(200)
+      .json(tasks.filter((task) => task.node_id && isNodeClaimed(task.node_id)));
   } catch (err) {
     res.status(500).json({ message: "Server Error", error: err.message });
   }
@@ -215,9 +227,9 @@ export async function getRecentPredictions(req, res) {
 // Get all active nodes (public list)
 export async function getActiveNodes(req, res) {
   try {
-    const nodes = await Node.find({ status: "active" }).select(
-      "node_id location coordinates description",
-    );
+    const nodes = (await Node.find({ status: "active" }).select(
+      "node_id location coordinates description is_claimed",
+    )).filter(isNodeClaimed);
     res.status(200).json(nodes);
   } catch (err) {
     res.status(500).json({ message: "Server Error", error: err.message });

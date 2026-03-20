@@ -23,9 +23,30 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/super-admin" element={<SuperAdminPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/worker/*" element={<WorkerPage />} />
+        <Route
+          path="/super-admin"
+          element={
+            <ProtectedRoute>
+              <SuperAdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/worker/*"
+          element={
+            <ProtectedRoute>
+              <WorkerPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/home" element={<LandingPage />} />
 
         {/* Guest-accessible routes (no ProtectedRoute) */}
