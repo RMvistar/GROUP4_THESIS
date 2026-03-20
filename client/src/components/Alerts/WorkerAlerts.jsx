@@ -24,7 +24,7 @@ function WorkerAlerts() {
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5001/api/tasks", {
+      const response = await fetch("http://localhost:5001/api/tasks/my-tasks", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
