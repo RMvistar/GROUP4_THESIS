@@ -162,9 +162,9 @@ function NodeContainer() {
             </div>
           </div>
 
-          {/* Compact System Insights Section */}
+          {/* System Prediction & Insights Section (copied from WorkNodeDetails) */}
           <div className="insights-section">
-            <h3 className="section-title">System Insights</h3>
+            <h3 className="section-title">System Prediction & Insights</h3>
             <p className="insights-text">
               {sensor.ml_state
                 ? `ML state: ${statusLabel}. Real-time values are from live sensor data.`

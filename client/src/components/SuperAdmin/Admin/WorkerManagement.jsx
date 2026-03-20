@@ -1,5 +1,5 @@
 import "./WorkerManagement.css";
-import { FaSearch, FaFilter, FaEllipsisV } from "react-icons/fa";
+import { FaSearch, FaFilter, FaPause, FaPlay } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/useAuthStore";
@@ -70,7 +70,14 @@ function WorkerManagement() {
         throw new Error("Failed to update user status");
       }
 
-      await fetchUsers();
+      const result = await response.json();
+      if (result.user) {
+        setUsers((prev) =>
+          prev.map((u) =>
+            u._id === userId ? { ...u, status: newStatus } : u
+          )
+        );
+      }
       setSelectedUserId(null);
     } catch (err) {
       setError(err.message);
@@ -158,7 +165,7 @@ function WorkerManagement() {
                 <th>Email</th>
                 <th>Name</th>
                 <th>Status</th>
-                <th>Actions</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -190,31 +197,28 @@ function WorkerManagement() {
                       </span>
                     </td>
                     <td>
-                      <div className="action-menu-container">
-                        <button
-                          className="action-menu-btn"
-                          onClick={() => toggleActionMenu(user._id)}
-                        >
-                          <FaEllipsisV />
-                        </button>
-                        {selectedUserId === user._id && (
-                          <div className="action-menu-dropdown">
-                            <button
-                              className="action-menu-item"
-                              onClick={() =>
-                                handleSuspendToggle(
-                                  user._id,
-                                  (user.status || "Active") === "Active",
-                                )
-                              }
-                            >
-                              {(user.status || "Active") === "Active"
-                                ? "Suspend Worker"
-                                : "Activate Worker"}
-                            </button>
-                          </div>
+                      <button
+                        className={`worker-action-btn ${
+                          (user.status || "Active") === "Active"
+                            ? "suspend-btn"
+                            : "activate-btn"
+                        }`}
+                        onClick={() =>
+                          handleSuspendToggle(
+                            user._id,
+                            (user.status || "Active") === "Active",
+                          )
+                        }
+                      >
+                        {(user.status || "Active") === "Active" ? (
+                          <FaPause style={{ marginRight: 6 }} />
+                        ) : (
+                          <FaPlay style={{ marginRight: 6 }} />
                         )}
-                      </div>
+                        {(user.status || "Active") === "Active"
+                          ? "Suspend Worker"
+                          : "Activate Worker"}
+                      </button>
                     </td>
                   </tr>
                 ))
