@@ -1,6 +1,7 @@
 import Data from "../models/Data.js";
 import Node from "../models/Node.js";
 import Task from "../models/Task.js";
+import { getNodeConnectivityStatus } from "../utils/nodeConnectivity.js";
 import {
   buildAutoNodeId,
   buildSensorIdQuery,
@@ -59,6 +60,8 @@ async function buildNodeResponse(nodeDoc) {
   return {
     ...node,
     is_claimed: isNodeClaimed(node),
+    connectivity: getNodeConnectivityStatus(latestData?.timestamp),
+    is_online: getNodeConnectivityStatus(latestData?.timestamp) === "online",
     latest_data: latestData
       ? {
           sensor_id: latestData.sensor_id,

@@ -31,6 +31,13 @@
   color: #dbeafe;
 }
 
+.feed-section-empty {
+  font-size: 0.78rem;
+  color: #7f8fae;
+  text-align: center;
+  padding: 0.4rem 0;
+}
+
 .feed-content {
   display: flex;
   flex-direction: column;
@@ -43,6 +50,14 @@
   padding: 0.85rem 0.95rem;
   border-left: 3px solid rgba(255, 255, 255, 0.1);
   transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.feed-task-card {
+  border-left-color: rgba(249, 115, 22, 0.8);
+}
+
+.feed-overflow-card {
+  border-left-color: rgba(225, 29, 72, 0.8);
 }
 
 .feed-alert-item:hover {

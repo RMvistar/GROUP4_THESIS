@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaChartLine } from "react-icons/fa";
 import HistoricalTrendsModal from "../HistoricalTrends/HistoricalTrendsModal";
+import { buildHistoricalTrendEvents } from "../../utils/historicalTrendEvents";
 import "./NodeContainer.css";
 
 const API_BASE_URL =
@@ -38,6 +39,10 @@ function getStatusLabel(node) {
   return STATUS_LABEL[node.status] || "Unknown";
 }
 
+function getConnectivityLabel(node) {
+  return node?.is_online ? "Online" : "Offline";
+}
+
 function NodeContainer({ className = "" }) {
   const [nodes, setNodes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,10 +54,13 @@ function NodeContainer({ className = "" }) {
 
   const fetchNodeData = useCallback(async () => {
     try {
+      const alertsRes = await fetch(`${API_BASE_URL}/api/public/alerts`);
       const nodesRes = await fetch(`${API_BASE_URL}/api/public/nodes`);
       if (!nodesRes.ok) throw new Error("Failed to fetch nodes");
+      if (!alertsRes.ok) throw new Error("Failed to fetch alerts");
 
       const nodeList = await nodesRes.json();
+      const alerts = await alertsRes.json();
 
       if (!Array.isArray(nodeList) || nodeList.length === 0) {
         setNodes([]);
@@ -78,16 +86,11 @@ function NodeContainer({ className = "" }) {
               };
 
           const history = historyRes.ok ? await historyRes.json() : null;
-          const historicalEvents = (history?.historical_events || [])
-            .filter(
-              (eventItem) =>
-                eventItem.event_type === "clog" ||
-                eventItem.event_type === "overflow",
-            )
-            .map((eventItem) => ({
-              date: new Date(eventItem.timestamp).toISOString().slice(0, 10),
-              type: eventItem.event_type,
-            }));
+          const historicalEvents = buildHistoricalTrendEvents({
+            node: details,
+            historyEvents: history?.historical_events || [],
+            alerts: Array.isArray(alerts) ? alerts : [],
+          });
 
           return {
             ...details,
@@ -141,12 +144,19 @@ function NodeContainer({ className = "" }) {
     return (
       <div key={node.node_id} className="node-shell">
         <div className="nodeCard">
-          <div className="card-header">
-            <span
-              className={`node-status-badge node-status-${node.statusTone}`}
-            >
-              {node.statusLabel.toUpperCase()}
-            </span>
+            <div className="card-header">
+            <div className="node-header-badges">
+              <span
+                className={`node-status-badge node-status-${node.statusTone}`}
+              >
+                {node.statusLabel.toUpperCase()}
+              </span>
+              <span
+                className={`node-status-badge node-connectivity-badge node-connectivity-${node.is_online ? "online" : "offline"}`}
+              >
+                {getConnectivityLabel(node).toUpperCase()}
+              </span>
+            </div>
             <span className="timestamp">
               {node.last_update
                 ? new Date(node.last_update).toLocaleString()
@@ -169,6 +179,14 @@ function NodeContainer({ className = "" }) {
                   className={`metric-value node-metric-status node-metric-status-${node.statusTone}`}
                 >
                   {node.statusLabel}
+                </span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Connection</span>
+                <span
+                  className={`metric-value node-metric-status node-metric-status-${node.is_online ? "optimal" : "offline"}`}
+                >
+                  {getConnectivityLabel(node)}
                 </span>
               </div>
               <div className="metric-item">
@@ -209,9 +227,11 @@ function NodeContainer({ className = "" }) {
             <div className="insights-section">
               <h3 className="section-title">System Prediction & Insights</h3>
               <p className="insights-text">
-                {node.ml_state
-                  ? `ML state: ${node.statusLabel}. Real-time values are from live sensor data.`
-                  : "No ML prediction on the latest sample. View historical trends for analysis."}
+                {!node.is_online
+                  ? "This node is currently offline. It will switch back to online once fresh sensor data is received."
+                  : node.ml_state
+                    ? `ML state: ${node.statusLabel}. Real-time values are from live sensor data.`
+                    : "No ML prediction on the latest sample. View historical trends for analysis."}
               </p>
             </div>
 

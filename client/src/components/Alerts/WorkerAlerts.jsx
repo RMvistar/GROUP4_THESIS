@@ -1,8 +1,9 @@
 import "./WorkerAlerts.css";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
 import { ConfigProvider, Pagination } from "antd";
+import { getAlertCardContent } from "../../utils/alertPresentation";
 
 function WorkerAlerts() {
   const ALERTS_PER_PAGE = 2;
@@ -17,11 +18,7 @@ function WorkerAlerts() {
   const [nodePages, setNodePages] = useState({});
 
   // Fetch tasks on component mount
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("http://localhost:5001/api/tasks/my-tasks", {
@@ -43,7 +40,11 @@ function WorkerAlerts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   // Handle acknowledge button
   const handleAcknowledge = async (taskId) => {
@@ -252,6 +253,7 @@ function WorkerAlerts() {
                     <div className="worker-node-dropdown-content">
                       {paginatedTasks.map((task) => {
                         const assignedNames = formatAssignedTo(task.assigned_to);
+                        const alertCard = getAlertCardContent(task);
 
                         return (
                           <div key={task._id} className="worker-data-card">
@@ -262,9 +264,9 @@ function WorkerAlerts() {
                             </div>
                             <div className="worker-card-body">
                               <span>
-                                <strong>{task.title}</strong>
+                                <strong>{alertCard.title}</strong>
                               </span>
-                              <p>{task.description}</p>
+                              <p>{alertCard.description}</p>
                               {assignedNames && (
                                 <div className="worker-assigned-to-section">
                                   <span className="worker-assigned-label">
@@ -365,6 +367,7 @@ function WorkerAlerts() {
                     <div className="worker-node-dropdown-content">
                       {paginatedTasks.map((task) => {
                         const assignedNames = formatAssignedTo(task.assigned_to);
+                        const alertCard = getAlertCardContent(task);
 
                         return (
                           <div key={task._id} className="worker-data-card">
@@ -375,9 +378,9 @@ function WorkerAlerts() {
                             </div>
                             <div className="worker-card-body">
                               <span>
-                                <strong>{task.title}</strong>
+                                <strong>{alertCard.title}</strong>
                               </span>
-                              <p>{task.description}</p>
+                              <p>{alertCard.description}</p>
                               {assignedNames && (
                                 <div className="worker-assigned-to-section">
                                   <span className="worker-assigned-label">
@@ -478,6 +481,7 @@ function WorkerAlerts() {
                     <div className="worker-node-dropdown-content">
                       {paginatedTasks.map((task) => {
                         const assignedNames = formatAssignedTo(task.assigned_to);
+                        const alertCard = getAlertCardContent(task);
 
                         return (
                           <div key={task._id} className="worker-data-card">
@@ -490,9 +494,9 @@ function WorkerAlerts() {
                             </div>
                             <div className="worker-card-body">
                               <span>
-                                <strong>{task.title}</strong>
+                                <strong>{alertCard.title}</strong>
                               </span>
-                              <p>{task.description}</p>
+                              <p>{alertCard.description}</p>
                               {assignedNames && (
                                 <div className="worker-assigned-to-section">
                                   <span className="worker-assigned-label">

@@ -2,6 +2,7 @@ import "./Alerts.css";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { ConfigProvider, Pagination } from "antd";
+import { getAlertCardContent } from "../../utils/alertPresentation";
 
 function Alerts() {
   const ALERTS_PER_PAGE = 2;
@@ -165,21 +166,25 @@ function Alerts() {
                   </div>
                   {isOpen && (
                     <div className="node-dropdown-content">
-                      {paginatedTasks.map((task) => (
-                        <div key={task._id} className="data-card">
-                          <div className="card-header">
-                            <span>
-                              {new Date(task.created_date).toLocaleString()}
-                            </span>
+                      {paginatedTasks.map((task) => {
+                        const alertCard = getAlertCardContent(task);
+
+                        return (
+                          <div key={task._id} className="data-card">
+                            <div className="card-header">
+                              <span>
+                                {new Date(task.created_date).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="card-body">
+                              <span>
+                                <strong>{alertCard.title}</strong>
+                              </span>
+                              <p>{alertCard.description}</p>
+                            </div>
                           </div>
-                          <div className="card-body">
-                            <span>
-                              <strong>{task.title}</strong>
-                            </span>
-                            <p>{task.description}</p>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {nodeTasks.length === 0 && (
                         <p className="no-alerts">
                           No pending alerts for this node
@@ -254,21 +259,25 @@ function Alerts() {
                   </div>
                   {isOpen && (
                     <div className="node-dropdown-content">
-                      {paginatedTasks.map((task) => (
-                        <div key={task._id} className="data-card">
-                          <div className="card-header">
-                            <span>
-                              {new Date(task.created_date).toLocaleString()}
-                            </span>
+                      {paginatedTasks.map((task) => {
+                        const alertCard = getAlertCardContent(task);
+
+                        return (
+                          <div key={task._id} className="data-card">
+                            <div className="card-header">
+                              <span>
+                                {new Date(task.created_date).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="card-body">
+                              <span>
+                                <strong>{alertCard.title}</strong>
+                              </span>
+                              <p>{alertCard.description}</p>
+                            </div>
                           </div>
-                          <div className="card-body">
-                            <span>
-                              <strong>{task.title}</strong>
-                            </span>
-                            <p>{task.description}</p>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {nodeTasks.length === 0 && (
                         <p className="no-alerts">
                           No ongoing alerts for this node
@@ -343,23 +352,27 @@ function Alerts() {
                   </div>
                   {isOpen && (
                     <div className="node-dropdown-content">
-                      {paginatedTasks.map((task) => (
-                        <div key={task._id} className="data-card">
-                          <div className="card-header">
-                            <span>
-                              {new Date(
-                                task.completed_date || task.created_date,
-                              ).toLocaleString()}
-                            </span>
+                      {paginatedTasks.map((task) => {
+                        const alertCard = getAlertCardContent(task);
+
+                        return (
+                          <div key={task._id} className="data-card">
+                            <div className="card-header">
+                              <span>
+                                {new Date(
+                                  task.completed_date || task.created_date,
+                                ).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="card-body">
+                              <span>
+                                <strong>{alertCard.title}</strong>
+                              </span>
+                              <p>{alertCard.description}</p>
+                            </div>
                           </div>
-                          <div className="card-body">
-                            <span>
-                              <strong>{task.title}</strong>
-                            </span>
-                            <p>{task.description}</p>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {nodeTasks.length === 0 && (
                         <p className="no-alerts">
                           No resolved alerts for this node

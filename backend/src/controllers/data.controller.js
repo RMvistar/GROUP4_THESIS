@@ -3,6 +3,7 @@ import Node from "../models/Node.js";
 import Task from "../models/Task.js";
 import User from "../models/User.js";
 import Role from "../models/Role.js";
+import { emitTaskUpdate } from "../utils/taskEvents.js";
 import {
   buildAutoNodeId,
   buildSensorIdQuery,
@@ -84,7 +85,7 @@ async function ensureNodeForSensor(sensor_id) {
   });
 }
 
-async function autoCreateAlertTask(sensor_id, status, ml_state) {
+async function autoCreateAlertTask(sensor_id, status, ml_state, io) {
   if (status < 1) return; // Normal — no alert needed
   try {
     const normalizedSensorId = normalizeSensorId(sensor_id);
@@ -110,7 +111,7 @@ async function autoCreateAlertTask(sensor_id, status, ml_state) {
     const stateLabel =
       (ml_state && ML_STATE_DISPLAY[ml_state]) || STATUS_ALERT_TITLE[status];
 
-    await Task.create({
+    const task = await Task.create({
       task_id: `AUTO-${node.node_id}-${Date.now()}`,
       title: `${STATUS_ALERT_TITLE[status]} – ${node.location}`,
       description: `Drainage state detected: ${stateLabel}. Auto-generated from sensor ${normalizedSensorId}.`,
@@ -121,9 +122,35 @@ async function autoCreateAlertTask(sensor_id, status, ml_state) {
     console.log(
       `🔔 Auto-created alert task for ${node.location} [${stateLabel}]`,
     );
+    const populatedTask = await Task.findById(task._id).populate(
+      "node_id",
+      "node_id location",
+    );
+    emitTaskUpdate(io, populatedTask);
   } catch (err) {
     console.error("autoCreateAlertTask error:", err.message);
   }
+}
+
+function emitOverflowAlert(io, node, dataRecord) {
+  if (!io || !node || !dataRecord) return;
+  const isOverflow =
+    dataRecord.status === 3 || dataRecord.ml_state === "overflow";
+  if (!isOverflow) return;
+
+  const timestamp =
+    dataRecord.createdAt ||
+    dataRecord.timestamp ||
+    new Date().toISOString();
+
+  io.emit("overflow_alert", {
+    sensor_id: dataRecord.sensor_id,
+    node_location: node.location || "Unknown Node",
+    water_level: dataRecord.water_level,
+    flow_rate: dataRecord.flow_rate,
+    timestamp,
+    message: `Overflow detected at ${node.location || "Unknown Node"}.`,
+  });
 }
 
 export async function getData(req, res) {
@@ -162,7 +189,7 @@ export async function postData(req, res) {
       const sensorId = normalizeSensorId("DRAINAGE_Module_01");
 
       // Ensure this sensor exists as a Node so it can appear in live alerts/details.
-      await ensureNodeForSensor(sensorId);
+      const node = await ensureNodeForSensor(sensorId);
 
       const newData = new Data({
         sensor_id: sensorId,
@@ -194,7 +221,10 @@ export async function postData(req, res) {
         savedData.sensor_id,
         savedData.status,
         savedData.ml_state,
+        io,
       );
+
+      emitOverflowAlert(io, node, savedData);
 
       return res.status(201).json(savedData);
     }
@@ -203,7 +233,7 @@ export async function postData(req, res) {
       const normalizedMac = normalizeSensorId(mac);
 
       // Ensure this sensor exists as a Node so it can appear in live alerts/details.
-      await ensureNodeForSensor(normalizedMac);
+      const node = await ensureNodeForSensor(normalizedMac);
 
       // Transform ESP data to backend format
       const flow_rate = data.velocity || 0;
@@ -246,7 +276,14 @@ export async function postData(req, res) {
       if (io) io.emit("new_prediction", savedData);
 
       // Auto-create an alert task when the sensor detects a non-normal state
-      await autoCreateAlertTask(savedData.sensor_id, savedData.status, null);
+      await autoCreateAlertTask(
+        savedData.sensor_id,
+        savedData.status,
+        null,
+        io,
+      );
+
+      emitOverflowAlert(io, node, savedData);
 
       return res.status(201).json(savedData);
     }

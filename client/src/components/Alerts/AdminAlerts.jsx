@@ -1,8 +1,9 @@
 import "./AdminAlerts.css";
 import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
 import { ConfigProvider, Pagination } from "antd";
+import { getAlertCardContent } from "../../utils/alertPresentation";
 
 function AdminAlerts() {
   const ALERTS_PER_PAGE = 2;
@@ -23,11 +24,7 @@ function AdminAlerts() {
   const [openDropdowns, setOpenDropdowns] = useState({});
   const [nodePages, setNodePages] = useState({});
 
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("http://localhost:5001/api/tasks", {
@@ -49,7 +46,11 @@ function AdminAlerts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const handleAcknowledge = async (taskId) => {
     try {
@@ -324,6 +325,7 @@ function AdminAlerts() {
                     <div className="admin-node-dropdown-content">
                       {paginatedTasks.map((task) => {
                         const assignedNames = formatAssignedTo(task.assigned_to);
+                        const alertCard = getAlertCardContent(task);
 
                         return (
                           <div key={task._id} className="admin-data-card">
@@ -334,9 +336,9 @@ function AdminAlerts() {
                             </div>
                             <div className="admin-card-body">
                               <span>
-                                <strong>{task.title}</strong>
+                                <strong>{alertCard.title}</strong>
                               </span>
-                              <p>{task.description}</p>
+                              <p>{alertCard.description}</p>
                               {assignedNames && (
                                 <div className="assigned-to-section">
                                   <span className="assigned-label">
@@ -444,29 +446,33 @@ function AdminAlerts() {
                   </div>
                   {isOpen && (
                     <div className="admin-node-dropdown-content">
-                      {paginatedTasks.map((task) => (
-                        <div key={task._id} className="admin-data-card">
-                          <div className="admin-card-header">
-                            <span>
-                              {new Date(task.created_date).toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="admin-card-body">
-                            <span>
-                              <strong>{task.title}</strong>
-                            </span>
-                            <p>{task.description}</p>
-                            <div className="admin-buttons-container">
-                              <button
-                                className="admin-resolve-button"
-                                onClick={() => handleResolve(task._id)}
-                              >
-                                Resolve
-                              </button>
+                      {paginatedTasks.map((task) => {
+                        const alertCard = getAlertCardContent(task);
+
+                        return (
+                          <div key={task._id} className="admin-data-card">
+                            <div className="admin-card-header">
+                              <span>
+                                {new Date(task.created_date).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="admin-card-body">
+                              <span>
+                                <strong>{alertCard.title}</strong>
+                              </span>
+                              <p>{alertCard.description}</p>
+                              <div className="admin-buttons-container">
+                                <button
+                                  className="admin-resolve-button"
+                                  onClick={() => handleResolve(task._id)}
+                                >
+                                  Resolve
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {nodeTasks.length === 0 && (
                         <p className="admin-no-alerts">
                           No ongoing alerts for this node
@@ -541,23 +547,27 @@ function AdminAlerts() {
                   </div>
                   {isOpen && (
                     <div className="admin-node-dropdown-content">
-                      {paginatedTasks.map((task) => (
-                        <div key={task._id} className="admin-data-card">
-                          <div className="admin-card-header">
-                            <span>
-                              {new Date(
-                                task.completed_date || task.created_date,
-                              ).toLocaleString()}
-                            </span>
+                      {paginatedTasks.map((task) => {
+                        const alertCard = getAlertCardContent(task);
+
+                        return (
+                          <div key={task._id} className="admin-data-card">
+                            <div className="admin-card-header">
+                              <span>
+                                {new Date(
+                                  task.completed_date || task.created_date,
+                                ).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="admin-card-body">
+                              <span>
+                                <strong>{alertCard.title}</strong>
+                              </span>
+                              <p>{alertCard.description}</p>
+                            </div>
                           </div>
-                          <div className="admin-card-body">
-                            <span>
-                              <strong>{task.title}</strong>
-                            </span>
-                            <p>{task.description}</p>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {nodeTasks.length === 0 && (
                         <p className="admin-no-alerts">
                           No resolved alerts for this node

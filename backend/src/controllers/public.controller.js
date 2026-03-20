@@ -1,6 +1,7 @@
 import Data from "../models/Data.js";
 import Node from "../models/Node.js";
 import Task from "../models/Task.js";
+import { getNodeConnectivityStatus } from "../utils/nodeConnectivity.js";
 import { buildSensorIdQuery, isNodeClaimed } from "../utils/nodeMetadata.js";
 
 // Get flood risk information for all active nodes
@@ -26,6 +27,8 @@ export async function getFloodRiskInfo(req, res) {
           flow_rate: latestData ? latestData.flow_rate : null,
           alertStatus: latestData ? latestData.alertStatus : "unresolved",
           last_update: latestData ? latestData.timestamp : null,
+          connectivity: getNodeConnectivityStatus(latestData?.timestamp),
+          is_online: getNodeConnectivityStatus(latestData?.timestamp) === "online",
         };
       }),
     );
@@ -122,6 +125,8 @@ export async function getPublicNodeDetails(req, res) {
       rate_of_change: latestData ? latestData.rate_of_change : null,
       alertStatus: latestData ? latestData.alertStatus : "unresolved",
       last_update: latestData ? latestData.timestamp : null,
+      connectivity: getNodeConnectivityStatus(latestData?.timestamp),
+      is_online: getNodeConnectivityStatus(latestData?.timestamp) === "online",
     };
 
     res.status(200).json(nodeDetails);
@@ -228,9 +233,27 @@ export async function getRecentPredictions(req, res) {
 export async function getActiveNodes(req, res) {
   try {
     const nodes = (await Node.find({ status: "active" }).select(
-      "node_id location coordinates description is_claimed",
+      "node_id location coordinates description is_claimed sensor_id",
     )).filter(isNodeClaimed);
-    res.status(200).json(nodes);
+
+    const payload = await Promise.all(
+      nodes.map(async (node) => {
+        const latestData = await Data.findOne({
+          sensor_id: buildSensorIdQuery(node.sensor_id),
+        })
+          .sort({ timestamp: -1 })
+          .select("timestamp");
+
+        return {
+          ...node.toObject(),
+          last_update: latestData ? latestData.timestamp : null,
+          connectivity: getNodeConnectivityStatus(latestData?.timestamp),
+          is_online: getNodeConnectivityStatus(latestData?.timestamp) === "online",
+        };
+      }),
+    );
+
+    res.status(200).json(payload);
   } catch (err) {
     res.status(500).json({ message: "Server Error", error: err.message });
   }

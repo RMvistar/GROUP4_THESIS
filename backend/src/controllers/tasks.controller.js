@@ -1,4 +1,5 @@
 import Task from "../models/Task.js";
+import { emitTaskUpdate } from "../utils/taskEvents.js";
 
 //new  methods para sa tasks
 
@@ -59,6 +60,8 @@ export async function acknowledgeTask(req, res) {
       new_status: "ongoing",
     });
 
+    emitTaskUpdate(req.app.get("io"), task);
+
     res.status(200).json({
       message: "Task acknowledged successfully",
       task,
@@ -104,6 +107,8 @@ export async function resolveTask(req, res) {
       new_status: "resolved",
     });
 
+    emitTaskUpdate(req.app.get("io"), task);
+
     res.status(200).json({
       message: "Task resolved successfully",
       task,
@@ -127,6 +132,7 @@ export async function getTasks(req, res) {
       ],
     })
       .populate("assigned_to", "first_name last_name email")
+      .populate("assigned_by", "first_name last_name email")
       .populate("created_by", "first_name last_name email")
       .populate("node_id", "node_id location")
       .sort({ createdAt: -1 });
@@ -150,6 +156,7 @@ export async function getMyTasks(req, res) {
       ],
     })
       .populate("assigned_to", "first_name last_name email")
+      .populate("assigned_by", "first_name last_name email")
       .populate("created_by", "first_name last_name email")
       .populate("node_id", "node_id location")
       .sort({ createdAt: -1 });
@@ -164,6 +171,7 @@ export async function getTaskById(req, res) {
   try {
     const task = await Task.findById(req.params.id)
       .populate("assigned_to", "first_name last_name email")
+      .populate("assigned_by", "first_name last_name email")
       .populate("created_by", "first_name last_name email")
       .populate("node_id", "node_id location");
 
@@ -200,13 +208,16 @@ export async function createTask(req, res) {
       title,
       description,
       assigned_to: normalizeAssignedTo(assigned_to),
-      created_by: req.user.userId,
+      created_by: req.user._id,
+      assigned_by: req.user._id,
       node_id,
       priority: priority || "medium",
     });
 
     const populatedTask = await Task.findById(task._id)
       .populate("assigned_to", "first_name last_name email")
+      .populate("assigned_by", "first_name last_name email")
+      .populate("created_by", "first_name last_name email")
       .populate("node_id", "node_id location");
 
     await createActivityLog({
@@ -218,6 +229,8 @@ export async function createTask(req, res) {
       description: `Task "${title}" was created by ${req.user.first_name} ${req.user.last_name}`,
       new_status: task.status,
     });
+
+    emitTaskUpdate(req.app.get("io"), populatedTask);
 
     res
       .status(201)
@@ -287,6 +300,9 @@ export async function updateTaskStatus(req, res) {
     }
 
     await task.save();
+    await task.populate("node_id", "node_id location");
+
+    emitTaskUpdate(req.app.get("io"), task);
 
     res.status(200).json({ message: "Task status updated", task });
   } catch (err) {
@@ -318,10 +334,16 @@ export async function delegateTask(req, res) {
 
     const task = await Task.findByIdAndUpdate(
       req.params.id,
-      { assigned_to: assignedTo, status: "pending" },
+      {
+        assigned_to: assignedTo,
+        assigned_by: req.user._id,
+        status: "pending",
+      },
       { new: true },
     )
       .populate("assigned_to", "first_name last_name email")
+      .populate("assigned_by", "first_name last_name email")
+      .populate("created_by", "first_name last_name email")
       .populate("node_id", "node_id location");
 
     if (!task) {
@@ -338,6 +360,8 @@ export async function delegateTask(req, res) {
       previous_status: task.status,
       new_status: "pending",
     });
+
+    emitTaskUpdate(req.app.get("io"), task);
 
     res.status(200).json({ message: "Task delegated successfully", task });
   } catch (err) {

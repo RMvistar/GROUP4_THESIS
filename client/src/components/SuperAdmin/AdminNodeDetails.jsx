@@ -3,6 +3,7 @@ import { FaChartLine, FaPlus, FaTimes, FaTrash } from "react-icons/fa";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
 import HistoricalTrendsModal from "../HistoricalTrends/HistoricalTrendsModal";
+import { buildHistoricalTrendEvents } from "../../utils/historicalTrendEvents";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
@@ -38,6 +39,10 @@ function getStatusTone(node) {
 function getNodeTitle(node) {
   if (!node) return "Node";
   return node.is_claimed === false ? "Unclaimed Node" : node.location;
+}
+
+function getConnectivityLabel(node) {
+  return node?.is_online ? "Online" : "Offline";
 }
 
 function AdminNodeDetails() {
@@ -193,21 +198,24 @@ function AdminNodeDetails() {
     });
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/public/nodes/${node.node_id}/history?limit=100`,
-      );
+      const [historyResponse, alertsResponse] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/public/nodes/${node.node_id}/history?limit=100`),
+        fetch(`${API_BASE_URL}/api/public/alerts`),
+      ]);
 
-      if (!response.ok) {
+      if (!historyResponse.ok || !alertsResponse.ok) {
         throw new Error("Failed to fetch historical trends");
       }
 
-      const payload = await response.json();
-      const events = (payload.historical_events || [])
-        .filter((item) => item.event_type === "clog" || item.event_type === "overflow")
-        .map((item) => ({
-          date: new Date(item.timestamp).toISOString().slice(0, 10),
-          type: item.event_type,
-        }));
+      const [historyPayload, alertsPayload] = await Promise.all([
+        historyResponse.json(),
+        alertsResponse.json(),
+      ]);
+      const events = buildHistoricalTrendEvents({
+        node,
+        historyEvents: historyPayload.historical_events || [],
+        alerts: Array.isArray(alertsPayload) ? alertsPayload : [],
+      });
 
       setTrendsState({
         open: true,
@@ -277,6 +285,11 @@ function AdminNodeDetails() {
                         {statusLabel.toUpperCase()}
                       </span>
                       <span
+                        className={`status-badge connectivity-badge connectivity-${node.is_online ? "online" : "offline"}`}
+                      >
+                        {getConnectivityLabel(node).toUpperCase()}
+                      </span>
+                      <span
                         className={`claim-badge ${node.is_claimed === false ? "claim-unclaimed" : "claim-claimed"}`}
                       >
                         {node.is_claimed === false ? "Unclaimed" : "Claimed"}
@@ -316,6 +329,14 @@ function AdminNodeDetails() {
                           node.latest_data?.batteryPercent !== undefined
                             ? `${node.latest_data.batteryPercent}%`
                             : "N/A"}
+                        </span>
+                      </div>
+                      <div className="metric-item">
+                        <span className="metric-label">Connection</span>
+                        <span
+                          className={`metric-value connectivity-value connectivity-${node.is_online ? "online" : "offline"}`}
+                        >
+                          {getConnectivityLabel(node)}
                         </span>
                       </div>
                       <div className="metric-item">
@@ -371,6 +392,8 @@ function AdminNodeDetails() {
                       <p className="insights-text">
                         {node.is_claimed === false
                           ? `This sensor is already reporting data, but it is still unclaimed. Enter MAC address ${node.sensor_id} with a location to turn it into a named node.`
+                          : !node.is_online
+                            ? "This node is currently offline. It will return to online automatically once sensor communication is restored."
                           : node.latest_data
                             ? `Latest status is ${statusLabel}. New alerts for this MAC address will continue to appear under ${node.location}.`
                             : "This node is claimed, but it has not sent live sensor data yet."}
