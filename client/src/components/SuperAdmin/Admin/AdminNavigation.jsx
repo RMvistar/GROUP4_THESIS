@@ -20,7 +20,7 @@ function AdminNavigation({ activeSection, onSectionChange }) {
 
   const handleLogout = () => {
     logout();
-    navigate("/dashboard");
+    navigate("/home");
   };
 
   return (
