@@ -13,12 +13,12 @@ function Tasks() {
     const fetchMyTasks = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:5001/api/tasks", {
+        const response = await fetch("http://localhost:5001/api/tasks/my-tasks", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) throw new Error("Failed to fetch tasks");
         const data = await response.json();
-        setTasks(data.filter((t) => t.assigned_to));
+        setTasks(data);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -42,7 +42,7 @@ function Tasks() {
               <tr>
                 <th>Node Location</th>
                 <th>Task Description</th>
-                <th>Assigned To</th>
+                <th>Assigned By</th>
               </tr>
             </thead>
             <tbody>
@@ -93,8 +93,8 @@ function Tasks() {
                   <td>{task.node_id?.location || "—"}</td>
                   <td>{task.title}</td>
                   <td>
-                    {task.assigned_to
-                      ? `${task.assigned_to.first_name} ${task.assigned_to.last_name}`
+                    {task.created_by
+                      ? `${task.created_by.first_name} ${task.created_by.last_name}`
                       : "—"}
                   </td>
                 </tr>

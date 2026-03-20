@@ -25,7 +25,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/super-admin" element={<SuperAdminPage />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="/worker" element={<WorkerPage />} />
+        <Route path="/worker/*" element={<WorkerPage />} />
         <Route path="/home" element={<LandingPage />} />
 
         {/* Guest-accessible routes (no ProtectedRoute) */}

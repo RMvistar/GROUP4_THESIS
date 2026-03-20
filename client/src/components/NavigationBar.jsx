@@ -12,7 +12,12 @@ function NavigationBar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/home");
+    const roleName = typeof user?.role === "string" ? user.role : user?.role?.name;
+    if (roleName === "Admin" || roleName === "Super Admin") {
+      navigate("/dashboard");
+    } else {
+      navigate("/home");
+    }
   };
 
   const handleAdminLogin = () => {

@@ -83,6 +83,7 @@ function WorkerNavigation({ activeSection, onSectionChange }) {
           <span className="nav-label">Tasks</span>
         </div>
 
+        {/* Account Settings */}
         <div
           className={`nav-item ${activeSection === "account-settings" ? "active" : ""}`}
           onClick={() => onSectionChange("account-settings")}
@@ -92,10 +93,7 @@ function WorkerNavigation({ activeSection, onSectionChange }) {
           </span>
           <span className="nav-label">Account Settings</span>
         </div>
-
-        <button className="log-out-button" onClick={handleLogout}>
-          Log out
-        </button>
+        <button className="log-out-button" onClick={handleLogout}>Log out</button>
       </nav>
     </div>
   );

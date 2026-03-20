@@ -11,8 +11,18 @@ import {
 } from "react-icons/fa";
 import logo from "../../../assets/ARCOMLogo2.png";
 import "./AdminNavigation.css";
+import { useAuthStore } from "../../../store/useAuthStore.js";
+import { useNavigate } from "react-router-dom";
 
 function AdminNavigation({ activeSection, onSectionChange }) {
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/dashboard");
+  };
+
   return (
     <div className="admin-navigation-wrapper">
       {/* User Profile Section */}
@@ -95,7 +105,7 @@ function AdminNavigation({ activeSection, onSectionChange }) {
           </span>
           <span className="nav-label">Account Settings</span>
         </div>
-        <button className="log-out-button">Log out</button>
+        <button className="log-out-button" onClick={handleLogout}>Log out</button>
       </nav>
     </div>
   );
