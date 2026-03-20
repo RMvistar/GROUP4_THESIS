@@ -74,7 +74,10 @@ export const login = async (req, res) => {
       user: {
         id: user._id,
         name: user.username,
+        first_name: user.first_name || "",
+        last_name: user.last_name || "",
         email: user.email,
+        government_id: user.government_id || "",
         role: user.role?.name || null,
         // Tell the frontend whether this is a temporary password the user must change.
         mustChangePassword: user.mustChangePassword || false,
@@ -82,6 +85,30 @@ export const login = async (req, res) => {
     });
   } catch (err) {
     console.error("Login error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    res.status(200).json({
+      id: user._id,
+      name: user.username || "",
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
+      email: user.email || "",
+      government_id: user.government_id || "",
+      role: user.role?.name || null,
+      mustChangePassword: user.mustChangePassword || false,
+    });
+  } catch (err) {
+    console.error("Get profile error:", err);
     res.status(500).json({ message: "Server Error" });
   }
 };

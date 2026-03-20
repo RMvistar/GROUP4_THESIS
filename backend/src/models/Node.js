@@ -20,6 +20,13 @@ const nodeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    is_claimed: {
+      type: Boolean,
+      default: true,
+    },
+    claimed_at: {
+      type: Date,
+    },
     installed_date: {
       type: Date,
       default: Date.now,

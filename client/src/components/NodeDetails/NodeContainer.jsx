@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaChartLine } from "react-icons/fa";
 import HistoricalTrendsModal from "../HistoricalTrends/HistoricalTrendsModal";
 import "./NodeContainer.css";
@@ -13,93 +13,110 @@ const STATUS_LABEL = {
   3: "Overflow",
 };
 
-function NodeContainer() {
-  const [isTrendsModalOpen, setIsTrendsModalOpen] = useState(false);
-  const [nodeDetails, setNodeDetails] = useState(null);
-  const [historicalEvents, setHistoricalEvents] = useState([]);
+function getStatusLabel(node) {
+  if (!node) return "No Data";
+  if (node.ml_state) {
+    return node.ml_state
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (match) => match.toUpperCase());
+  }
+
+  return STATUS_LABEL[node.status] || "Unknown";
+}
+
+function NodeContainer({ className = "" }) {
+  const [nodes, setNodes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [trendsState, setTrendsState] = useState({
+    open: false,
+    node: null,
+    events: [],
+  });
+
+  const fetchNodeData = useCallback(async () => {
+    try {
+      const nodesRes = await fetch(`${API_BASE_URL}/api/public/nodes`);
+      if (!nodesRes.ok) throw new Error("Failed to fetch nodes");
+
+      const nodeList = await nodesRes.json();
+
+      if (!Array.isArray(nodeList) || nodeList.length === 0) {
+        setNodes([]);
+        return;
+      }
+
+      const enrichedNodes = await Promise.all(
+        nodeList.map(async (nodeSummary) => {
+          const [detailsRes, historyRes] = await Promise.all([
+            fetch(`${API_BASE_URL}/api/public/nodes/${nodeSummary.node_id}`),
+            fetch(
+              `${API_BASE_URL}/api/public/nodes/${nodeSummary.node_id}/history?limit=100`,
+            ),
+          ]);
+
+          const details = detailsRes.ok
+            ? await detailsRes.json()
+            : {
+                node_id: nodeSummary.node_id,
+                location: nodeSummary.location,
+                description: nodeSummary.description,
+                last_update: null,
+              };
+
+          const history = historyRes.ok ? await historyRes.json() : null;
+          const historicalEvents = (history?.historical_events || [])
+            .filter(
+              (eventItem) =>
+                eventItem.event_type === "clog" ||
+                eventItem.event_type === "overflow",
+            )
+            .map((eventItem) => ({
+              date: new Date(eventItem.timestamp).toISOString().slice(0, 10),
+              type: eventItem.event_type,
+            }));
+
+          return {
+            ...details,
+            historicalEvents,
+          };
+        }),
+      );
+
+      setNodes(enrichedNodes);
+    } catch (err) {
+      console.error("Error fetching node details:", err);
+      setNodes([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchNodeData = async () => {
-      try {
-        const nodesRes = await fetch(`${API_BASE_URL}/api/public/nodes`);
-        if (!nodesRes.ok) throw new Error("Failed to fetch nodes");
-        const nodes = await nodesRes.json();
-
-        if (!Array.isArray(nodes) || nodes.length === 0) {
-          setNodeDetails(null);
-          setHistoricalEvents([]);
-          return;
-        }
-
-        const firstNodeId = nodes[0].node_id;
-        const [detailsRes, historyRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/public/nodes/${firstNodeId}`),
-          fetch(
-            `${API_BASE_URL}/api/public/nodes/${firstNodeId}/history?limit=100`,
-          ),
-        ]);
-
-        if (detailsRes.ok) {
-          const details = await detailsRes.json();
-          setNodeDetails(details);
-        }
-
-        if (historyRes.ok) {
-          const history = await historyRes.json();
-          const mappedEvents = (history.historical_events || []).map((e) => ({
-            date: new Date(e.timestamp).toISOString().slice(0, 10),
-            type: (e.event_type || "").toLowerCase(),
-          }));
-          setHistoricalEvents(mappedEvents);
-        }
-      } catch (err) {
-        console.error("Error fetching node details:", err);
-        setNodeDetails(null);
-        setHistoricalEvents([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchNodeData();
     const interval = setInterval(fetchNodeData, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchNodeData]);
 
-  const statusLabel = useMemo(() => {
-    if (!nodeDetails) return "No Data";
-    if (nodeDetails.ml_state) {
-      return nodeDetails.ml_state
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (m) => m.toUpperCase());
-    }
-    return STATUS_LABEL[nodeDetails.status] || "Unknown";
-  }, [nodeDetails]);
+  const renderedNodes = useMemo(() => {
+    return nodes.map((node) => ({
+      ...node,
+      statusLabel: getStatusLabel(node),
+    }));
+  }, [nodes]);
 
-  const renderNodeCard = (sensor) => {
-    if (loading) {
+  const renderNodeCard = (node) => {
+    if (!node) {
       return (
-        <div className="nodeCard">
-          <div className="card-header">
-            <span className="status-badge">LOADING</span>
-            <span className="timestamp">Fetching latest sensor data...</span>
-          </div>
-        </div>
-      );
-    }
-
-    if (!sensor) {
-      return (
-        <div className="nodeCard">
-          <div className="card-header">
-            <span className="status-badge">NO DATA</span>
-            <span className="timestamp">Waiting for data...</span>
-          </div>
-          <div className="card-body">
-            <div className="data-row">
-              <span className="data-label">Node:</span>
-              <span className="data-value">Not connected</span>
+        <div className="node-shell">
+          <div className="nodeCard">
+            <div className="card-header">
+              <span className="status-badge">NO DATA</span>
+              <span className="timestamp">Waiting for data...</span>
+            </div>
+            <div className="card-body">
+              <div className="empty-card-message">
+                No connected nodes are available right now.
+              </div>
             </div>
           </div>
         </div>
@@ -107,82 +124,91 @@ function NodeContainer() {
     }
 
     return (
-      <div className="nodeCard">
-        <div className="card-header">
-          <span className="status-badge">{statusLabel.toUpperCase()}</span>
-          <span className="timestamp">
-            {sensor.last_update
-              ? new Date(sensor.last_update).toLocaleString()
-              : "No timestamp"}
-          </span>
-        </div>
-        <div className="card-body">
-          {/* Compact Metrics Grid */}
-          <div className="metrics-grid">
-            <div className="metric-item">
-              <span className="metric-label">Node Location</span>
-              <span className="metric-value">{sensor.location || "N/A"}</span>
-            </div>
-            <div className="metric-item">
-              <span className="metric-label">Status</span>
-              <span className="metric-value status-normal">{statusLabel}</span>
-            </div>
-            <div className="metric-item">
-              <span className="metric-label">Battery</span>
-              <span className="metric-value battery-value">
-                {sensor.batteryPercent !== undefined &&
-                sensor.batteryPercent !== null
-                  ? `${sensor.batteryPercent}%`
-                  : "N/A"}
-              </span>
-            </div>
-            <div className="metric-item">
-              <span className="metric-label">Clog Status</span>
-              <span className="metric-value">
-                {sensor.distance !== undefined && sensor.distance !== null
-                  ? `${sensor.distance} cm`
-                  : "N/A"}
-              </span>
-            </div>
-            <div className="metric-item">
-              <span className="metric-label">Water Level</span>
-              <span className="metric-value">
-                {sensor.water_level !== undefined && sensor.water_level !== null
-                  ? `${sensor.water_level.toFixed(2)} cm`
-                  : "N/A"}
-              </span>
-            </div>
-            <div className="metric-item">
-              <span className="metric-label">Water Flow</span>
-              <span className="metric-value">
-                {sensor.flow_rate !== undefined && sensor.flow_rate !== null
-                  ? `${sensor.flow_rate} cm/s`
-                  : "N/A"}
-              </span>
-            </div>
+      <div key={node.node_id} className="node-shell">
+        <div className="nodeCard">
+          <div className="card-header">
+            <span className="status-badge">{node.statusLabel.toUpperCase()}</span>
+            <span className="timestamp">
+              {node.last_update
+                ? new Date(node.last_update).toLocaleString()
+                : "No timestamp"}
+            </span>
           </div>
+          <div className="card-body">
+            <div className="metrics-grid">
+              <div className="metric-item">
+                <span className="metric-label">Node Location</span>
+                <span className="metric-value">{node.location || "N/A"}</span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Node ID</span>
+                <span className="metric-value">{node.node_id || "N/A"}</span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Status</span>
+                <span className="metric-value status-normal">
+                  {node.statusLabel}
+                </span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Battery</span>
+                <span className="metric-value battery-value">
+                  {node.batteryPercent !== undefined &&
+                  node.batteryPercent !== null
+                    ? `${node.batteryPercent}%`
+                    : "N/A"}
+                </span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Clog Status</span>
+                <span className="metric-value">
+                  {node.distance !== undefined && node.distance !== null
+                    ? `${node.distance} cm`
+                    : "N/A"}
+                </span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Water Level</span>
+                <span className="metric-value">
+                  {node.water_level !== undefined && node.water_level !== null
+                    ? `${node.water_level.toFixed(2)} cm`
+                    : "N/A"}
+                </span>
+              </div>
+              <div className="metric-item">
+                <span className="metric-label">Water Flow</span>
+                <span className="metric-value">
+                  {node.flow_rate !== undefined && node.flow_rate !== null
+                    ? `${node.flow_rate} cm/s`
+                    : "N/A"}
+                </span>
+              </div>
+            </div>
 
-          {/* System Prediction & Insights Section (copied from WorkNodeDetails) */}
-          <div className="insights-section">
-            <h3 className="section-title">System Prediction & Insights</h3>
-            <p className="insights-text">
-              {sensor.ml_state
-                ? `ML state: ${statusLabel}. Real-time values are from live sensor data.`
-                : "No ML prediction on latest sample. View historical trends for analysis."}
-            </p>
-          </div>
+            <div className="insights-section">
+              <h3 className="section-title">System Prediction & Insights</h3>
+              <p className="insights-text">
+                {node.ml_state
+                  ? `ML state: ${node.statusLabel}. Real-time values are from live sensor data.`
+                  : "No ML prediction on the latest sample. View historical trends for analysis."}
+              </p>
+            </div>
 
-          {/* Actions Section */}
-          <div className="actions-section">
-            <button
-              className="historical-trends-button"
-              onClick={() => {
-                setIsTrendsModalOpen(true);
-              }}
-            >
-              <FaChartLine />
-              View Trends
-            </button>
+            <div className="actions-section">
+              <button
+                className="historical-trends-button"
+                onClick={() =>
+                  setTrendsState({
+                    open: true,
+                    node,
+                    events: node.historicalEvents || [],
+                  })
+                }
+              >
+                <FaChartLine />
+                View Trends
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -190,17 +216,36 @@ function NodeContainer() {
   };
 
   return (
-    <div className="node-wrapper">
-      <div className="node-container-1">
-        <div className="node-1">{renderNodeCard(nodeDetails)}</div>
+    <div className={`node-wrapper ${className}`.trim()}>
+      <div className="node-list">
+        {loading && nodes.length === 0 ? (
+          <div className="node-shell">
+            <div className="nodeCard">
+              <div className="card-header">
+                <span className="status-badge">LOADING</span>
+                <span className="timestamp">Fetching latest sensor data...</span>
+              </div>
+            </div>
+          </div>
+        ) : renderedNodes.length === 0 ? (
+          renderNodeCard(null)
+        ) : (
+          renderedNodes.map(renderNodeCard)
+        )}
       </div>
 
       <HistoricalTrendsModal
-        isOpen={isTrendsModalOpen}
-        onClose={() => setIsTrendsModalOpen(false)}
-        sensor={nodeDetails}
-        nodeLabel={nodeDetails?.location || "N/A"}
-        events={historicalEvents}
+        isOpen={trendsState.open}
+        onClose={() =>
+          setTrendsState({
+            open: false,
+            node: null,
+            events: [],
+          })
+        }
+        sensor={trendsState.node}
+        nodeLabel={trendsState.node?.location || "N/A"}
+        events={trendsState.events}
         selectId="node-trend-view-select"
       />
     </div>

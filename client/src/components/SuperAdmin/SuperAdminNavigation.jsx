@@ -6,18 +6,24 @@ import {
   FaNetworkWired,
   FaBell,
   FaChevronRight,
-  FaUser,
   FaHistory,
   FaUserCog,
   FaCog,
 } from "react-icons/fa";
 import { useAuthStore } from "../../store/useAuthStore";
+import {
+  getFullName,
+  getProfileInitials,
+  getRoleName,
+  getUserIdLabel,
+  getUsernameLabel,
+} from "../../utils/profileDisplay.js";
 import logo from "../../assets/ARCOMLogo2.png";
 import "./SuperAdminNavigation.css";
 
 function SuperAdminNavigation({ activeSection, onSectionChange }) {
   const navigate = useNavigate();
-  const { logout } = useAuthStore();
+  const { logout, user } = useAuthStore();
   const [isUsersExpanded, setIsUsersExpanded] = useState(() => {
     return localStorage.getItem("usersMenuExpanded") === "true";
   });
@@ -37,6 +43,12 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
     navigate("/home");
   };
 
+  const fullName = getFullName(user);
+  const roleName = getRoleName(user);
+  const userIdLabel = getUserIdLabel(user);
+  const usernameLabel = getUsernameLabel(user);
+  const profileInitials = getProfileInitials(user);
+
   return (
     <div className="super-admin-navigation-wrapper">
       {/* User Profile Section */}
@@ -46,10 +58,15 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
       </div>
       <div className="nav-profile">
         <div className="profile-avatar">
-          <FaUser />
+          <span className="profile-initials">{profileInitials}</span>
         </div>
         <div className="profile-info">
-          <span className="profile-name">Super Admin</span>
+          <span className="profile-name">{fullName}</span>
+          <span className="profile-role">{roleName}</span>
+          {userIdLabel && <span className="profile-id">ID {userIdLabel}</span>}
+          {usernameLabel && (
+            <span className="profile-username">@{usernameLabel}</span>
+          )}
         </div>
       </div>
 
