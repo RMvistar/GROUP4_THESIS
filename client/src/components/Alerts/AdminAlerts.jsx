@@ -6,7 +6,7 @@ import { ConfigProvider, Pagination } from "antd";
 
 function AdminAlerts() {
   const ALERTS_PER_PAGE = 2;
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
 
   // State for tasks
   const [tasks, setTasks] = useState([]);
@@ -314,12 +314,15 @@ function AdminAlerts() {
                               >
                                 Acknowledge
                               </button>
-                              <button
-                                className="admin-assign-button"
-                                onClick={() => openAssignModal(task._id)}
-                              >
-                                Assign
-                              </button>
+                              {/* Always show Assign button for Super Admin and Admin */}
+                              {user && user.role && (user.role === "Super Admin" || user.role === "Admin") && (
+                                <button
+                                  className="admin-assign-button"
+                                  onClick={() => openAssignModal(task._id)}
+                                >
+                                  Assign
+                                </button>
+                              )}
                             </div>
                           </div>
                         </div>
