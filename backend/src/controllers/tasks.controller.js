@@ -6,6 +6,24 @@ import { createActivityLog } from "./activityLog.controller.js";
 
 // Add these NEW functions to the existing file:
 
+function normalizeAssignedTo(assignedTo) {
+  if (!assignedTo) {
+    return [];
+  }
+
+  const normalized = Array.isArray(assignedTo) ? assignedTo : [assignedTo];
+
+  return [...new Set(normalized.map(String))];
+}
+
+function isTaskAssignedToUser(task, userId) {
+  return normalizeAssignedTo(task.assigned_to).includes(String(userId));
+}
+
+function getAssignedToForLog(task) {
+  return normalizeAssignedTo(task.assigned_to);
+}
+
 // Acknowledge task (moves from pending to ongoing)
 export async function acknowledgeTask(req, res) {
   try {
@@ -34,6 +52,7 @@ export async function acknowledgeTask(req, res) {
       task_id: task._id,
       user_id: req.user._id, // This comes from the JWT token
       node_id: task.node_id._id,
+      assigned_to: getAssignedToForLog(task),
       action: "acknowledged",
       description: `Task "${task.title}" was acknowledged by ${req.user.first_name} ${req.user.last_name}`,
       previous_status: previousStatus,
@@ -78,6 +97,7 @@ export async function resolveTask(req, res) {
       task_id: task._id,
       user_id: req.user._id, // This comes from the JWT token
       node_id: task.node_id._id,
+      assigned_to: getAssignedToForLog(task),
       action: "resolved",
       description: `Task "${task.title}" was resolved by ${req.user.first_name} ${req.user.last_name}`,
       previous_status: previousStatus,
@@ -179,7 +199,7 @@ export async function createTask(req, res) {
       task_id,
       title,
       description,
-      assigned_to,
+      assigned_to: normalizeAssignedTo(assigned_to),
       created_by: req.user.userId,
       node_id,
       priority: priority || "medium",
@@ -188,6 +208,16 @@ export async function createTask(req, res) {
     const populatedTask = await Task.findById(task._id)
       .populate("assigned_to", "first_name last_name email")
       .populate("node_id", "node_id location");
+
+    await createActivityLog({
+      task_id: task._id,
+      user_id: req.user._id,
+      node_id,
+      assigned_to: getAssignedToForLog(task),
+      action: "created",
+      description: `Task "${title}" was created by ${req.user.first_name} ${req.user.last_name}`,
+      new_status: task.status,
+    });
 
     res
       .status(201)
@@ -207,7 +237,7 @@ export async function acceptTask(req, res) {
     }
 
     // Check if task is assigned to this worker
-    if (task.assigned_to.toString() !== req.user.userId) {
+    if (!isTaskAssignedToUser(task, req.user.userId)) {
       return res
         .status(403)
         .json({ message: "This task is not assigned to you" });
@@ -244,7 +274,7 @@ export async function updateTaskStatus(req, res) {
     // Workers can only update their own assigned tasks
     if (
       req.user.role === "worker" &&
-      task.assigned_to.toString() !== req.user.userId
+      !isTaskAssignedToUser(task, req.user.userId)
     ) {
       return res
         .status(403)
@@ -280,21 +310,34 @@ export async function deleteTask(req, res) {
 // Delegate task to another worker (Admin only)
 export async function delegateTask(req, res) {
   try {
-    const { assigned_to } = req.body;
+    const assignedTo = normalizeAssignedTo(req.body.assigned_to);
 
-    if (!assigned_to) {
-      return res.status(400).json({ message: "Worker ID is required" });
+    if (!assignedTo.length) {
+      return res.status(400).json({ message: "At least one worker ID is required" });
     }
 
     const task = await Task.findByIdAndUpdate(
       req.params.id,
-      { assigned_to, status: "pending" },
+      { assigned_to: assignedTo, status: "pending" },
       { new: true },
-    ).populate("assigned_to", "first_name last_name email");
+    )
+      .populate("assigned_to", "first_name last_name email")
+      .populate("node_id", "node_id location");
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
     }
+
+    await createActivityLog({
+      task_id: task._id,
+      user_id: req.user._id,
+      node_id: task.node_id?._id || task.node_id,
+      assigned_to: getAssignedToForLog(task),
+      action: "assigned",
+      description: `Task "${task.title}" was assigned by ${req.user.first_name} ${req.user.last_name}`,
+      previous_status: task.status,
+      new_status: "pending",
+    });
 
     res.status(200).json({ message: "Task delegated successfully", task });
   } catch (err) {

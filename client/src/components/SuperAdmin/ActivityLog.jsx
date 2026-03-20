@@ -80,6 +80,34 @@ function ActivityLog() {
       setLoading(false);
     }
   };
+
+  const formatAssignedUsers = (assignedTo) => {
+    if (Array.isArray(assignedTo)) {
+      return assignedTo
+        .map((user) =>
+          [user?.first_name, user?.last_name].filter(Boolean).join(" "),
+        )
+        .filter(Boolean)
+        .join(", ");
+    }
+
+    if (assignedTo && typeof assignedTo === "object") {
+      return [assignedTo.first_name, assignedTo.last_name]
+        .filter(Boolean)
+        .join(" ");
+    }
+
+    return "";
+  };
+
+  const getAssignedDisplay = (log) => {
+    return (
+      formatAssignedUsers(log.assigned_to) ||
+      formatAssignedUsers(log.task_id?.assigned_to) ||
+      "Unassigned"
+    );
+  };
+
   const handleDownloadExcel = () => {
     if (!filteredLogs.length) return;
 
@@ -90,6 +118,7 @@ function ActivityLog() {
       NodeLocation: log.node_id?.location || "N/A",
       Description: log.description || "",
       Status: log.new_status || "N/A",
+      Assigned: getAssignedDisplay(log),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(rows);
@@ -100,6 +129,7 @@ function ActivityLog() {
       { wch: 28 }, // para sa NodeLocation
       { wch: 60 }, // para sa  Description
       { wch: 14 }, //and then  Status
+      { wch: 42 }, // para sa Assigned
     ];
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Activity Logs");
@@ -235,13 +265,14 @@ function ActivityLog() {
                     <th>Node Location</th>
                     <th>Description</th>
                     <th>Status</th>
+                    <th>Assigned</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredLogs.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="6"
+                        colSpan="7"
                         style={{ textAlign: "center", padding: "20px" }}
                       >
                         No activity logs found
@@ -268,6 +299,7 @@ function ActivityLog() {
                             {log.new_status || "N/A"}
                           </span>
                         </td>
+                        <td>{getAssignedDisplay(log)}</td>
                       </tr>
                     ))
                   )}

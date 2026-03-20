@@ -17,13 +17,12 @@ function AdminAlerts() {
   const [assignModal, setAssignModal] = useState({ open: false, taskId: null });
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [assigning, setAssigning] = useState(false);
 
   const [openDropdowns, setOpenDropdowns] = useState({});
   const [nodePages, setNodePages] = useState({});
 
-  // Fetch tasks on component mount
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -52,7 +51,6 @@ function AdminAlerts() {
     }
   };
 
-  // Handle acknowledge button
   const handleAcknowledge = async (taskId) => {
     try {
       const response = await fetch(
@@ -71,7 +69,6 @@ function AdminAlerts() {
         throw new Error(errorData.message || "Failed to acknowledge task");
       }
 
-      // Refresh tasks after successful acknowledgment
       await fetchTasks();
     } catch (err) {
       console.error("Error acknowledging task:", err);
@@ -79,20 +76,23 @@ function AdminAlerts() {
     }
   };
 
-  // Open assign modal and fetch users
   const openAssignModal = async (taskId) => {
     setAssignModal({ open: true, taskId });
-    setSelectedUser("");
+    setSelectedUsers([]);
     setUsersLoading(true);
+
     try {
       const response = await fetch("http://localhost:5001/api/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!response.ok) throw new Error("Failed to fetch users");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+
       const data = await response.json();
-      // Only include users with Worker role
       const filtered = data.filter(
-        (u) => u.role && u.role.name && u.role.name.toLowerCase() === "worker"
+        (u) => u.role && u.role.name && u.role.name.toLowerCase() === "worker",
       );
       setUsers(filtered);
     } catch (err) {
@@ -105,12 +105,22 @@ function AdminAlerts() {
 
   const closeAssignModal = () => {
     setAssignModal({ open: false, taskId: null });
-    setSelectedUser("");
+    setSelectedUsers([]);
+  };
+
+  const toggleSelectedUser = (userId) => {
+    setSelectedUsers((prev) =>
+      prev.includes(userId)
+        ? prev.filter((selectedId) => selectedId !== userId)
+        : [...prev, userId],
+    );
   };
 
   const handleAssignSubmit = async () => {
-    if (!selectedUser) return;
+    if (!selectedUsers.length) return;
+
     setAssigning(true);
+
     try {
       const response = await fetch(
         `http://localhost:5001/api/tasks/${assignModal.taskId}/delegate`,
@@ -120,13 +130,15 @@ function AdminAlerts() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ assigned_to: selectedUser }),
+          body: JSON.stringify({ assigned_to: selectedUsers }),
         },
       );
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to assign task");
       }
+
       closeAssignModal();
       await fetchTasks();
     } catch (err) {
@@ -137,7 +149,6 @@ function AdminAlerts() {
     }
   };
 
-  // Handle resolve button
   const handleResolve = async (taskId) => {
     try {
       const response = await fetch(
@@ -156,7 +167,6 @@ function AdminAlerts() {
         throw new Error(errorData.message || "Failed to resolve task");
       }
 
-      // Refresh tasks after successful resolution
       await fetchTasks();
     } catch (err) {
       console.error("Error resolving task:", err);
@@ -164,7 +174,6 @@ function AdminAlerts() {
     }
   };
 
-  // Group tasks by status and node
   const groupTasksByNodeAndStatus = (status) => {
     return tasks
       .filter((task) => task.status === status)
@@ -176,6 +185,25 @@ function AdminAlerts() {
         acc[nodeLocation].push(task);
         return acc;
       }, {});
+  };
+
+  const formatAssignedTo = (assignedTo) => {
+    if (Array.isArray(assignedTo)) {
+      return assignedTo
+        .map((assignee) =>
+          [assignee?.first_name, assignee?.last_name].filter(Boolean).join(" "),
+        )
+        .filter(Boolean)
+        .join(", ");
+    }
+
+    if (assignedTo && typeof assignedTo === "object") {
+      return [assignedTo.first_name, assignedTo.last_name]
+        .filter(Boolean)
+        .join(" ");
+    }
+
+    return "";
   };
 
   const pendingTasks = groupTasksByNodeAndStatus("pending");
@@ -219,11 +247,11 @@ function AdminAlerts() {
     }));
   };
 
-  // Count total tasks by status
   const totalPending = tasks.filter((t) => t.status === "pending").length;
   const totalOngoing = tasks.filter((t) => t.status === "ongoing").length;
   const totalResolved = tasks.filter((t) => t.status === "resolved").length;
   const totalTasks = tasks.length;
+
   return (
     <div className="admin-alerts-wrapper">
       <div className="admin-alerts-content">
@@ -294,38 +322,54 @@ function AdminAlerts() {
                   </div>
                   {isOpen && (
                     <div className="admin-node-dropdown-content">
-                      {paginatedTasks.map((task) => (
-                        <div key={task._id} className="admin-data-card">
-                          <div className="admin-card-header">
-                            <span>
-                              {new Date(task.created_date).toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="admin-card-body">
-                            <span>
-                              <strong>{task.title}</strong>
-                            </span>
-                            <p>{task.description}</p>
-                            <div className="admin-buttons-container">
-                              <button
-                                className="admin-acknowledge-button"
-                                onClick={() => handleAcknowledge(task._id)}
-                              >
-                                Acknowledge
-                              </button>
-                              {/* Always show Assign button for Super Admin and Admin */}
-                              {user && user.role && (user.role === "Super Admin" || user.role === "Admin") && (
-                                <button
-                                  className="admin-assign-button"
-                                  onClick={() => openAssignModal(task._id)}
-                                >
-                                  Assign
-                                </button>
+                      {paginatedTasks.map((task) => {
+                        const assignedNames = formatAssignedTo(task.assigned_to);
+
+                        return (
+                          <div key={task._id} className="admin-data-card">
+                            <div className="admin-card-header">
+                              <span>
+                                {new Date(task.created_date).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="admin-card-body">
+                              <span>
+                                <strong>{task.title}</strong>
+                              </span>
+                              <p>{task.description}</p>
+                              {assignedNames && (
+                                <div className="assigned-to-section">
+                                  <span className="assigned-label">
+                                    Assigned to
+                                  </span>
+                                  <span className="assigned-names">
+                                    {assignedNames}
+                                  </span>
+                                </div>
                               )}
+                              <div className="admin-buttons-container">
+                                <button
+                                  className="admin-acknowledge-button"
+                                  onClick={() => handleAcknowledge(task._id)}
+                                >
+                                  Acknowledge
+                                </button>
+                                {user &&
+                                  user.role &&
+                                  (user.role === "Super Admin" ||
+                                    user.role === "Admin") && (
+                                    <button
+                                      className="admin-assign-button"
+                                      onClick={() => openAssignModal(task._id)}
+                                    >
+                                      Assign
+                                    </button>
+                                  )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {nodeTasks.length === 0 && (
                         <p className="admin-no-alerts">
                           No pending alerts for this node
@@ -562,7 +606,6 @@ function AdminAlerts() {
         </div>
       </div>
 
-      {/* Assign Modal */}
       {assignModal.open && (
         <div className="assign-modal-overlay" onClick={closeAssignModal}>
           <div className="assign-modal" onClick={(e) => e.stopPropagation()}>
@@ -574,39 +617,49 @@ function AdminAlerts() {
             </div>
             <div className="assign-modal-body">
               <p className="assign-modal-label">
-                Select a user to assign this task to:
+                Select one or more workers to assign this task to:
               </p>
+              {!usersLoading && selectedUsers.length > 0 && (
+                <p className="assign-modal-label">
+                  {selectedUsers.length} worker
+                  {selectedUsers.length > 1 ? "s" : ""} selected
+                </p>
+              )}
               {usersLoading ? (
                 <p className="assign-modal-loading">Loading users...</p>
               ) : users.length === 0 ? (
                 <p className="assign-modal-empty">No assignable users found.</p>
               ) : (
                 <div className="assign-user-list">
-                  {users.map((user) => (
-                    <div
-                      key={user._id}
-                      className={`assign-user-item${
-                        selectedUser === user._id ? " selected" : ""
-                      }`}
-                      onClick={() => setSelectedUser(user._id)}
-                    >
-                      <div className="assign-user-avatar">
-                        {user.first_name?.[0]}
-                        {user.last_name?.[0]}
+                  {users.map((worker) => {
+                    const isSelected = selectedUsers.includes(worker._id);
+
+                    return (
+                      <div
+                        key={worker._id}
+                        className={`assign-user-item${
+                          isSelected ? " selected" : ""
+                        }`}
+                        onClick={() => toggleSelectedUser(worker._id)}
+                      >
+                        <div className="assign-user-avatar">
+                          {worker.first_name?.[0]}
+                          {worker.last_name?.[0]}
+                        </div>
+                        <div className="assign-user-info">
+                          <span className="assign-user-name">
+                            {worker.first_name} {worker.last_name}
+                          </span>
+                          <span className="assign-user-role">
+                            {worker.role?.name || "No Role"}
+                          </span>
+                        </div>
+                        {isSelected && (
+                          <div className="assign-user-check">&#10003;</div>
+                        )}
                       </div>
-                      <div className="assign-user-info">
-                        <span className="assign-user-name">
-                          {user.first_name} {user.last_name}
-                        </span>
-                        <span className="assign-user-role">
-                          {user.role?.name || "No Role"}
-                        </span>
-                      </div>
-                      {selectedUser === user._id && (
-                        <div className="assign-user-check">&#10003;</div>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -620,7 +673,7 @@ function AdminAlerts() {
               <button
                 className="assign-modal-confirm"
                 onClick={handleAssignSubmit}
-                disabled={!selectedUser || assigning}
+                disabled={!selectedUsers.length || assigning}
               >
                 {assigning ? "Assigning..." : "Confirm Assign"}
               </button>
