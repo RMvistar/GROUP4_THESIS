@@ -17,6 +17,12 @@ const activityLogSchema = new mongoose.Schema(
       ref: "Node",
       required: true,
     },
+    assigned_to: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     action: {
       type: String,
       enum: ["acknowledged", "resolved", "assigned", "created"],

@@ -33,7 +33,7 @@ export const register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: role || "user", // Default to "user" if not specified
+      role: role || null,
     });
 
     console.log("User created successfully:", newUser._id);
@@ -75,7 +75,7 @@ export const login = async (req, res) => {
         id: user._id,
         name: user.username,
         email: user.email,
-        role: user.role?.name || "user", // Return role name string, not the object
+        role: user.role?.name || null,
         // Tell the frontend whether this is a temporary password the user must change.
         mustChangePassword: user.mustChangePassword || false,
       },

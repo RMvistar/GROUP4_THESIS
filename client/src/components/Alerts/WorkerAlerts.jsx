@@ -113,6 +113,25 @@ function WorkerAlerts() {
       }, {});
   };
 
+  const formatAssignedTo = (assignedTo) => {
+    if (Array.isArray(assignedTo)) {
+      return assignedTo
+        .map((assignee) =>
+          [assignee?.first_name, assignee?.last_name].filter(Boolean).join(" "),
+        )
+        .filter(Boolean)
+        .join(", ");
+    }
+
+    if (assignedTo && typeof assignedTo === "object") {
+      return [assignedTo.first_name, assignedTo.last_name]
+        .filter(Boolean)
+        .join(" ");
+    }
+
+    return "";
+  };
+
   const pendingTasks = groupTasksByNodeAndStatus("pending");
   const ongoingTasks = groupTasksByNodeAndStatus("ongoing");
   const resolvedTasks = groupTasksByNodeAndStatus("resolved");
@@ -231,29 +250,43 @@ function WorkerAlerts() {
                   </div>
                   {isOpen && (
                     <div className="worker-node-dropdown-content">
-                      {paginatedTasks.map((task) => (
-                        <div key={task._id} className="worker-data-card">
-                          <div className="worker-card-header">
-                            <span>
-                              {new Date(task.created_date).toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="worker-card-body">
-                            <span>
-                              <strong>{task.title}</strong>
-                            </span>
-                            <p>{task.description}</p>
-                            <div className="worker-buttons-container">
-                              <button
-                                className="worker-acknowledge-button"
-                                onClick={() => handleAcknowledge(task._id)}
-                              >
-                                Acknowledge
-                              </button>
+                      {paginatedTasks.map((task) => {
+                        const assignedNames = formatAssignedTo(task.assigned_to);
+
+                        return (
+                          <div key={task._id} className="worker-data-card">
+                            <div className="worker-card-header">
+                              <span>
+                                {new Date(task.created_date).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="worker-card-body">
+                              <span>
+                                <strong>{task.title}</strong>
+                              </span>
+                              <p>{task.description}</p>
+                              {assignedNames && (
+                                <div className="worker-assigned-to-section">
+                                  <span className="worker-assigned-label">
+                                    Assigned to
+                                  </span>
+                                  <span className="worker-assigned-names">
+                                    {assignedNames}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="worker-buttons-container">
+                                <button
+                                  className="worker-acknowledge-button"
+                                  onClick={() => handleAcknowledge(task._id)}
+                                >
+                                  Acknowledge
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {nodeTasks.length === 0 && (
                         <p className="worker-no-alerts">
                           No pending alerts for this node
@@ -330,29 +363,43 @@ function WorkerAlerts() {
                   </div>
                   {isOpen && (
                     <div className="worker-node-dropdown-content">
-                      {paginatedTasks.map((task) => (
-                        <div key={task._id} className="worker-data-card">
-                          <div className="worker-card-header">
-                            <span>
-                              {new Date(task.created_date).toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="worker-card-body">
-                            <span>
-                              <strong>{task.title}</strong>
-                            </span>
-                            <p>{task.description}</p>
-                            <div className="worker-buttons-container">
-                              <button
-                                className="worker-resolve-button"
-                                onClick={() => handleResolve(task._id)}
-                              >
-                                Resolve
-                              </button>
+                      {paginatedTasks.map((task) => {
+                        const assignedNames = formatAssignedTo(task.assigned_to);
+
+                        return (
+                          <div key={task._id} className="worker-data-card">
+                            <div className="worker-card-header">
+                              <span>
+                                {new Date(task.created_date).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="worker-card-body">
+                              <span>
+                                <strong>{task.title}</strong>
+                              </span>
+                              <p>{task.description}</p>
+                              {assignedNames && (
+                                <div className="worker-assigned-to-section">
+                                  <span className="worker-assigned-label">
+                                    Assigned to
+                                  </span>
+                                  <span className="worker-assigned-names">
+                                    {assignedNames}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="worker-buttons-container">
+                                <button
+                                  className="worker-resolve-button"
+                                  onClick={() => handleResolve(task._id)}
+                                >
+                                  Resolve
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {nodeTasks.length === 0 && (
                         <p className="worker-no-alerts">
                           No ongoing alerts for this node
@@ -429,23 +476,37 @@ function WorkerAlerts() {
                   </div>
                   {isOpen && (
                     <div className="worker-node-dropdown-content">
-                      {paginatedTasks.map((task) => (
-                        <div key={task._id} className="worker-data-card">
-                          <div className="worker-card-header">
-                            <span>
-                              {new Date(
-                                task.completed_date || task.created_date,
-                              ).toLocaleString()}
-                            </span>
+                      {paginatedTasks.map((task) => {
+                        const assignedNames = formatAssignedTo(task.assigned_to);
+
+                        return (
+                          <div key={task._id} className="worker-data-card">
+                            <div className="worker-card-header">
+                              <span>
+                                {new Date(
+                                  task.completed_date || task.created_date,
+                                ).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="worker-card-body">
+                              <span>
+                                <strong>{task.title}</strong>
+                              </span>
+                              <p>{task.description}</p>
+                              {assignedNames && (
+                                <div className="worker-assigned-to-section">
+                                  <span className="worker-assigned-label">
+                                    Assigned to
+                                  </span>
+                                  <span className="worker-assigned-names">
+                                    {assignedNames}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <div className="worker-card-body">
-                            <span>
-                              <strong>{task.title}</strong>
-                            </span>
-                            <p>{task.description}</p>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {nodeTasks.length === 0 && (
                         <p className="worker-no-alerts">
                           No resolved alerts for this node

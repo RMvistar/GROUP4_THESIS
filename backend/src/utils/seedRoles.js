@@ -33,15 +33,15 @@ const DEFAULT_ROLES = [
     permissions: ["ASSIGN_TASKS", "VIEW_DATA", "VIEW_ALERTS"],
     isSystem: false,
   },
-  {
-    name: "Public User",
-    permissions: ["VIEW_PUBLIC"],
-    isSystem: false,
-  },
 ];
 
 async function seed() {
   await connectDB();
+
+  const deletedRole = await Role.findOneAndDelete({ name: "Public User" });
+  if (deletedRole) {
+    console.log('Removed deprecated role: Public User');
+  }
 
   for (const roleData of DEFAULT_ROLES) {
     const result = await Role.findOneAndUpdate(

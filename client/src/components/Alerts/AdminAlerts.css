@@ -446,6 +446,36 @@
   line-height: 1.5;
 }
 
+.assigned-to-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  margin: 2px 0 16px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+
+.assigned-label {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.assigned-names {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.92);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
 /* Alert status variants */
 .admin-unresolved-alerts-column .admin-data-card {
   border-left-color: #ef4444;

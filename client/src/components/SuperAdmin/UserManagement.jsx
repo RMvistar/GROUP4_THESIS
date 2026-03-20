@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { useSuperAdminManagementStore } from "../../store/useSuperAdminManagementStore";
 
 function UserManagement() {
+  const VISIBLE_ROLE_NAMES = ["Super Admin", "Admin", "Worker"];
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -73,7 +74,11 @@ function UserManagement() {
       }
 
       if (rolesResult?.success) {
-        setRoles(rolesResult.roles || []);
+        setRoles(
+          (rolesResult.roles || []).filter((role) =>
+            VISIBLE_ROLE_NAMES.includes(role.name),
+          ),
+        );
       }
     };
 

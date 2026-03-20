@@ -21,8 +21,6 @@ function RegisterPage() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("user");
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -32,14 +30,7 @@ function RegisterPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const user = await register(
-        first_name,
-        last_name,
-        name,
-        email,
-        password,
-        role,
-      );
+      const user = await register(first_name, last_name, name, email, password);
       console.log("Registration successful:", user);
 
       navigate("/login");

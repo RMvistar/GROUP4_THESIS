@@ -64,7 +64,7 @@ export const useAuthStore = create((set) => ({
   },
 
   // REGISTER
-  register: async (first_name, last_name, name, email, password, role) => {
+  register: async (first_name, last_name, name, email, password, role = null) => {
     set({ loading: true, error: null });
 
     try {

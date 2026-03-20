@@ -21,8 +21,13 @@ export async function getActivityLogs(req, res) {
         path: "user_id",
         populate: { path: "role", select: "name" },
       })
+      .populate("assigned_to", "first_name last_name email")
       .populate("node_id", "node_id location")
-      .populate("task_id", "title description")
+      .populate("task_id", "title description assigned_to")
+      .populate({
+        path: "task_id",
+        populate: { path: "assigned_to", select: "first_name last_name email" },
+      })
       .sort({ timestamp: -1 });
 
     let filteredLogs = logs;
