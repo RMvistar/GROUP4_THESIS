@@ -13,6 +13,20 @@ const STATUS_LABEL = {
   3: "Overflow",
 };
 
+function getStatusTone(node) {
+  const mlState = node?.ml_state;
+  if (mlState === "overflow") return "overflow";
+  if (mlState === "clogged") return "clogged";
+  if (mlState === "at_risk" || mlState === "warning") return "risk";
+
+  const status = node?.status;
+  if (status === 3) return "overflow";
+  if (status === 2) return "clogged";
+  if (status === 1) return "risk";
+  if (!node) return "muted";
+  return "optimal";
+}
+
 function getStatusLabel(node) {
   if (!node) return "No Data";
   if (node.ml_state) {
@@ -101,6 +115,7 @@ function NodeContainer({ className = "" }) {
     return nodes.map((node) => ({
       ...node,
       statusLabel: getStatusLabel(node),
+      statusTone: getStatusTone(node),
     }));
   }, [nodes]);
 
@@ -110,7 +125,7 @@ function NodeContainer({ className = "" }) {
         <div className="node-shell">
           <div className="nodeCard">
             <div className="card-header">
-              <span className="status-badge">NO DATA</span>
+              <span className="node-status-badge node-status-muted">NO DATA</span>
               <span className="timestamp">Waiting for data...</span>
             </div>
             <div className="card-body">
@@ -127,7 +142,11 @@ function NodeContainer({ className = "" }) {
       <div key={node.node_id} className="node-shell">
         <div className="nodeCard">
           <div className="card-header">
-            <span className="status-badge">{node.statusLabel.toUpperCase()}</span>
+            <span
+              className={`node-status-badge node-status-${node.statusTone}`}
+            >
+              {node.statusLabel.toUpperCase()}
+            </span>
             <span className="timestamp">
               {node.last_update
                 ? new Date(node.last_update).toLocaleString()
@@ -146,7 +165,9 @@ function NodeContainer({ className = "" }) {
               </div>
               <div className="metric-item">
                 <span className="metric-label">Status</span>
-                <span className="metric-value status-normal">
+                <span
+                  className={`metric-value node-metric-status node-metric-status-${node.statusTone}`}
+                >
                   {node.statusLabel}
                 </span>
               </div>
@@ -220,9 +241,9 @@ function NodeContainer({ className = "" }) {
       <div className="node-list">
         {loading && nodes.length === 0 ? (
           <div className="node-shell">
-            <div className="nodeCard">
+              <div className="nodeCard">
               <div className="card-header">
-                <span className="status-badge">LOADING</span>
+                <span className="node-status-badge node-status-muted">LOADING</span>
                 <span className="timestamp">Fetching latest sensor data...</span>
               </div>
             </div>
