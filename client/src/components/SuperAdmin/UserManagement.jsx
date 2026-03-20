@@ -258,15 +258,27 @@ function UserManagement() {
     let newStatus;
     if (user.status === "Active") {
       newStatus = "Suspended";
-    } else if (user.status === "Suspended") {
-      newStatus = "Inactive";
     } else {
       newStatus = "Active";
     }
-    console.log(
-      `Changing ${user.first_name} ${user.last_name} status to ${newStatus}`,
-    );
-    // Add API call here
+    fetch(`http://localhost:5001/api/users/${user._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ status: newStatus }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.user) {
+          setUsers((prev) =>
+            prev.map((u) =>
+              u._id === user._id ? { ...u, status: newStatus } : u
+            )
+          );
+        }
+      });
     setActiveDropdown(null);
   };
 
@@ -421,10 +433,8 @@ function UserManagement() {
                               <FaPlay />
                             )}
                             {(user.status || "Active") === "Active"
-                              ? "Suspend"
-                              : (user.status || "Active") === "Suspended"
-                                ? "Deactivate"
-                                : "Activate"}
+                              ? " Suspend"
+                              : " Activate"}
                           </button>
                           <button
                             className="action-menu-item delete"
