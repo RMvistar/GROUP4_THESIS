@@ -22,8 +22,8 @@ function LandingPage() {
           </h1>
 
           <h2 className="subheader-text">
-            Automated Risk Clog and Overflow Monitorng to Protect your
-            Communities
+            A MACHINE LEARNING APPROACH TO OVERFLOW PREDICTION, DRAINAGE ANOMALY
+            DETECTION, AND ALERT VALIDATION
           </h2>
 
           <div className="description-container">

@@ -350,21 +350,30 @@ export async function delegateTask(req, res) {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    await createActivityLog({
-      task_id: task._id,
-      user_id: req.user._id,
-      node_id: task.node_id?._id || task.node_id,
-      assigned_to: getAssignedToForLog(task),
-      action: "assigned",
-      description: `Task "${task.title}" was assigned by ${req.user.first_name} ${req.user.last_name}`,
-      previous_status: task.status,
-      new_status: "pending",
-    });
+    // Try to create activity log, but don't fail the delegate if it fails
+    try {
+      if (task.node_id) {
+        const nodeId = task.node_id._id || task.node_id;
+        await createActivityLog({
+          task_id: task._id,
+          user_id: req.user._id,
+          node_id: nodeId,
+          assigned_to: getAssignedToForLog(task),
+          action: "assigned",
+          description: `Task "${task.title}" was assigned by ${req.user.first_name} ${req.user.last_name}`,
+          previous_status: task.status,
+          new_status: "pending",
+        });
+      }
+    } catch (logErr) {
+      console.warn("Could not create activity log:", logErr.message);
+    }
 
     emitTaskUpdate(req.app.get("io"), task);
 
     res.status(200).json({ message: "Task delegated successfully", task });
   } catch (err) {
+    console.error("Error in delegateTask:", err);
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 }
