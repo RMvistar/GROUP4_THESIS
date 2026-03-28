@@ -41,7 +41,7 @@ async function ensureNodeForSensor(sensor_id) {
     if (node.is_claimed === undefined && isUnclaimedNodeLocation(node.location)) {
       node.location = buildUnclaimedLocation(normalizedSensorId);
       node.is_claimed = false;
-      node.description = "Waiting for a super admin to claim this node.";
+      node.description = "Waiting for an admin to claim this node.";
       await node.save();
     }
 
@@ -62,7 +62,7 @@ async function ensureNodeForSensor(sensor_id) {
         status: "active",
         sensor_id: normalizedSensorId,
         is_claimed: false,
-        description: "Waiting for a super admin to claim this node.",
+        description: "Waiting for an admin to claim this node.",
       });
       console.log(
         `Auto-created node: ${node.node_id} for sensor ${normalizedSensorId}`,
@@ -99,9 +99,9 @@ async function autoCreateAlertTask(sensor_id, status, ml_state, io) {
     });
     if (existing) return;
 
-    // Find a system user to act as task creator (Super Admin > Admin > any)
+    // Find a system user to act as task creator (Admin > PowerUser > any)
     const adminRole = await Role.findOne({
-      name: { $in: ["Super Admin", "Admin"] },
+      name: { $in: ["Admin", "PowerUser"] },
     });
     const systemUser = adminRole
       ? await User.findOne({ role: adminRole._id })

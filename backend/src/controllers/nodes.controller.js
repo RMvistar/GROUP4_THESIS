@@ -171,7 +171,7 @@ export async function createNode(req, res) {
       existingSensorNode.sensor_id = normalizedSensorId;
       existingSensorNode.coordinates = coordinates;
       existingSensorNode.description =
-        description || "Claimed by super admin";
+        description || "Claimed by admin";
       existingSensorNode.is_claimed = true;
       existingSensorNode.claimed_at = new Date();
       await existingSensorNode.save();
@@ -197,7 +197,7 @@ export async function createNode(req, res) {
       location: normalizedLocation,
       sensor_id: normalizedSensorId,
       coordinates,
-      description: description || "Claimed by super admin",
+      description: description || "Claimed by admin",
       is_claimed: true,
       claimed_at: new Date(),
     });
@@ -283,7 +283,7 @@ export async function deleteNode(req, res) {
     }
 
     node.location = buildUnclaimedLocation(node.sensor_id);
-    node.description = "Waiting for a super admin to claim this node.";
+    node.description = "Waiting for an admin to claim this node.";
     node.coordinates = undefined;
     node.last_maintenance = undefined;
     node.is_claimed = false;

@@ -7,7 +7,7 @@ import {
   sendPasswordResetEmail,
 } from "../utils/mailer.js";
 
-// Get all users (Super Admin only)
+// Get all users (Admin only)
 export async function getUsers(req, res) {
   try {
     const users = await User.find().select("-password").populate("role");
@@ -32,7 +32,7 @@ export async function getUserId(req, res) {
   }
 }
 
-// Create user (Super Admin )
+// Create user (Admin)
 export async function CreateUser(req, res) {
   try {
     const {
@@ -245,7 +245,7 @@ export async function changePassword(req, res) {
   }
 }
 
-// ─── Reset a user's password (Super Admin only) ──────────────────────────────
+// ─── Reset a user's password (Admin only) ──────────────────────────────
 // Generates a random temporary password, saves it, marks mustChangePassword,
 // and emails the user so they can log in and set their own password.
 export async function resetPassword(req, res) {

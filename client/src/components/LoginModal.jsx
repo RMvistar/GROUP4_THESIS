@@ -63,10 +63,10 @@ function LoginModal({ isOpen, onClose }) {
       onClose();
 
       // Route based on role
-      if (user.role === "Super Admin") {
-        navigate("/super-admin");
-      } else if (user.role === "Admin") {
+      if (user.role === "Admin") {
         navigate("/admin");
+      } else if (user.role === "PowerUser") {
+        navigate("/power-user");
       } else if (user.role === "Worker") {
         navigate("/worker");
       } else {

@@ -31,7 +31,7 @@ router.delete(
   deleteUserId,
 );
 
-// Super Admin resets another user's password and sends them an email.
+// Admin resets another user's password and sends them an email.
 router.post(
   "/:id/reset-password",
   verifyToken,

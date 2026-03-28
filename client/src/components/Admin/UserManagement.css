@@ -201,7 +201,7 @@
 }
 
 .role-superadmin,
-.role-super-admin {
+.role-admin {
   background: rgba(147, 51, 234, 0.2);
   color: #c4b5fd;
   border: 1px solid rgba(147, 51, 234, 0.3);

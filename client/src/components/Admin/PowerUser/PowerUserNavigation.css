@@ -1,4 +1,4 @@
-.super-admin-navigation-wrapper {
+.admin-navigation-wrapper {
   width: 250px;
   height: 100vh;
   background: #121E33;
@@ -233,20 +233,20 @@
 }
 
 /* Scrollbar Styling */
-.super-admin-navigation-wrapper::-webkit-scrollbar {
+.admin-navigation-wrapper::-webkit-scrollbar {
   width: 6px;
 }
 
-.super-admin-navigation-wrapper::-webkit-scrollbar-track {
+.admin-navigation-wrapper::-webkit-scrollbar-track {
   background: #121E33;
 }
 
-.super-admin-navigation-wrapper::-webkit-scrollbar-thumb {
+.admin-navigation-wrapper::-webkit-scrollbar-thumb {
   background: #1a3050;
   border-radius: 3px;
 }
 
-.super-admin-navigation-wrapper::-webkit-scrollbar-thumb:hover {
+.admin-navigation-wrapper::-webkit-scrollbar-thumb:hover {
   background: #2a4a6a;
 }
 
@@ -269,7 +269,7 @@
   border-color: #d32f2f;
 }
 
-.super-admin-navigation-wrapper .logo-container {
+.admin-navigation-wrapper .logo-container {
   display: flex;
   justify-content: flex-start;
   padding-left: 20px;
@@ -277,7 +277,7 @@
   width: 100%;
 }
 
-.super-admin-navigation-wrapper .logo {
+.admin-navigation-wrapper .logo {
   height: auto;
   width: 25%;
   object-fit: contain;

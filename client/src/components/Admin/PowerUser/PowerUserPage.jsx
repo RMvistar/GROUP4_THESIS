@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import "./AdminPage.css";
-import AdminNavigation from "./AdminNavigation.jsx";
+import "./PowerUserPage.css";
+import PowerUserNavigation from "./PowerUserNavigation.jsx";
 import WorkNodeDetails from "../WorkNodeDetails.jsx";
 import AdminAlerts from "../../Alerts/AdminAlerts.jsx";
 import ActivityLog from "../ActivityLog.jsx";
@@ -8,18 +8,18 @@ import WorkerManagement from "./WorkerManagement.jsx";
 import WorkDashboard from "../WorkDashboard.jsx";
 import AccountSettings from "../../AccountSettings/AccountSettings.jsx";
 
-function AdminPage() {
+function PowerUserPage() {
   const [activeSection, setActiveSection] = useState(() => {
-    return localStorage.getItem("adminActiveSection") || "dashboard";
+    return localStorage.getItem("powerUserActiveSection") || "dashboard";
   });
 
   useEffect(() => {
-    localStorage.setItem("adminActiveSection", activeSection);
+    localStorage.setItem("powerUserActiveSection", activeSection);
   }, [activeSection]);
 
   return (
     <div className="admin-page-wrapper">
-      <AdminNavigation
+      <PowerUserNavigation
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
@@ -35,4 +35,4 @@ function AdminPage() {
   );
 }
 
-export default AdminPage;
+export default PowerUserPage;

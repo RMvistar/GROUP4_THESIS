@@ -168,12 +168,15 @@ function AdminNodeDetails() {
     if (!deleteTarget) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/nodes/${deleteTarget}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${API_BASE_URL}/api/nodes/${deleteTarget}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       const payload = await response.json().catch(() => null);
 
@@ -199,7 +202,9 @@ function AdminNodeDetails() {
 
     try {
       const [historyResponse, alertsResponse] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/public/nodes/${node.node_id}/history?limit=100`),
+        fetch(
+          `${API_BASE_URL}/api/public/nodes/${node.node_id}/history?limit=100`,
+        ),
         fetch(`${API_BASE_URL}/api/public/alerts`),
       ]);
 
@@ -262,7 +267,7 @@ function AdminNodeDetails() {
             <h3>No nodes yet</h3>
             <p>
               Once a sensor sends data, it will appear here as an unclaimed node
-              until the super admin assigns a location to its MAC address.
+              until the admin assigns a location to its MAC address.
             </p>
           </div>
         )}
@@ -306,7 +311,9 @@ function AdminNodeDetails() {
                     <div className="metrics-grid">
                       <div className="metric-item">
                         <span className="metric-label">Display Name</span>
-                        <span className="metric-value">{getNodeTitle(node)}</span>
+                        <span className="metric-value">
+                          {getNodeTitle(node)}
+                        </span>
                       </div>
                       <div className="metric-item">
                         <span className="metric-label">Node ID</span>
@@ -319,7 +326,9 @@ function AdminNodeDetails() {
                       <div className="metric-item">
                         <span className="metric-label">Location</span>
                         <span className="metric-value">
-                          {node.is_claimed === false ? "Unclaimed Node" : node.location}
+                          {node.is_claimed === false
+                            ? "Unclaimed Node"
+                            : node.location}
                         </span>
                       </div>
                       <div className="metric-item">
@@ -388,15 +397,17 @@ function AdminNodeDetails() {
                     </div>
 
                     <div className="insights-section">
-                      <h3 className="section-title">System Prediction & Insights</h3>
+                      <h3 className="section-title">
+                        System Prediction & Insights
+                      </h3>
                       <p className="insights-text">
                         {node.is_claimed === false
                           ? `This sensor is already reporting data, but it is still unclaimed. Enter MAC address ${node.sensor_id} with a location to turn it into a named node.`
                           : !node.is_online
                             ? "This node is currently offline. It will return to online automatically once sensor communication is restored."
-                          : node.latest_data
-                            ? `Latest status is ${statusLabel}. New alerts for this MAC address will continue to appear under ${node.location}.`
-                            : "This node is claimed, but it has not sent live sensor data yet."}
+                            : node.latest_data
+                              ? `Latest status is ${statusLabel}. New alerts for this MAC address will continue to appear under ${node.location}.`
+                              : "This node is claimed, but it has not sent live sensor data yet."}
                       </p>
                     </div>
 
@@ -406,7 +417,8 @@ function AdminNodeDetails() {
                         onClick={() => openTrendsModal(node)}
                       >
                         <FaChartLine />
-                        {trendsState.loading && trendsState.node?._id === node._id
+                        {trendsState.loading &&
+                        trendsState.node?._id === node._id
                           ? "Loading Trends..."
                           : "View Historical Trends"}
                       </button>
@@ -438,7 +450,10 @@ function AdminNodeDetails() {
 
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(event) => event.stopPropagation()}>
+          <div
+            className="modal-content"
+            onClick={(event) => event.stopPropagation()}
+          >
             <div className="modal-header">
               <h2>Add New Node</h2>
               <button className="close-btn" onClick={closeModal}>
@@ -472,10 +487,18 @@ function AdminNodeDetails() {
               </div>
               {formError && <p className="form-error">{formError}</p>}
               <div className="form-actions">
-                <button type="button" className="cancel-btn" onClick={closeModal}>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={closeModal}
+                >
                   Cancel
                 </button>
-                <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "Saving..." : "Add Node"}
                 </button>
               </div>
@@ -486,7 +509,10 @@ function AdminNodeDetails() {
 
       {deleteTarget && (
         <div className="modal-overlay" onClick={() => setDeleteTarget(null)}>
-          <div className="confirm-modal" onClick={(event) => event.stopPropagation()}>
+          <div
+            className="confirm-modal"
+            onClick={(event) => event.stopPropagation()}
+          >
             <h3>Delete Node</h3>
             <p>
               This will return the node to its unclaimed state so it can appear
@@ -500,7 +526,11 @@ function AdminNodeDetails() {
               >
                 Cancel
               </button>
-              <button type="button" className="delete-btn" onClick={handleDeleteNode}>
+              <button
+                type="button"
+                className="delete-btn"
+                onClick={handleDeleteNode}
+              >
                 Delete Node
               </button>
             </div>
