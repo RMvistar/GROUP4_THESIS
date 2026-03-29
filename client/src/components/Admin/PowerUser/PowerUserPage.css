@@ -1,18 +1,18 @@
-.super-admin-dashboard-wrapper {
+.admin-dashboard-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
 }
 
-.super-admin-page-wrapper {
+.admin-page-wrapper {
   display: flex;
   min-height: 100vh;
   background: linear-gradient(to bottom, #020E2A 0%, #0F172A 50%, #0B2154 100%);
   background-attachment: fixed;
 }
 
-.super-admin-content {
+.admin-content {
   margin-left: 250px;
   flex: 1;
   padding: 40px;

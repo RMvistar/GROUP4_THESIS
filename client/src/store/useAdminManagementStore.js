@@ -4,7 +4,7 @@ import { useAuthStore } from "./useAuthStore.js";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 
-export const useSuperAdminManagementStore = create((set) => ({
+export const useAdminManagementStore = create((set) => ({
   user: JSON.parse(localStorage.getItem("user")) || null,
   token: localStorage.getItem("token") || null,
   isAuthenticated: !!localStorage.getItem("token"),
@@ -208,7 +208,7 @@ export const useSuperAdminManagementStore = create((set) => ({
     }
   },
 
-  // Super Admin resets another user's password.
+  // Admin resets another user's password.
   // The backend generates a random temporary password, saves it (hashed),
   // sets mustChangePassword: true, and emails the user.
   resetPassword: async (userId) => {

@@ -5,7 +5,7 @@ import { getActivityLogs } from "../controllers/activityLog.controller.js";
 
 const router = express.Router();
 
-// Get all activity logs (Admin/Super Admin)
+// Get all activity logs (Admin/PowerUser)
 router.get(
   "/",
   verifyToken,

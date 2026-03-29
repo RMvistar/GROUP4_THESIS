@@ -1,8 +1,8 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import "./WorkerPage.css";
 import WorkerNavigation from "./WorkerNavigation.jsx";
-import WorkDashboard from "../SuperAdmin/WorkDashboard.jsx";
-import WorkNodeDetails from "../SuperAdmin/WorkNodeDetails.jsx";
+import WorkDashboard from "../Admin/WorkDashboard.jsx";
+import WorkNodeDetails from "../Admin/WorkNodeDetails.jsx";
 import WorkerAlerts from "../Alerts/WorkerAlerts.jsx";
 import Tasks from "./Tasks.jsx";
 import AccountSettings from "../AccountSettings/AccountSettings.jsx";

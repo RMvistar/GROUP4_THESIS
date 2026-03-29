@@ -14,10 +14,10 @@ import {
 } from "react-icons/fa";
 
 import { useEffect, useState } from "react";
-import { useSuperAdminManagementStore } from "../../store/useSuperAdminManagementStore";
+import { useAdminManagementStore } from "../../store/useAdminManagementStore";
 
 function UserManagement() {
-  const VISIBLE_ROLE_NAMES = ["Super Admin", "Admin", "Worker"];
+  const VISIBLE_ROLE_NAMES = ["Admin", "PowerUser", "Worker"];
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -44,7 +44,7 @@ function UserManagement() {
     updateUser,
     findUserById,
     resetPassword,
-  } = useSuperAdminManagementStore();
+  } = useAdminManagementStore();
 
   const normalizeUser = (user) => ({
     id: user?._id || user?.id || Date.now(),
@@ -279,8 +279,8 @@ function UserManagement() {
         if (result.user) {
           setUsers((prev) =>
             prev.map((u) =>
-              u._id === user._id ? { ...u, status: newStatus } : u
-            )
+              u._id === user._id ? { ...u, status: newStatus } : u,
+            ),
           );
         }
       });

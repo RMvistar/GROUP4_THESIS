@@ -10,7 +10,7 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-// ─── Sent when a Super Admin CREATES a new user account ──────────────────────
+// ─── Sent when an Admin CREATES a new user account ──────────────────────
 // The password is temporary. The user must change it in Account Settings.
 export async function sendCredentialsEmail({
   to,
@@ -59,7 +59,7 @@ immediately inside Account Settings.
   });
 }
 
-// ─── Sent when a Super Admin RESETS an existing user's password ───────────────
+// ─── Sent when an Admin RESETS an existing user's password ───────────────
 export async function sendPasswordResetEmail({
   to,
   firstName,
@@ -69,7 +69,7 @@ export async function sendPasswordResetEmail({
   const subject = "Your ARCOM password has been reset";
   const text = `Hi ${firstName},
 
-A Super Admin has reset your ARCOM account password.
+An admin has reset your ARCOM account password.
 
 Username: ${username}
 New Temporary Password: ${newPassword}
@@ -82,7 +82,7 @@ immediately inside Account Settings.
   const html = `
     <div style="font-family: Arial, sans-serif; line-height: 1.5;">
       <p>Hi <b>${firstName}</b>,</p>
-      <p>A Super Admin has reset your ARCOM account password.</p>
+      <p>An admin has reset your ARCOM account password.</p>
       <p>
         <b>Username:</b> ${username}<br/>
         <b>New Temporary Password:</b> ${newPassword}

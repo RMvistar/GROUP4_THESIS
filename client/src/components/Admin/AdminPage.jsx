@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import "./SuperAdminPage.css";
-import SuperAdminNavigation from "./SuperAdminNavigation.jsx";
+import "./AdminPage.css";
+import AdminNavigation from "./AdminNavigation.jsx";
 import UserManagement from "./UserManagement.jsx";
 import ActivityLog from "./ActivityLog.jsx";
 import AdminNodeDetails from "./AdminNodeDetails.jsx";
@@ -8,22 +8,22 @@ import AdminAlerts from "../Alerts/AdminAlerts.jsx";
 import WorkDashboard from "./WorkDashboard.jsx";
 import AccountSettings from "../AccountSettings/AccountSettings.jsx";
 
-function SuperAdminPage() {
+function AdminPage() {
   const [activeSection, setActiveSection] = useState(() => {
-    return localStorage.getItem("superAdminActiveSection") || "dashboard";
+    return localStorage.getItem("adminActiveSection") || "dashboard";
   });
 
   useEffect(() => {
-    localStorage.setItem("superAdminActiveSection", activeSection);
+    localStorage.setItem("adminActiveSection", activeSection);
   }, [activeSection]);
 
   return (
-    <div className="super-admin-page-wrapper">
-      <SuperAdminNavigation
+    <div className="admin-page-wrapper">
+      <AdminNavigation
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
-      <div className="super-admin-content">
+      <div className="admin-content">
         {activeSection === "dashboard" && <WorkDashboard />}
         {activeSection === "alerts" && <AdminAlerts />}
         {activeSection === "user-management" && <UserManagement />}
@@ -36,4 +36,4 @@ function SuperAdminPage() {
   );
 }
 
-export default SuperAdminPage;
+export default AdminPage;

@@ -11,8 +11,8 @@ import Alerts from "./components/Alerts/Alerts.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import React from "react";
 import RegisterPage from "./RegisterPage.jsx";
-import SuperAdminPage from "./components/SuperAdmin/SuperAdminPage.jsx";
-import AdminPage from "./components/SuperAdmin/Admin/AdminPage.jsx";
+import AdminPage from "./components/Admin/AdminPage.jsx";
+import PowerUserPage from "./components/Admin/PowerUser/PowerUserPage.jsx";
 import WorkerPage from "./components/Worker/WorkerPage.jsx";
 import LandingPage from "./components/LandingPage.jsx";
 import "./App.css";
@@ -24,18 +24,18 @@ function App() {
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
-          path="/super-admin"
-          element={
-            <ProtectedRoute>
-              <SuperAdminPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/admin"
           element={
             <ProtectedRoute>
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/power-user"
+          element={
+            <ProtectedRoute>
+              <PowerUserPage />
             </ProtectedRoute>
           }
         />

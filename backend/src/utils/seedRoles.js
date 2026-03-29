@@ -12,12 +12,12 @@ dotenv.config();
 
 const DEFAULT_ROLES = [
   {
-    name: "Super Admin",
+    name: "Admin",
     permissions: [], // bypasses all checks — no permission list needed
     isSystem: true,
   },
   {
-    name: "Admin",
+    name: "PowerUser",
     permissions: [
       "MANAGE_USERS",
       "MANAGE_ROLES",

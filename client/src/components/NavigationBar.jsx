@@ -12,8 +12,9 @@ function NavigationBar() {
 
   const handleLogout = () => {
     logout();
-    const roleName = typeof user?.role === "string" ? user.role : user?.role?.name;
-    if (roleName === "Admin" || roleName === "Super Admin") {
+    const roleName =
+      typeof user?.role === "string" ? user.role : user?.role?.name;
+    if (roleName === "Admin" || roleName === "PowerUser") {
       navigate("/dashboard");
     } else {
       navigate("/home");

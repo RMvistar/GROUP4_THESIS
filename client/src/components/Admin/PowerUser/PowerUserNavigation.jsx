@@ -1,45 +1,29 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   FaChartLine,
-  FaUsers,
   FaNetworkWired,
   FaBell,
-  FaChevronRight,
+  FaUsers,
   FaHistory,
-  FaUserCog,
   FaCog,
 } from "react-icons/fa";
-import { useAuthStore } from "../../store/useAuthStore";
+import logo from "../../../assets/ARCOMLogo2.png";
+import "./PowerUserNavigation.css";
+import { useAuthStore } from "../../../store/useAuthStore.js";
+import { useNavigate } from "react-router-dom";
 import {
   getFullName,
   getProfileInitials,
   getRoleName,
   getUserIdLabel,
   getUsernameLabel,
-} from "../../utils/profileDisplay.js";
-import logo from "../../assets/ARCOMLogo2.png";
-import "./SuperAdminNavigation.css";
+} from "../../../utils/profileDisplay.js";
 
-function SuperAdminNavigation({ activeSection, onSectionChange }) {
-  const navigate = useNavigate();
+function PowerUserNavigation({ activeSection, onSectionChange }) {
   const { logout, user } = useAuthStore();
-  const [isUsersExpanded, setIsUsersExpanded] = useState(() => {
-    return localStorage.getItem("usersMenuExpanded") === "true";
-  });
-
-  useEffect(() => {
-    localStorage.setItem("usersMenuExpanded", isUsersExpanded);
-  }, [isUsersExpanded]);
-
-  const toggleUsers = () => {
-    setIsUsersExpanded(!isUsersExpanded);
-  };
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    localStorage.removeItem("superAdminActiveSection");
-    localStorage.removeItem("usersMenuExpanded");
     navigate("/home");
   };
 
@@ -50,7 +34,7 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
   const profileInitials = getProfileInitials(user);
 
   return (
-    <div className="super-admin-navigation-wrapper">
+    <div className="admin-navigation-wrapper">
       {/* User Profile Section */}
       <div className="logo-container">
         <img src={logo} alt="ARCOM Logo" className="logo" />
@@ -83,48 +67,26 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
           <span className="nav-label">Dashboard</span>
         </div>
 
-        {/* Users Section with Submenu */}
-        <div className="nav-item-group">
-          <div
-            className={`nav-item ${isUsersExpanded ? "expanded" : ""}`}
-            onClick={toggleUsers}
-          >
-            <span className="nav-icon">
-              <FaUsers />
-            </span>
-            <span className="nav-label">Users</span>
-            <span className={`nav-arrow ${isUsersExpanded ? "open" : ""}`}>
-              <FaChevronRight />
-            </span>
-          </div>
+        {/* Worker Management */}
+        <div
+          className={`nav-item ${activeSection === "worker-management" ? "active" : ""}`}
+          onClick={() => onSectionChange("worker-management")}
+        >
+          <span className="nav-icon">
+            <FaUsers />
+          </span>
+          <span className="nav-label">Worker Management</span>
+        </div>
 
-          {isUsersExpanded && (
-            <div className="nav-submenu">
-              <div
-                className={`nav-subitem ${
-                  activeSection === "user-management" ? "active" : ""
-                }`}
-                onClick={() => onSectionChange("user-management")}
-              >
-                <span className="nav-icon">
-                  <FaUserCog />
-                </span>
-                <span className="nav-label">User Management</span>
-              </div>
-
-              <div
-                className={`nav-subitem ${
-                  activeSection === "activity-log" ? "active" : ""
-                }`}
-                onClick={() => onSectionChange("activity-log")}
-              >
-                <span className="nav-icon">
-                  <FaHistory />
-                </span>
-                <span className="nav-label">Activity Log</span>
-              </div>
-            </div>
-          )}
+        {/* Activity Log */}
+        <div
+          className={`nav-item ${activeSection === "activity-log" ? "active" : ""}`}
+          onClick={() => onSectionChange("activity-log")}
+        >
+          <span className="nav-icon">
+            <FaHistory />
+          </span>
+          <span className="nav-label">Activity Log</span>
         </div>
 
         {/* Node Details */}
@@ -166,4 +128,4 @@ function SuperAdminNavigation({ activeSection, onSectionChange }) {
   );
 }
 
-export default SuperAdminNavigation;
+export default PowerUserNavigation;

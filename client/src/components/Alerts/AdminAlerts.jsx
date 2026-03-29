@@ -324,7 +324,9 @@ function AdminAlerts() {
                   {isOpen && (
                     <div className="admin-node-dropdown-content">
                       {paginatedTasks.map((task) => {
-                        const assignedNames = formatAssignedTo(task.assigned_to);
+                        const assignedNames = formatAssignedTo(
+                          task.assigned_to,
+                        );
                         const alertCard = getAlertCardContent(task);
 
                         return (
@@ -358,8 +360,8 @@ function AdminAlerts() {
                                 </button>
                                 {user &&
                                   user.role &&
-                                  (user.role === "Super Admin" ||
-                                    user.role === "Admin") && (
+                                  (user.role === "Admin" ||
+                                    user.role === "PowerUser") && (
                                     <button
                                       className="admin-assign-button"
                                       onClick={() => openAssignModal(task._id)}

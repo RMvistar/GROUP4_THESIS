@@ -224,8 +224,8 @@ function ActivityLog() {
               onChange={handleRoleFilterChange}
             >
               <option value="all">All Roles</option>
-              <option value="super admin">Super Admin</option>
               <option value="admin">Admin</option>
+              <option value="power user">PowerUser</option>
               <option value="worker">Worker</option>
             </select>
 
